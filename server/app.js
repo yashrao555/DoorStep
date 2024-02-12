@@ -5,6 +5,8 @@ const dotenv = require('dotenv')
 
 const authController = require('./controllers/authController');
 const restaurantAuthController = require("./controllers/restaurantAuthContoller");
+const foodController = require('./controllers/foodItemController')
+const restaurantController = require('./controllers/restaurantController')
 const app = express();
 const corsOptions = {
     origin:true,
@@ -16,6 +18,8 @@ app.use(express.json());
 
 app.use(authController)
 app.use(restaurantAuthController)
+app.use(foodController)
+app.use(restaurantController)
 
 const sequelize = require("./util/database");
 

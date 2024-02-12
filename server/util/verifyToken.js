@@ -10,9 +10,13 @@ const authenticateToken = (req, res, next) => {
       if (err) {
         return res.status(401).json({ error: 'Unauthorized: Invalid token' });
       }
-  
+      
       // Attach the decoded token payload to the request for use in subsequent handlers
+      if(decoded.customerId)
       req.customerId = decoded.customerId;
+    else
+    req.restaurantId = decoded.restaurantId
+
       next();
     });
   };

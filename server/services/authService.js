@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-console.log(process.env.GMAIL_PASS, typeof process.env.GMAIL_PASS);
+
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
