@@ -4,12 +4,18 @@ import HomePage from './views/HomePage.vue';
 import RegisterAsCustomer from './views/RegisterAsCustomer.vue';
 import RegisterAsRestaurant from './views/RegisterAsRestaurant.vue';
 import LoginPage from './views/LoginPage.vue';
+import LandingPage from './views/LandingPage.vue';
+import RestaurantPage from './views/RestaurantPage.vue';
+import AddToCart from './components/AddToCart.vue';
 
 const routes = [
-  { path: '/', component: HomePage },
+  { path: '/', component: LandingPage },
+  { path: '/register', component: HomePage },
   { path: '/register/customer', component: RegisterAsCustomer },
   { path: '/register/restaurant', component: RegisterAsRestaurant },
-  { path: '/login', component: LoginPage }
+  { path: '/login', component: LoginPage },
+  { path: "/restaurant/:id", component:RestaurantPage},
+  { path: '/cart', component: AddToCart },
 ];
 
 const router = createRouter({
