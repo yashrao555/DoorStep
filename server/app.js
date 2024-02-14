@@ -7,6 +7,7 @@ const authController = require('./controllers/authController');
 const restaurantAuthController = require("./controllers/restaurantAuthContoller");
 const foodController = require('./controllers/foodItemController')
 const restaurantController = require('./controllers/restaurantController')
+const cartController = require('./controllers/cartController')
 const app = express();
 const corsOptions = {
     origin:true,
@@ -20,6 +21,10 @@ app.use(authController)
 app.use(restaurantAuthController)
 app.use(foodController)
 app.use(restaurantController)
+app.use(cartController)
+
+
+
 
 const sequelize = require("./util/database");
 
