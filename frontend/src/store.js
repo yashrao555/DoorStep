@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
 export default createStore({
     state: {
       cartItems: [],
@@ -58,6 +59,8 @@ export default createStore({
         return state.restaurant;
       },
     },
+
+    plugins: [createPersistedState()],
   });
 
   import { restaurants } from './dummyRestaurantDb';
@@ -65,10 +68,12 @@ export default createStore({
 // Add a function to fetch restaurant data by ID
 async function fetchRestaurantById(restaurantId) {
   // Simulate fetching restaurant data
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       // Replace this with your actual logic to find a restaurant by ID
       const restaurant = restaurants.find(restaurant => restaurant.restaurant_id === restaurantId);
+      if(restaurant === null)
+        reject('No restaurant found');
       resolve(restaurant);
     }, 500); // Simulating an asynchronous fetch
   });
