@@ -33,8 +33,8 @@
   
           <div class="col-md-6">
             <label for="username" class="form-label">User Name</label>
-            <input v-model="formData.username" type="text" class="form-control" id="username" />
-            <div v-if="formSubmitted && !validateUsername(formData.username)" class="error-message">
+            <input v-model="formData.name" type="text" class="form-control" id="username" />
+            <div v-if="formSubmitted && !validateUsername(formData.name)" class="error-message">
               User name is required.
             </div>
           </div>
@@ -86,7 +86,7 @@
             <label for="inputState" class="form-label">State</label>
             <select v-model="formData.state" id="inputState" class="form-select">
               <option selected>Choose...</option>
-              <option>...</option>
+              <option>gandhinagar</option>
             </select>
             <div v-if="formSubmitted && !validateState(formData.state)" class="error-message">
               State is required.
@@ -105,13 +105,13 @@
           <div class="col-md-12">
             <label for="contact" class="form-label">Contact Number</label>
             <input
-              v-model="formData.contact"
+              v-model="formData.phone"
               type="text"
               class="form-control"
               id="contact"
               placeholder="name@example.com"
             />
-            <div v-if="formSubmitted &&!validateContact(formData.contact)" class="error-message">
+            <div v-if="formSubmitted &&!validateContact(formData.phone)" class="error-message">
               Please enter a valid contact number.
             </div>
           </div>
@@ -127,27 +127,28 @@
   
   
   <script>
+  import axios from 'axios';
   export default {
     data() {
       return {
         formData: {
           email: '',
           password: '',
-          username: '',
+          name: '',
           dob: null,
           gender: '',
           address: '',
           city: '',
           state: '',
           zip: '',
-          contact: '',
+          phone: '',
           // ... other form fields ...
         },
         formSubmitted: false
       };
     },
     methods: {
-      validateForm() {
+     async validateForm() {
 
         this.formSubmitted = true;
 
@@ -156,19 +157,35 @@
         if (
           this.validateEmail(this.formData.email) &&
           this.validatePassword(this.formData.password) &&
-          this.validateUsername(this.formData.username) &&
+          this.validateUsername(this.formData.name) &&
           this.validateGender(this.formData.gender) &&
           this.validateAddress(this.formData.address) &&
           this.validateCity(this.formData.city) &&
           this.validateState(this.formData.state) &&
           this.validateZip(this.formData.zip) &&
-          this.validateContact(this.formData.contact)
+          this.validateContact(this.formData.phone)
         ) {
-          // Form is valid, you can submit it or perform other actions
-          console.log('Form is valid');
-        } else {
-          console.log('Form is invalid');
+        try {
+          const response = await axios.post('http://localhost:3000/register-user', this.formData);
+
+          // Handle the response from the backend
+          console.log(response.data);
+
+          // Optionally, you can perform further actions based on the response
+          if (response.data.message) {
+            // Registration success
+            console.log('User registered successfully.');
+            this.$router.push('/verifyOTP');
+          } else if (response.data.error) {
+            // Registration failed
+            console.error('Error registering user:', response.data.error);
+          }
+        } catch (error) {
+          console.error('Failed to make the API request:', error);
         }
+      } else {
+        console.log('Form is invalid');
+      }
       },
       validateEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -177,8 +194,8 @@
       validatePassword(password) {
         return password.length >= 8;
       },
-      validateUsername(username) {
-        return username.trim() !== '';
+      validateUsername(name) {
+        return name.trim() !== '';
       },
       validateGender(gender) {
         return gender !== '';
@@ -197,12 +214,12 @@
         const zipRegex = /^\d{5}$/;
         return zipRegex.test(zip);
       },
-      validateContact(contact) {
+      validateContact(phone) {
         // Simple contact number validation, you can enhance it as needed
         const contactRegex = /^[0-9]{10}$/;
-        return contactRegex.test(contact);
+        return contactRegex.test(phone);
       },
-      // Add more validation methods for other fields if needed
+      
     },
   };
   </script>

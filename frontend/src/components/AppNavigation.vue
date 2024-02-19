@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="navbar navbar-expand-sm navbar-dark">
-      <a class="navbar-brand" href="#">DoorStep</a>
+      <a class="navbar-brand" href="/">DoorStep</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -16,15 +16,12 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="#"
-              >Home <span class="sr-only">(current)</span></a
+            <a class="nav-link navbar-brand" href="/register"
+              >Register</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link navbar-brand" href="/login">Login</a>
           </li>
         </ul>
       </div>

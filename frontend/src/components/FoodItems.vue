@@ -2,7 +2,7 @@
     <div class="food-item-container">
       <div class="food-item-details">
         <h2 class="food-item-name">{{ foodItem.name }}</h2>
-        <p class="food-item-description">{{ foodItem.description }}</p>
+        <!-- <p class="food-item-description">{{ foodItem.description }}</p> -->
         <p class="food-item-price">Price: {{ formattedPrice }}</p>
         <div class="add-to-cart">
           <span class="quantity-button" @click="decrementQuantity">-</span>
@@ -70,10 +70,11 @@
   }
   
   .food-item-details {
-    flex-grow: 1;
-    padding: 20px;
-    text-align: left;
-  }
+  flex-grow: 1;
+  padding: 5px; /* Adjust the padding as needed */
+  text-align: left;
+}
+
   
   .food-item-name {
     font-size: 18px;
@@ -93,21 +94,22 @@
   
   .food-item-image {
     width: 200px; /* Adjust the width of the image container */
-    height: 200px; /* Adjust the height of the image container */
+    height: 130px; /* Adjust the height of the image container */
     overflow: hidden;
   }
   
   .food-item-image img {
     width: 100%;
-    height: 100%;
+    height:100%;
     object-fit: cover;
   }
 
   .add-to-cart {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 5px; /* Adjust the margin as needed */
 }
+
 
 .add-to-cart .quantity-button {
    

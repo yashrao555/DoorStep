@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@vee-validate/rules": "^4.5.8",
+    "axios": "^1.6.7",
     "core-js": "^3.8.3",
     "vee-validate": "^4.5.8",
     "vue": "^3.2.13",
+    "vue-cookies": "^1.8.3",
     "vue-resource": "^1.5.3",
     "vue-router": "^4.2.5",
     "vuex": "^4.1.0",

@@ -3,10 +3,11 @@
     <h3 class="login-header">Log in</h3>
     <form @submit.prevent="login" class="login-form">
       <p class="signup-link">Need an account? <a href="/">Sign up</a></p>
+      <router-link to = '/'>Jaoo</router-link>
 
       <div class="form-group">
         <label for="role" class="form-label">Login as</label>
-        <select id="role" class="form-select">
+        <select v-model="role" id="role" class="form-select">
           <option selected>Choose...</option>
           <option>Customer</option>
           <option>Restaurant</option>
@@ -57,17 +58,19 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
       email: "",
       password: "",
+      role:"",
       errors: {},
       showPassword: false,
     };
   },
   methods: {
-    login() {
+   async login() {
       // Reset errors
       this.errors = {};
 
@@ -87,14 +90,45 @@ export default {
 
       // If no errors, submit form
       if (Object.keys(this.errors).length === 0) {
-        // Send login request to server with username and password
-        // If successful, redirect to home page
-        // If unsuccessful, display error message
-        if (this.email === "xyz@gmail.com" && this.password === "mypassword") {
-          // Replace with your own logic to handle successful login
-          alert("Logged in successfully!");
-        } else {
-          alert("Invalid email or password.");
+        
+        try {
+          if(this.role ==='Customer')
+          {
+            const response = await axios.post('http://localhost:3000/login-user', {
+            email: this.email,
+            password: this.password,
+          });
+
+          console.log(response.data);
+
+          if (response.data.token) {
+            alert('Logged in successfully!');
+            
+            this.$router.push('/')
+          } else if (response.data.error) {
+            this.errors.login = response.data.error;
+            alert(response.data.error);
+          }
+          }
+          else{
+            const response = await axios.post('http://localhost:3000/login-restaurant', {
+            email: this.email,
+            password: this.password,
+          });
+
+          console.log(response.data);
+
+          if (response.data.token) {
+            alert('Logged in successfully!');
+            this.$cookies.set('token', response.data.token);
+            this.$router.push('/')
+          } else if (response.data.error) {
+            this.errors.login = response.data.error;
+            alert(response.data.error);
+          }
+          }
+        } catch (error) {
+          console.error('Failed to make the API request:', error);
         }
       }
     },

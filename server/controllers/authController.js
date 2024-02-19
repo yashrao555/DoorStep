@@ -12,6 +12,7 @@ authController.post('/verify-user-otp', async (req, res) => {
     const { email, otp } = req.body;
 
     const result = await verifyOTP(email, otp);
+    console.log('result is :',result)
 
     if (result.message) {
         res.json(result);

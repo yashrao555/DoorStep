@@ -13,7 +13,7 @@
     </div>
 
     <!-- Card Section -->
-    <div class="card-section">
+    <!-- <div class="card-section">
       <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
         <food-cards
           v-for="(card, cardIndex) in row"
@@ -26,11 +26,27 @@
           :buttonText="card.buttonText"
         />
       </div>
+    </div> -->
+
+
+    <div class="card-section">
+      <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
+        <food-cards
+          v-for="(card, cardIndex) in row"
+          :key="cardIndex"
+          :title="card.name"
+          :opensAt="card.opens_at"
+          :address="card.address"
+          :id="card.restaurant_id"
+        />
+      </div>
     </div>
+
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import FoodCards from '../components/FoodCards.vue';
 
 export default {
@@ -41,94 +57,15 @@ export default {
   data() {
     return {
       // Sample card data, you can replace this with your actual data
-      cards: [
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-        {
-          imageSrc: 'https://img.freepik.com/free-photo/tasty-burger-isolated-white-background-fresh-hamburger-fastfood-with-beef-cheese_90220-1063.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707264000&semt=sph',
-          altText: 'Card 1',
-          title: 'Card title 1',
-          description: 'Some quick example text for card 1.',
-          link: '#',
-          buttonText: 'Go somewhere',
-        },
-      ],
+      restaurants: [],
       rows: [], // Array to store rows of cards
     };
   },
   mounted() {
+    this.fetchRestaurants();
     // Initialize rows with 4 cards each
-    this.rows = this.chunkArray(this.cards, 5);
+    
+    
   },
   methods: {
     // Helper function to chunk the array into rows
@@ -139,7 +76,24 @@ export default {
       }
       return chunkedArray;
     },
+
+    async fetchRestaurants() {
+      try {
+        const response = await axios.get('http://localhost:3000/restaurants'); // Replace with your actual backend URL
+        this.restaurants = response.data.data;
+        this.rows = this.chunkArray(this.restaurants, 5);
+        console.log(this.restaurants)
+      } catch (error) {
+        console.error('Failed to fetch restaurants:', error);
+      }
+    },
+
+
   },
+  created()
+  {
+    console.log(this.$cookies.get('token'));
+  }
 };
 </script>
 

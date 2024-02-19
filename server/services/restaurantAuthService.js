@@ -117,7 +117,7 @@ const verifyRestaurantOTP = async (email, otp) => {
                 // For example, using a database connection and an ORM like Sequelize or Mongoose
                 await restaurant.save(); // Save the updated customer data
 
-                return { message: 'OTP verification successful. Customer registered.' };
+                return { message: 'OTP verification successful. Restaurant registered.' };
             } else {
                 // OTP has expired, handle accordingly (e.g., set is_verified to false, delete the customer)
                 // For demonstration purposes, here we set is_verified to false
@@ -159,10 +159,12 @@ const loginRestaurant = async (email, password) => {
                 const token = jwt.sign({ restaurantId: restaurant.restaurant_id }, 'your_secret_key', {
                     expiresIn: '1h', // Token expiration time (e.g., 1 hour)
                 });
+                console.log(token)
 
                 return {
                     message: 'Login successful',
                     token: token,
+                    
                 };
             } else {
                 return { error: 'Account not verified. Please complete the registration process.' };

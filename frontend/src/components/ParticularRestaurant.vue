@@ -5,7 +5,7 @@
           <h1 class="restaurant-name">{{ restaurant.name }}</h1>
           <p class="restaurant-address">{{ restaurant.address }}</p>
           <p class="restaurant-timings">
-            Opening Time: {{ restaurant.operating_hours_start }} - Closing Time: {{ restaurant.operating_hours_end }}
+            Opening Time: {{ restaurant.opens_at }} - Closing Time: {{ restaurant.closes_at }}
           </p>
           <p class="restaurant-distance">Distance: {{ calculateDistance(restaurant.latitude, restaurant.longitude) }} km</p>
         </div>

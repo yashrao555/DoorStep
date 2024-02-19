@@ -1,7 +1,7 @@
 <!-- src/components/RestaurantPage.vue -->
 <template>
   <div>
-    <div class="restaurant-page">
+    <div v-if="restaurant" class="restaurant-page">
       <particular-restaurant :restaurant="restaurant"></particular-restaurant>
     </div>
 
@@ -19,10 +19,9 @@
 </template>
 
 <script>
-import { restaurants } from "../dummyRestaurantDb.js";
+import axios from 'axios';
 import ParticularRestaurant from "@/components/ParticularRestaurant.vue";
 import FoodItems from "@/components/FoodItems.vue";
-import { getFoodItemsByRestaurantId } from "../dummyFoodDb.js";
 import { mapState } from 'vuex';
 
 
@@ -34,22 +33,38 @@ export default {
   data() {
     return {
       // Use a computed property to find the restaurant based on the route parameter
-      restaurant: this.findRestaurantById(parseInt(this.$route.params.id)),
+      restaurant: null,
       restaurantMenu: [],
     };
   },
   mounted() {
-    // Fetch food items for the current restaurant ID
-    this.fetchRestaurantMenu(this.restaurant.restaurant_id);
+    const restaurantId = this.$route.params.id;
+    console.log(restaurantId)
+
+  this.fetchRestaurantDetails(restaurantId);
+
+  this.fetchRestaurantMenu(restaurantId);
   },
   methods: {
-    findRestaurantById(id) {
-      // Simulate database lookup based on restaurant_id
-      return restaurants.find((restaurant) => restaurant.restaurant_id === id);
-    },
-    fetchRestaurantMenu(restaurantId) {
-      // Fetch food items from the dummy database
-      this.restaurantMenu = getFoodItemsByRestaurantId(restaurantId);
+    async fetchRestaurantDetails(restaurantId) {
+    try {
+      const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}`);
+      const { data } = response.data;
+      this.restaurant = data;
+      console.log(this.restaurant)
+    } catch (error) {
+      console.error('Error fetching restaurant details:', error);
+    }
+  },
+  async fetchRestaurantMenu(restaurantId) {
+      try {
+        // Make an HTTP request to fetch food items from the backend
+        const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`);
+        const { data } = response.data;
+        this.restaurantMenu = data; // Update the restaurantMenu with the fetched data
+      } catch (error) {
+        console.error('Error fetching restaurant menu:', error);
+      }
     },
     navigateToPage2() {
       console.log(parseInt(this.$route.params.id))

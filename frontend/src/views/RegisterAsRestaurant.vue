@@ -2,7 +2,7 @@
     <div>
       <!-- Dynamic Registration Form based on the selected type -->
       <div class="registration-container">
-        <form class="row g-3">
+        <form class="row g-3" @submit.prevent="registerRestaurant">
           <!-- Customer Registration Form -->
           <div class="col-md-6 form-floating">
             <input
@@ -10,6 +10,7 @@
               class="form-control"
               id="inputEmail4"
               placeholder="name@example.com"
+              v-model="email"
             />
             <label for="inputEmail4">Email</label>
           </div>
@@ -20,23 +21,24 @@
               class="form-control"
               id="inputPassword4"
               placeholder="name@example.com"
+              v-model="password"
             />
             <label for="inputPassword4">Password</label>
           </div>
   
           <div class="col-md-6">
             <label for="username" class="form-label">Restaurant Name</label>
-            <input type="text" class="form-control" id="username" />
+            <input type="text" class="form-control" id="username" v-model="restaurantName"/>
           </div>
   
           <div class="col-md-4">
             <label for="opensat" class="form-label">Opens At</label>
-            <input type="time" id="opensat" class="form-control" />
+            <input type="time" id="opensat" class="form-control" v-model="opensAt"/>
           </div>
   
           <div class="col-md-2">
             <label for="closesat" class="form-label">Closes At</label>
-            <input type="time" id="closesat" class="form-control"/>
+            <input type="time" id="closesat" class="form-control" v-model="closesAt"/>
           </div>
   
           <div class="col-12">
@@ -46,25 +48,26 @@
               class="form-control"
               id="inputAddress2"
               placeholder="Apartment, studio, or floor"
+              v-model="address"
             />
           </div>
   
           <div class="col-md-6">
             <label for="inputCity" class="form-label">City</label>
-            <input type="text" class="form-control" id="inputCity" />
+            <input type="text" class="form-control" id="inputCity" v-model="city"/>
           </div>
   
           <div class="col-md-4">
             <label for="inputState" class="form-label">State</label>
-            <select id="inputState" class="form-select">
+            <select id="inputState" class="form-select" v-model="state">
               <option selected>Choose...</option>
-              <option>...</option>
+              <option>gandhinagar</option>
             </select>
           </div>
   
           <div class="col-md-2">
             <label for="inputZip" class="form-label">Zip</label>
-            <input type="text" class="form-control" id="inputZip" />
+            <input type="text" class="form-control" id="inputZip" v-model="zip" />
           </div>
   
           <div class="col-md-12 form-floating">
@@ -73,6 +76,7 @@
               class="form-control"
               id="contact"
               placeholder="name@example.com"
+              v-model="phone"
             />
             <label for="contact">Contact Number</label>
           </div>
@@ -84,6 +88,64 @@
       </div>
     </div>
   </template>
+
+
+  <script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+          email: '',
+          password: '',
+          restaurantName: '',
+          opensAt: '',
+          closesAt: '',
+          address: '',
+          city: '',
+          state: '',
+          zip: '',
+          phone: '',
+    };
+  },
+  methods: {
+    async registerRestaurant() {
+      try {
+        const response = await axios.post('http://localhost:3000/register-restaurant', {
+          name: this.restaurantName,
+          opens_at: this.opensAt,
+          closes_at: this.closesAt,
+          email: this.email,
+          phone: this.phone,
+          address: this.address,
+          city: this.city,
+          state: this.state,
+          zip: this.zip,
+          password: this.password,
+         // location_lat: this.locationLat,
+         // location_long: this.locationLong,
+          // Add other fields as needed
+        });
+
+        // Handle the response from the backend
+        console.log(response.data);
+
+        if (response.data.message) {
+          // Registration successful, handle redirection or other actions
+          alert(response.data.message);
+          this.$router.push('/verifyRestaurantOTP');
+        } else if (response.data.error) {
+          // Registration failed, display error message
+          alert(response.data.error);
+        }
+      } catch (error) {
+        console.error('Failed to make the API request:', error);
+      }
+    },
+  },
+};
+</script>
+
   
   <style scoped>
   .registration-container {

@@ -67,7 +67,7 @@ export default {
   watch: {
     restaurant(value) {
       console.log(value);
-      if (value === null) console.log("bhak bhenchod");
+      if (value === null) console.log("bbbbbbbbbb");
     },
   },
   methods: {
