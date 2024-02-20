@@ -26,6 +26,52 @@ const addFoodItem = async (restaurantId, foodItemData) => {
     }
   };
 
+  const updateFoodItem = async (food_item_id, updatedFoodItemData) => {
+    try {
+      // Check if the FoodItem with the given ID exists
+      const existingFoodItem = await FoodItem.findByPk(food_item_id);
+  
+      if (!existingFoodItem) {
+        throw new Error('FoodItem not found');
+      }
+  
+      // Update the existing FoodItem data
+      await existingFoodItem.update({
+        ...updatedFoodItemData
+       
+      });
+  
+      console.log('FoodItem updated successfully:', existingFoodItem.toJSON());
+  
+      return existingFoodItem;
+    } catch (error) {
+      console.error('Error updating FoodItem:', error);
+      throw error; // Propagate the error to the calling function or route handler
+    }
+  };
+  
+  const deleteFoodItem = async (food_item_id) => {
+    try {
+      // Check if the FoodItem with the given ID exists
+      const existingFoodItem = await FoodItem.findByPk(food_item_id)
+  
+      if (!existingFoodItem) {
+        throw new Error('FoodItem not found');
+      }
+  
+      // Delete the FoodItem
+      const deletedItem = await existingFoodItem.destroy();
+  
+     
+  
+      return deletedItem;
+    } catch (error) {
+      console.error('Error deleting FoodItem:', error);
+      throw error; // Propagate the error to the calling function or route handler
+    }
+  };
+  
+
   const getFoodItemsByRestaurantId = async (restaurantId) => {
     try {
       // Find all FoodItems with the specified restaurant_id
@@ -43,4 +89,4 @@ const addFoodItem = async (restaurantId, foodItemData) => {
   };
   
 
-  module.exports = { addFoodItem ,getFoodItemsByRestaurantId};
+  module.exports = { addFoodItem ,getFoodItemsByRestaurantId,updateFoodItem,deleteFoodItem};

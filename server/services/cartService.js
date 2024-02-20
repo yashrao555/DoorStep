@@ -12,6 +12,8 @@ async function getCartByCustomerAndRestaurant(customer_id) {
 
 async function updateCart(cart, newItem) {
   // Copy the existing items array to avoid direct references
+  console.log(newItem);
+  console.log(cart);
   let existingItems = cart.items;
 
   // Find the index of the item with the same food_item_id in the existing items array
