@@ -161,7 +161,7 @@ const loginCustomer = async (email, password) => {
             if (customer.is_verified) {
                 // Generate JWT token
                 const token = jwt.sign({ customerId: customer.customer_id }, 'your_secret_key', {
-                    expiresIn: '1h', // Token expiration time (e.g., 1 hour)
+                    expiresIn: '8h', // Token expiration time (e.g., 1 hour)
                 });
 
                 return {

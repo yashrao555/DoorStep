@@ -41,7 +41,6 @@ import axios from 'axios';
         try {
           // Make a request to your backend API
           const token = this.$cookies.get('token');
-          console.log(token);
         const response = await axios.post('http://localhost:3000/restaurants/addFoodItems',this.foodItem,  {
             headers: {
                 Authorization: `${token}`

@@ -23,6 +23,9 @@
           <li class="nav-item">
             <a class="nav-link navbar-brand" href="/login">Login</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link navbar-brand" href="/cart">My Cart</a>
+          </li>
         </ul>
       </div>
     </nav>
