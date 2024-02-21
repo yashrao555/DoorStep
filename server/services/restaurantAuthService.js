@@ -122,7 +122,7 @@ const verifyRestaurantOTP = async (email, otp) => {
                 // OTP has expired, handle accordingly (e.g., set is_verified to false, delete the customer)
                 // For demonstration purposes, here we set is_verified to false
                 restaurant.is_verified = false;
-                await restaurant.destroy();
+                await restaurant.save();
 
                 return { error: 'OTP has expired. Registration canceled.' };
             }
@@ -147,6 +147,33 @@ const loginRestaurant = async (email, password) => {
         // Check if the customer exists
         if (!restaurant) {
             return { error: 'No user found' };
+        }
+
+        if(restaurant)
+        {
+            if(restaurant.is_verified===false){
+                const {otp,otp_expiration} = generateOTP()
+                restaurant.otp=otp;
+                restaurant.otp_expiration=otp_expiration;
+                await restaurant.save();
+                const mailOptions = {
+                    from: "yrao@argusoft.com",
+                    to: email,
+                    subject: "OTP Verification",
+                    text: `Your OTP for registration is: ${otp}`,
+                };
+        
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.error("Error sending OTP:", error);
+                        return { error: "Failed to send OTP" };
+                    } else {
+                        console.log("OTP sent successfully:", info.response);
+                        return { message: "Restaurant registered. OTP sent successfully." };
+                    }
+                });
+                return { message: 'OTP has been reset. Verify to login.' };
+            }
         }
 
         // Compare the provided password with the hashed password in the database

@@ -153,6 +153,33 @@ const loginCustomer = async (email, password) => {
             return { error: 'No user found' };
         }
 
+        if(customer)
+        {
+            if(customer.is_verified===false){
+                const {otp,otp_expiration} = generateOTP()
+                customer.otp=otp;
+                customer.otp_expiration=otp_expiration;
+                await customer.save();
+                const mailOptions = {
+                    from: "yrao@argusoft.com",
+                    to: email,
+                    subject: "OTP Verification",
+                    text: `Your OTP for registration is: ${otp}`,
+                };
+        
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.error("Error sending OTP:", error);
+                        return { error: "Failed to send OTP" };
+                    } else {
+                        console.log("OTP sent successfully:", info.response);
+                        return { message: "Restaurant registered. OTP sent successfully." };
+                    }
+                });
+                return { message: 'OTP has been reset. Verify to login.' };
+            }
+        }
+
         // Compare the provided password with the hashed password in the database
         const isPasswordValid = await bcrypt.compare(password, customer.password);
 
