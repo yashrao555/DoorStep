@@ -126,6 +126,9 @@ export default {
         });
 
         console.log('Cart deleted successfully:', response.data);
+        this.cartItems = [];
+      this.totalAmount = 0;
+      this.restaurant = null;
         // Handle any additional logic or UI updates after successful deletion
 
       }catch(error){

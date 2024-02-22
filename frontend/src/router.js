@@ -1,5 +1,5 @@
 // src/router.js
-// import VueCookies from "vue-cookies";
+import VueCookies from "vue-cookies";
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "./views/HomePage.vue";
 import RegisterAsCustomer from "./views/RegisterAsCustomer.vue";
@@ -12,6 +12,7 @@ import CheckPage from "./views/CheckPage.vue";
 import VerifyOTPpage from "./views/VerifyOTPpage.vue";
 import VerifyOTPrestaurant from "./views/VerifyOTPrestaurant.vue";
 import AddFoodItem from './views/AddFoodItem.vue';
+import RestaurantDashboard from './views/RestaurantDashboard.vue';
 
 const routes = [
   { path: "/", component: LandingPage },
@@ -20,11 +21,12 @@ const routes = [
   { path: "/register/restaurant", component: RegisterAsRestaurant },
   { path: "/login", component: LoginPage },
   { path: "/restaurant/:id", component: RestaurantPage },
-  { path: "/cart", component: AddToCart },
+  { path: "/cart", component: AddToCart,  beforeEnter: guardLoggedIn },
   { path: "/checks", component: CheckPage },
   { path: "/verifyOTP", component: VerifyOTPpage },
   { path: "/verifyRestaurantOTP", component: VerifyOTPrestaurant },
-  { path: "/addFoodItem", component: AddFoodItem },
+  { path: "/addFoodItem", component: AddFoodItem,  beforeEnter: guardLoggedIn },
+  { path: "/restaurant-dashboard", component: RestaurantDashboard, beforeEnter: guardLoggedIn },
 ];
 
 const router = createRouter({
@@ -32,6 +34,18 @@ const router = createRouter({
   routes,
 });
 
+
+function guardLoggedIn(to, from, next) {
+  const token = VueCookies.get("token");
+  
+  if (token) {
+    // User is logged in, allow access
+    next();
+  } else {
+    // User is not logged in, redirect to login page
+    next('/login');
+  }
+}
 // router.beforeEach(async (to, from, next) => {
 //   const check = ["/login", "/register"].reduce(
 //     (total, route) => total && route !== to.fullPath,

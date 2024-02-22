@@ -102,7 +102,7 @@ export default {
           console.log(response.data);
 
           if (response.data.token) {
-            alert('Logged in successfully!');
+            
             this.$cookies.set('token', response.data.token);
             this.$router.push('/')
           } else if (response.data.error) {

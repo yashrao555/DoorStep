@@ -9,7 +9,7 @@
       <h2 class="section-title">Menu</h2>
       <div class="menu-container">
         <div v-for="foodItem in restaurantMenu" :key="foodItem.food_item_id">
-          <food-items :foodItem="foodItem" />
+          <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId"/>
         </div>
       </div>
       <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link>
@@ -35,15 +35,16 @@ export default {
       // Use a computed property to find the restaurant based on the route parameter
       restaurant: null,
       restaurantMenu: [],
+      restaurantId:0
     };
   },
   mounted() {
-    const restaurantId = this.$route.params.id;
-    console.log(restaurantId)
+    this.restaurantId = parseInt(this.$route.params.id);
+    console.log(this.restaurantId)
 
-  this.fetchRestaurantDetails(restaurantId);
+  this.fetchRestaurantDetails(this.restaurantId);
 
-  this.fetchRestaurantMenu(restaurantId);
+  this.fetchRestaurantMenu(this.restaurantId);
   },
   methods: {
     async fetchRestaurantDetails(restaurantId) {

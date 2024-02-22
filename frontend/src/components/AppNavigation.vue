@@ -16,12 +16,12 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link navbar-brand" href="/register"
+            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/register"
               >Register</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link navbar-brand" href="/login">Login</a>
+            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/login">Login</a>
           </li>
           <li class="nav-item">
             <a class="nav-link navbar-brand" href="/cart">My Cart</a>
@@ -31,6 +31,33 @@
     </nav>
   </div>
 </template>
+
+<script>
+import VueCookies from 'vue-cookies';
+// import { ref } from 'vue';
+
+export default {
+  data() {
+    return {
+      isLoggedIn: false,
+       token :null,
+    };
+  },
+  mounted() {
+    // Use nextTick to ensure the component has rendered before checking the login status
+    this.$nextTick(() => {
+      this.checkLoginStatus();
+    });
+  },
+  methods: {
+    // Mock function to check login status (replace with your actual logic)
+    checkLoginStatus() {
+      this.token = VueCookies.get('token'); // Check if a token exists in cookies
+      this.isLoggedIn = this.token !== null; // Update the component's isLoggedIn state based on token existence
+    },
+  },
+};
+</script>
 
 <style scoped>
 .navbar {
