@@ -2,8 +2,8 @@
   <div id="app" class="login-container">
     <h3 class="login-header">Log in</h3>
     <form @submit.prevent="login" class="login-form">
-      <p class="signup-link">Need an account? <a href="/">Sign up</a></p>
-      <router-link to = '/'>Jaoo</router-link>
+      <p class="signup-link">Need an account? <a href="/register">Sign up</a></p>
+      <!-- <router-link to = '/'>Jaoo</router-link> -->
 
       <div class="form-group">
         <label for="role" class="form-label">Login as</label>
@@ -121,7 +121,7 @@ export default {
           if (response.data.token) {
             alert('Logged in successfully!');
             this.$cookies.set('token', response.data.token);
-            this.$router.push('/')
+            this.$router.push('/restaurant-dashboard')
           } else if (response.data.error) {
             this.errors.login = response.data.error;
             alert(response.data.error);

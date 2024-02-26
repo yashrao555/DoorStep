@@ -1,5 +1,6 @@
 // src/router.js
 import VueCookies from "vue-cookies";
+import {jwtDecode} from 'jwt-decode';
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "./views/HomePage.vue";
 import RegisterAsCustomer from "./views/RegisterAsCustomer.vue";
@@ -11,7 +12,7 @@ import AddToCart from "./components/AddToCart.vue";
 import CheckPage from "./views/CheckPage.vue";
 import VerifyOTPpage from "./views/VerifyOTPpage.vue";
 import VerifyOTPrestaurant from "./views/VerifyOTPrestaurant.vue";
-import AddFoodItem from './views/AddFoodItem.vue';
+
 import RestaurantDashboard from './views/RestaurantDashboard.vue';
 
 const routes = [
@@ -25,8 +26,7 @@ const routes = [
   { path: "/checks", component: CheckPage },
   { path: "/verifyOTP", component: VerifyOTPpage },
   { path: "/verifyRestaurantOTP", component: VerifyOTPrestaurant },
-  { path: "/addFoodItem", component: AddFoodItem,  beforeEnter: guardLoggedIn },
-  { path: "/restaurant-dashboard", component: RestaurantDashboard, beforeEnter: guardLoggedIn },
+  { path: "/restaurant-dashboard", component: RestaurantDashboard, beforeEnter: guardRestaurantLoggedIn },
 ];
 
 const router = createRouter({
@@ -45,6 +45,20 @@ function guardLoggedIn(to, from, next) {
     // User is not logged in, redirect to login page
     next('/login');
   }
+}
+
+function guardRestaurantLoggedIn(to, from, next) {
+  const token = VueCookies.get('token'); 
+      if(token===null){
+        next('/');
+      }
+      const decodedToken = jwtDecode(token);
+      if(decodedToken.restaurantId){
+        next('/restaurant-dashboard');
+      }
+      else{
+        next('/');
+      }
 }
 // router.beforeEach(async (to, from, next) => {
 //   const check = ["/login", "/register"].reduce(

@@ -24,7 +24,13 @@
             <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/login">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link navbar-brand" href="/cart">My Cart</a>
+            <a v-if="role==='customer'" class="nav-link navbar-brand" href="/cart">My Cart</a>
+          </li>
+          <li class="nav-item">
+            <a v-if="role==='customer'" class="nav-link navbar-brand" href="/register">A Restaurant?</a>
+          </li>
+          <li class="nav-item">
+            <a v-if="role==='restaurant'" class="nav-link navbar-brand" href="/restaurant-dashboard">Restaurant Dashboard</a>
           </li>
         </ul>
       </div>
@@ -34,6 +40,7 @@
 
 <script>
 import VueCookies from 'vue-cookies';
+import {jwtDecode} from 'jwt-decode';
 // import { ref } from 'vue';
 
 export default {
@@ -41,6 +48,7 @@ export default {
     return {
       isLoggedIn: false,
        token :null,
+       role:null
     };
   },
   mounted() {
@@ -48,6 +56,8 @@ export default {
     this.$nextTick(() => {
       this.checkLoginStatus();
     });
+
+    this.checkRole();
   },
   methods: {
     // Mock function to check login status (replace with your actual logic)
@@ -55,6 +65,21 @@ export default {
       this.token = VueCookies.get('token'); // Check if a token exists in cookies
       this.isLoggedIn = this.token !== null; // Update the component's isLoggedIn state based on token existence
     },
+
+    checkRole(){
+      this.token = VueCookies.get('token'); 
+      if(this.token===null){
+        this.role='customer'
+        return;
+      }
+      const decodedToken = jwtDecode(this.token);
+      if(decodedToken.restaurantId){
+        this.role='restaurant';
+      }
+      else{
+        this.role='customer'
+      }
+    }
   },
 };
 </script>

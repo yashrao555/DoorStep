@@ -115,12 +115,19 @@ export default {
     const expirationTime = decodedToken.exp * 1000; // Convert seconds to milliseconds
     console.log('decoded token : ',decodedToken)
     console.log('exp time : ',expirationTime)
+  
 
     if (Date.now() >= expirationTime) {
       alert('Your session has expired. Please log in again.');
       this.$router.push('/login');
       return; // Stop execution if the token has expired
     }
+
+    if(decodedToken.restaurantId){
+        alert('Please log in with customer id');
+        this.$router.push('/login');
+      return; 
+      }
   } catch (error) {
     console.error('Error decoding token:', error);
     // Handle decoding error, e.g., token is not a valid JWT

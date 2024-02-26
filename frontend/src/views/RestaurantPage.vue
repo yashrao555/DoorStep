@@ -12,7 +12,7 @@
           <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId"/>
         </div>
       </div>
-      <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link>
+      <!-- <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link> -->
     </div>
 
   </div>

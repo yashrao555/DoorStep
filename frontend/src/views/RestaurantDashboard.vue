@@ -73,6 +73,7 @@ export default {
     mounted() {
         // Retrieve restaurant id from cookies
         this.restaurantId = VueCookies.get('token') ? this.decodeToken(VueCookies.get('token')).restaurantId : null;
+        //console.log('decoded : ',this.decodeToken(VueCookies.get('token')))
         // Fetch food items using the restaurant id
         if (this.restaurantId) {
             this.fetchFoodItems(this.restaurantId);
