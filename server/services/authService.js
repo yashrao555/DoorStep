@@ -140,6 +140,7 @@ const verifyOTP = async (email, otp) => {
 
 const loginCustomer = async (email, password) => {
     try {
+        let myinterval;
         // console.log(process.env.GMAIL_PASS, typeof process.env.GMAIL_PASS);
         // Find the customer by email
         const customer = await Customer.findOne({
@@ -152,6 +153,27 @@ const loginCustomer = async (email, password) => {
         if (!customer) {
             return { error: 'No user found' };
         }
+
+        if (customer.counter === 3) {
+            // Wrap the setTimeout in a Promise for async/await support
+            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+           
+           clearInterval(myinterval)
+            // Set a timeout to reset the counter after 1 minute
+            myinterval=setInterval(async () => {
+              // Reset the counter to 0
+              customer.counter = 0;
+          
+              // Save the changes
+              await customer.save();
+          
+              console.log('Counter reset to 0');
+            }, 1 * 60 * 1000);
+          
+            return { message: 'Try after 1 minute' };
+          }
+          
+
 
         if(customer)
         {
@@ -199,7 +221,23 @@ const loginCustomer = async (email, password) => {
                 return { error: 'Account not verified. Please complete the registration process.' };
             }
         } else {
-            return { error: 'Invalid email or password' };
+            if(customer.counter<3){
+                customer.counter+=1;
+                await customer.save()
+                clearInterval(myinterval)
+                // Set a timeout to reset the counter after 1 minute
+                myinterval=setInterval(async () => {
+                  // Reset the counter to 0
+                  customer.counter = 0;
+              
+                  // Save the changes
+                  await customer.save();
+              
+                  console.log('Counter reset to 0');
+                }, 1 * 60 * 1000);
+                return { error: 'Invalid email or password' };
+            }
+           
         }
     } catch (error) {
         console.error('Error during login:', error);

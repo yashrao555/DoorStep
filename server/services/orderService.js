@@ -1,5 +1,6 @@
 
 const Order = require('../models/order')
+const Restaurant = require('../models/restaurant')
 const { getCartByCustomerAndRestaurant } = require('./cartService')
 
 async function createOrder(customer_id){
@@ -25,9 +26,11 @@ async function getAllCustomerOrders(id){
         where: {
             customer_id:id,
         },
+        
     })
     return orders;
 }
+
 async function getAllRestaurantOrders(id){
     const orders = await Order.findAll({
         where: {
