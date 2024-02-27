@@ -12,35 +12,30 @@
       </div>
     </div>
 
-    <!-- Card Section -->
-    <!-- <div class="card-section">
-      <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
-        <food-cards
-          v-for="(card, cardIndex) in row"
-          :key="cardIndex"
-          :imageSrc="card.imageSrc"
-          :altText="card.altText"
-          :title="card.title"
-          :description="card.description"
-          :link="card.link"
-          :buttonText="card.buttonText"
-        />
-      </div>
-    </div> -->
-
+    <div class="search-bar">
+      <input
+        v-model="searchTerm"
+        @input="searchRestaurants"
+        type="text"
+        placeholder="Search for restaurants..."
+      />
+      <button @click="clearSearch">Clear</button>
+    </div>
 
     <div class="card-section">
-      <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
-        <food-cards
-          v-for="(card, cardIndex) in row"
-          :key="cardIndex"
-          :title="card.name"
-          :opensAt="card.opens_at"
-          :address="card.address"
-          :id="card.restaurant_id"
-        />
-      </div>
+    <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
+      <food-cards
+        v-for="(card, cardIndex) in row"
+        :key="cardIndex"
+        :title="card.name"
+        :opensAt="card.opens_at"
+        :closesAt="card.closes_at"
+        :address="card.address"
+        :id="card.restaurant_id"
+        
+      />
     </div>
+  </div>
 
   </div>
 </template>
@@ -59,6 +54,7 @@ export default {
       // Sample card data, you can replace this with your actual data
       restaurants: [],
       rows: [], // Array to store rows of cards
+      searchTerm: "", 
     };
   },
   mounted() {
@@ -87,6 +83,25 @@ export default {
         console.error('Failed to fetch restaurants:', error);
       }
     },
+
+    // Method to search restaurants based on user input
+  async searchRestaurants() {
+    try {
+      const response = await axios.post('http://localhost:3000/restaurants/search', {
+        name: this.searchTerm,
+      });
+      this.restaurants = response.data.data;
+      this.rows = this.chunkArray(this.restaurants, 5);
+    } catch (error) {
+      console.error('Failed to fetch restaurants:', error);
+    }
+  },
+
+  // Method to clear the search and fetch all restaurants
+  async clearSearch() {
+    this.searchTerm = "";
+    await this.fetchRestaurants();
+  },
 
 
   },
@@ -139,7 +154,35 @@ h1 {
   gap: 1rem;
 }
 
+
+
 .card {
   width: 18rem;
 }
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.search-bar input {
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar button {
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 </style>

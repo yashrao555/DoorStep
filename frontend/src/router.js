@@ -1,6 +1,6 @@
 // src/router.js
 import VueCookies from "vue-cookies";
-import {jwtDecode} from 'jwt-decode';
+// import {jwtDecode} from 'jwt-decode';
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "./views/HomePage.vue";
 import RegisterAsCustomer from "./views/RegisterAsCustomer.vue";
@@ -12,7 +12,7 @@ import AddToCart from "./components/AddToCart.vue";
 import CheckPage from "./views/CheckPage.vue";
 import VerifyOTPpage from "./views/VerifyOTPpage.vue";
 import VerifyOTPrestaurant from "./views/VerifyOTPrestaurant.vue";
-
+import MyOrders from './views/MyOrders.vue'
 import RestaurantDashboard from './views/RestaurantDashboard.vue';
 
 const routes = [
@@ -26,7 +26,8 @@ const routes = [
   { path: "/checks", component: CheckPage },
   { path: "/verifyOTP", component: VerifyOTPpage },
   { path: "/verifyRestaurantOTP", component: VerifyOTPrestaurant },
-  { path: "/restaurant-dashboard", component: RestaurantDashboard, beforeEnter: guardRestaurantLoggedIn },
+  { path: "/restaurant-dashboard", component: RestaurantDashboard},
+  { path: "/myOrders", component: MyOrders, beforeEnter: guardLoggedIn },
 ];
 
 const router = createRouter({
@@ -47,19 +48,20 @@ function guardLoggedIn(to, from, next) {
   }
 }
 
-function guardRestaurantLoggedIn(to, from, next) {
-  const token = VueCookies.get('token'); 
-      if(token===null){
-        next('/');
-      }
-      const decodedToken = jwtDecode(token);
-      if(decodedToken.restaurantId){
-        next('/restaurant-dashboard');
-      }
-      else{
-        next('/');
-      }
-}
+// function guardRestaurantLoggedIn(to, from, next) {
+//   const token = VueCookies.get('token'); 
+//       if(token===null){
+//         next('/');
+//         return;
+//       }
+//       const decodedToken = jwtDecode(token);
+//       if(decodedToken.restaurantId){
+//         next('/restaurant-dashboard');
+//       }
+//       else{
+//         next('/');
+//       }
+// }
 // router.beforeEach(async (to, from, next) => {
 //   const check = ["/login", "/register"].reduce(
 //     (total, route) => total && route !== to.fullPath,

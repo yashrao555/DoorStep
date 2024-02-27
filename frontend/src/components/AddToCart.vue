@@ -1,6 +1,6 @@
 <template>
   <div class="cart-page-container">
-    <div class="restaurant-info" v-if = 'restaurant'>
+    <div class="restaurant-info" v-if="restaurant">
       <h2 class="restaurant-name">{{ restaurant.name }}</h2>
       <p class="location">{{ restaurant.address }}</p>
       <p class="location">
@@ -10,50 +10,47 @@
       <p class="location">Rating: {{ restaurant.rating }}</p>
     </div>
     <div class="restaurant-info" v-else>
-        <h2>No Items to display</h2>
+      <h2>No Items to display</h2>
     </div>
 
     <div class="cart-items" v-if="cartItems.length > 0">
       <div
         v-for="cartItem in cartItems"
         :key="cartItem.food_item_id"
-        class="cart-item"
+        class="cart-item separator-line"
       >
         <div class="item-details">
-          <h3>{{ cartItem.name }}</h3>
+          <h5>{{ cartItem.name }}</h5>
           <div class="quantity-box">
-            <span class="quantity-buttons"
-              >-</span
-            >
+            <span class="quantity-buttons">-</span>
             <span class="quantity">{{ cartItem.quantity }}</span>
-            <span class="quantity-buttons" 
-              >+</span
-            >
-            <span class="price">{{ cartItem.quantity*cartItem.price }}</span>
+            <span class="quantity-buttons">+</span>
+            <span class="price">{{ cartItem.quantity * cartItem.price }}</span>
           </div>
         </div>
       </div>
     </div>
-    
-    <div class="total-box" v-if="cartItems.length > 0">
-      <p>Total: {{ totalAmount }}</p>
-    </div>
-    <button class="total-box" @click="deleteCart" v-if="cartItems.length > 0">
-      <p>Clear Cart</p>
-    </button>
 
-  
+    <div class="buttons-container" v-if="cartItems.length > 0">
+      <button class="total-button">Total - {{ totalAmount }}</button>
+      <button class="confirm-order-button" @click="confirmOrder">
+        Confirm Order
+      </button>
+      <button class="clear-cart-button" @click="deleteCart">Clear Cart</button>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 export default {
   data() {
     return {
       restaurant: null,
       cartItems: [],
       totalAmount: 0,
+      
     };
   },
   mounted() {
@@ -61,18 +58,7 @@ export default {
     // this.$store.dispatch("fetchRestaurantData", this.restaurantId);
     this.fetchCartData();
   },
-  // computed: {
-  //   cartItems() {
-  //     return this.$store.getters.getCartItems;
-  //   },
-  //   restaurantId() {
-  //     return this.$store.getters.getRestaurantId;
-  //   },
 
-  //   restaurant() {
-  //     return this.$store.getters.getRestaurant;
-  //   },
-  // },
   watch: {
     restaurant(value) {
       if (value === null) console.log("bbbbbbbbbb");
@@ -81,60 +67,89 @@ export default {
   methods: {
     async fetchCartData() {
       try {
-        const token = this.$cookies.get('token');
-        const response = await axios.get('http://localhost:3000/get-cart',{
-            headers: {
-                Authorization: `${token}`
-            }
-          }); // Adjust the URL based on your backend setup
+        const token = this.$cookies.get("token");
+        const response = await axios.get("http://localhost:3000/get-cart", {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }); // Adjust the URL based on your backend setup
         const cartData = response.data.data;
-        if(cartData){this.cartItems = cartData.items;
-        this.totalAmount = cartData.total_amount;
-        console.log('this is cardData : ',cartData)
+        if (cartData) {
+          this.cartItems = cartData.items;
+          this.totalAmount = cartData.total_amount;
+          console.log("this is cardData : ", cartData);
 
-        // Extract restaurant ID and fetch restaurant details
-        const restaurantId = cartData.restaurant_id;
-        console.log('res id : ',restaurantId)
-        if (restaurantId) {
-          this.fetchRestaurantData(restaurantId);
-        }}
-        
-
+          // Extract restaurant ID and fetch restaurant details
+          const restaurantId = cartData.restaurant_id;
+          console.log("res id : ", restaurantId);
+          if (restaurantId) {
+            this.fetchRestaurantData(restaurantId);
+          }
+        }
       } catch (error) {
-        console.error('Error fetching cart data:', error);
+        console.error("Error fetching cart data:", error);
       }
     },
     async fetchRestaurantData(restaurantId) {
       try {
-        const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}`); // Adjust the URL based on your backend setup
+        const response = await axios.get(
+          `http://localhost:3000/restaurants/${restaurantId}`
+        ); // Adjust the URL based on your backend setup
         const restaurantData = response.data.data;
-        
+
         // Update the restaurant data in the component
         this.restaurant = restaurantData;
-        console.log('restaurant : ',this.restaurant)
+        console.log("restaurant : ", this.restaurant);
       } catch (error) {
-        console.error('Error fetching restaurant data:', error);
+        console.error("Error fetching restaurant data:", error);
       }
     },
-    async deleteCart(){
-      const token = this.$cookies.get('token');
+    async deleteCart() {
+      const token = this.$cookies.get("token");
       try {
-        const response = await axios.delete('http://localhost:3000/delete-cart', {
-          headers: {
-            Authorization: `${token}`,
-          },
-        });
+        const response = await axios.delete(
+          "http://localhost:3000/delete-cart",
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
 
-        console.log('Cart deleted successfully:', response.data);
+        console.log("Cart deleted successfully:", response.data);
         this.cartItems = [];
-      this.totalAmount = 0;
-      this.restaurant = null;
+        this.totalAmount = 0;
+        this.restaurant = null;
         // Handle any additional logic or UI updates after successful deletion
-
-      }catch(error){
-        console.error('Error clearing cart:', error);
+      } catch (error) {
+        console.error("Error clearing cart:", error);
       }
     },
+
+    async confirmOrder() {
+      try {
+        const token = this.$cookies.get("token");
+        const decoded = jwtDecode(token)
+        console.log(decoded)
+        const response = await axios.post(
+          "http://localhost:3000/create-order",
+          {
+            customer_id: decoded.customerId, // Replace with the actual customer_id if available
+          },
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+
+        console.log("Order created successfully:", response.data);
+        // Handle any additional logic or UI updates after successful order creation
+      } catch (error) {
+        console.error("Error confirming order:", error);
+      }
+    },
+    
   },
 };
 </script>
@@ -156,7 +171,7 @@ export default {
 }
 
 .separator-line {
-  border-top: 1px solid #ccc;
+  border-bottom: 5px solid #575555;
   margin: 10px 0;
 }
 
@@ -167,10 +182,14 @@ export default {
 .cart-item {
   margin-bottom: 20px;
   padding: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+  border-radius: 60px;
   overflow: hidden;
-  background-color: #f9f9f9;
+  background-color: #fff;
+}
+
+.cart-item:hover {
+  transform: scale(1.05);
 }
 
 .item-details {
@@ -185,13 +204,14 @@ export default {
 
 .quantity {
   font-size: 18px;
-  font-weight: bold;
+  color: #777;
   margin: 0 10px;
 }
 
 .quantity-buttons {
   font-size: 20px;
   cursor: pointer;
+  color: #777;
 }
 
 .price {
@@ -201,15 +221,23 @@ export default {
   color: #27ae60;
 }
 
-.total-box {
-  text-align: center;
-  margin-top: 20px;
-  padding: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  background-color: #27ae60;
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.total-button,
+.confirm-order-button,
+.clear-cart-button {
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
   color: #fff;
-  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffa500;
 }
 
 .restaurant-info {

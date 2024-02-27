@@ -21,17 +21,43 @@
             >
           </li>
           <li class="nav-item">
-            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/login">Login</a>
+            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/login"
+              >Login</a
+            >
           </li>
           <li class="nav-item">
-            <a v-if="role==='customer'" class="nav-link navbar-brand" href="/cart">My Cart</a>
+            <a
+              v-if="role === 'customer'"
+              class="nav-link navbar-brand"
+              href="/cart"
+              >My Cart</a
+            >
           </li>
           <li class="nav-item">
-            <a v-if="role==='customer'" class="nav-link navbar-brand" href="/register">A Restaurant?</a>
+            <a
+              class="nav-link navbar-brand"
+              href="/myOrders"
+              >My Orders</a
+            >
           </li>
           <li class="nav-item">
-            <a v-if="role==='restaurant'" class="nav-link navbar-brand" href="/restaurant-dashboard">Restaurant Dashboard</a>
+            <a
+              v-if="role === 'customer'"
+              class="nav-link navbar-brand"
+              href="/register"
+              >A Restaurant?</a
+            >
           </li>
+          <li class="nav-item">
+            <a
+              v-if="role === 'restaurant'"
+              class="nav-link navbar-brand"
+              href="/restaurant-dashboard"
+              >Restaurant Dashboard</a
+            >
+          </li>
+
+         
         </ul>
       </div>
     </nav>
@@ -39,16 +65,16 @@
 </template>
 
 <script>
-import VueCookies from 'vue-cookies';
-import {jwtDecode} from 'jwt-decode';
+import VueCookies from "vue-cookies";
+import { jwtDecode } from "jwt-decode";
 // import { ref } from 'vue';
 
 export default {
   data() {
     return {
       isLoggedIn: false,
-       token :null,
-       role:null
+      token: null,
+      role: null,
     };
   },
   mounted() {
@@ -62,24 +88,23 @@ export default {
   methods: {
     // Mock function to check login status (replace with your actual logic)
     checkLoginStatus() {
-      this.token = VueCookies.get('token'); // Check if a token exists in cookies
+      this.token = VueCookies.get("token"); // Check if a token exists in cookies
       this.isLoggedIn = this.token !== null; // Update the component's isLoggedIn state based on token existence
     },
 
-    checkRole(){
-      this.token = VueCookies.get('token'); 
-      if(this.token===null){
-        this.role='customer'
+    checkRole() {
+      this.token = VueCookies.get("token");
+      if (this.token === null) {
+        this.role = "customer";
         return;
       }
       const decodedToken = jwtDecode(this.token);
-      if(decodedToken.restaurantId){
-        this.role='restaurant';
+      if (decodedToken.restaurantId) {
+        this.role = "restaurant";
+      } else {
+        this.role = "customer";
       }
-      else{
-        this.role='customer'
-      }
-    }
+    },
   },
 };
 </script>

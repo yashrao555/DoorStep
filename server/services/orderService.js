@@ -16,7 +16,7 @@ async function createOrder(customer_id){
     })
     console.log(order);
     await cart.destroy()
-    cart.reload()
+    // cart.reload()
     return order
 }
 
