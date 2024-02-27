@@ -6,6 +6,8 @@ const restaurantAuthController = express.Router()
 restaurantAuthController.post("/register-restaurant", async (req, res) => {
     const restaurantData = req.body;
 
+    
+
     const result = await registerRestaurant(restaurantData);
     console.log(result);
 

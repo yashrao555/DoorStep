@@ -3,6 +3,7 @@ const { generateOTP } = require('./otpService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { getCoordinatesFromAddress } = require('./locationService');
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -24,8 +25,7 @@ const registerRestaurant = async (restaurantData) => {
         state,
         zip,
         password,
-        location_lat,
-        location_long,
+
     } = restaurantData;
 
     try {
@@ -47,6 +47,9 @@ const registerRestaurant = async (restaurantData) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save user data with hashed password, OTP, and expiration to the database
+
+        const coordinates = await getCoordinatesFromAddress(`${address},${city},${zip},Madhya Pradesh`)
+        console.log(coordinates);
         const newRestaurantData = {
             name,
         opens_at,
@@ -55,11 +58,11 @@ const registerRestaurant = async (restaurantData) => {
         phone,
         address,
         city,
-        state,
+        state:'Madhya Pradesh',
         zip,
         password:hashedPassword,
-        location_lat,
-        location_long,
+        location_lat:coordinates[0].latitude,
+        location_long:coordinates[0].longitude,
         otp,
         otp_expiration:expiration,
         is_verified:false
