@@ -22,28 +22,43 @@
       <button @click="clearSearch">Clear</button>
     </div>
 
-    <div class="card-section">
-    <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="card-row">
-      <food-cards
-        v-for="(card, cardIndex) in row"
-        :key="cardIndex"
-        :title="card.name"
-        :opensAt="card.opens_at"
-        :closesAt="card.closes_at"
-        :address="card.address"
-        :id="card.restaurant_id"
-        
-      />
-    </div>
-  </div>
 
+    <h2>Restaurants near you</h2>
+    <div class="card-section">
+      <div v-for="(row, rowIndex) in rows2" :key="rowIndex" class="card-row">
+        <food-cards
+          v-for="(card, cardIndex) in row"
+          :key="cardIndex"
+          :title="card.name"
+          :opensAt="card.opens_at"
+          :closesAt="card.closes_at"
+          :address="card.address"
+          :id="card.restaurant_id"
+        />
+      </div>
+    </div>
+
+    <h2>All Restaurants</h2>
+    <div class="card-section">
+      <div v-for="(row, rowIndex) in rows1" :key="rowIndex" class="card-row">
+        <food-cards
+          v-for="(card, cardIndex) in row"
+          :key="cardIndex"
+          :title="card.name"
+          :opensAt="card.opens_at"
+          :closesAt="card.closes_at"
+          :address="card.address"
+          :id="card.restaurant_id"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import FoodCards from '../components/FoodCards.vue';
-
+import axios from "axios";
+import FoodCards from "../components/FoodCards.vue";
+import { jwtDecode } from "jwt-decode";
 export default {
   name: "LandingPage",
   components: {
@@ -53,15 +68,16 @@ export default {
     return {
       // Sample card data, you can replace this with your actual data
       restaurants: [],
-      rows: [], // Array to store rows of cards
-      searchTerm: "", 
+      nearbyRestaurants: [],
+      rows1: [], // Array to store rows of cards
+      rows2: [],
+      searchTerm: "",
     };
   },
   mounted() {
     this.fetchRestaurants();
+    this.fetchUserAddressAndFetchRestaurants();
     // Initialize rows with 4 cards each
-    
-    
   },
   methods: {
     // Helper function to chunk the array into rows
@@ -75,40 +91,79 @@ export default {
 
     async fetchRestaurants() {
       try {
-        const response = await axios.get('http://localhost:3000/restaurants'); // Replace with your actual backend URL
+        const response = await axios.get("http://localhost:3000/restaurants"); // Replace with your actual backend URL
         this.restaurants = response.data.data;
-        this.rows = this.chunkArray(this.restaurants, 5);
-        console.log(this.restaurants)
+        this.rows1 = this.chunkArray(this.restaurants, 5);
+        console.log(this.restaurants);
       } catch (error) {
-        console.error('Failed to fetch restaurants:', error);
+        console.error("Failed to fetch restaurants:", error);
       }
     },
 
     // Method to search restaurants based on user input
-  async searchRestaurants() {
-    try {
-      const response = await axios.post('http://localhost:3000/restaurants/search', {
-        name: this.searchTerm,
-      });
-      this.restaurants = response.data.data;
-      this.rows = this.chunkArray(this.restaurants, 5);
-    } catch (error) {
-      console.error('Failed to fetch restaurants:', error);
-    }
-  },
+    async searchRestaurants() {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/restaurants/search",
+          {
+            name: this.searchTerm,
+          }
+        );
+        this.restaurants = response.data.data;
+        this.rows1 = this.chunkArray(this.restaurants, 5);
+      } catch (error) {
+        console.error("Failed to fetch restaurants:", error);
+      }
+    },
 
-  // Method to clear the search and fetch all restaurants
-  async clearSearch() {
-    this.searchTerm = "";
-    await this.fetchRestaurants();
-  },
+    // Method to clear the search and fetch all restaurants
+    async clearSearch() {
+      this.searchTerm = "";
+      await this.fetchRestaurants();
+    },
 
+    async fetchUserAddressAndFetchRestaurants() {
+      const token = this.$cookies.get("token");
+      const decoded = jwtDecode(token);
+      console.log("customer id : ", decoded);
+      try {
+        // Replace 'get-user-address' with your actual endpoint
+        const userAddressResponse = await axios.get(
+          `http://localhost:3000/get-user-address/${decoded.customerId}`
+        ); // Replace '123' with the actual user ID or username
 
+        // Extract user's address from the response
+        const userAddress = userAddressResponse.data.address;
+        console.log("userAddress : ", userAddressResponse);
+        // Use user's address to fetch coordinates
+        const coordinatesResponse = await axios.get(
+          `http://localhost:3000/coordinates-from-address?address=${encodeURIComponent(
+            userAddress
+          )}`
+        );
+
+        // Extract latitude and longitude from the response
+        const customerLat = coordinatesResponse.data.data.latitude;
+        const customerLong = coordinatesResponse.data.data.longitude;
+        console.log("lati : ", customerLat);
+        console.log("longi : ", customerLong);
+        // Use latitude and longitude to fetch nearby restaurants
+        const restaurantsResponse = await axios.get(
+          `http://localhost:3000/restaurants/sort-by-distance/${customerLat}/${customerLong}`
+        );
+
+        // Update the restaurants data in the component
+        this.nearbyRestaurants = restaurantsResponse.data.data;
+        console.log("distance filetered res : ", this.nearbyRestaurants);
+        this.rows2 = this.chunkArray(this.nearbyRestaurants, 5);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
   },
-  created()
-  {
-    console.log(this.$cookies.get('token'));
-  }
+  created() {
+    console.log(this.$cookies.get("token"));
+  },
 };
 </script>
 
@@ -154,8 +209,6 @@ h1 {
   gap: 1rem;
 }
 
-
-
 .card {
   width: 18rem;
 }
@@ -184,5 +237,4 @@ h1 {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 </style>

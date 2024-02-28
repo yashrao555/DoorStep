@@ -48,7 +48,7 @@ const registerRestaurant = async (restaurantData) => {
 
         // Save user data with hashed password, OTP, and expiration to the database
 
-        const coordinates = await getCoordinatesFromAddress(`${address},${city},${zip},Madhya Pradesh`)
+        const coordinates = await getCoordinatesFromAddress(`${address},${city},${zip},Gujarat`)
         console.log(coordinates);
         const newRestaurantData = {
             name,
@@ -58,7 +58,7 @@ const registerRestaurant = async (restaurantData) => {
         phone,
         address,
         city,
-        state:'Madhya Pradesh',
+        state:'Gujarat',
         zip,
         password:hashedPassword,
         location_lat:coordinates[0].latitude,

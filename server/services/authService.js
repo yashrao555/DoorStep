@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const { getCoordinatesFromAddress } = require('./locationService');
+
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -25,8 +27,7 @@ const registerCustomer = async (userData) => {
         state,
         zip,
         password,
-        location_lat,
-        location_long,
+       
     } = userData;
     try {
         // Check if the user already exists
@@ -45,7 +46,7 @@ const registerCustomer = async (userData) => {
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        const coordinates = await getCoordinatesFromAddress(`${address},${city},${zip},Gujarat`)
         // Save user data with hashed password, OTP, and expiration to the database
         const newCustomerData = {
             name,
@@ -55,11 +56,11 @@ const registerCustomer = async (userData) => {
             phone,
             address,
             city,
-            state,
+            state:'Gujarat',
             zip,
             password: hashedPassword, // Store the hashed password
-            location_lat,
-            location_long,
+            location_lat:coordinates[0].latitude,
+            location_long:coordinates[0].longitude,
             otp,
             otp_expiration: expiration,
             is_verified: false,
