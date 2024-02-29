@@ -5,15 +5,10 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const { getCoordinatesFromAddress } = require('./locationService');
+const { transporter } = require('../util/mail');
 
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "yrao@argusoft.com", // Replace with your Gmail email
-      pass: `${process.env.GMAIL_PASS}`, // Replace with your Gmail password
-    },
-  });
+
 
 const registerCustomer = async (userData) => {
     const {

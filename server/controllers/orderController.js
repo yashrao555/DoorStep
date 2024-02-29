@@ -1,5 +1,5 @@
 const express = require('express')
-const { createOrder, getAllCustomerOrders, getAllRestaurantOrders ,getOrderById} = require('../services/orderService')
+const { createOrder, getAllCustomerOrders, getAllRestaurantOrders ,getOrderById, updateOrderStatus} = require('../services/orderService')
 const { authenticateToken } = require('../util/verifyToken')
 
 const orderController = express.Router()
@@ -45,3 +45,14 @@ orderController.get('/orders/:orderId',async(req,res)=>{
     }
 })
 module.exports=orderController
+
+orderController.post('/orders/:orderId/update-order-status',async(req,res)=>{
+    const {orderId} = req.params
+    const {orderStatus} = req.body
+    try{
+        const result = await updateOrderStatus(orderId,orderStatus)
+        return res.status(201).json(result)
+    }catch(error){
+        return res.status(500).json(error)
+    }
+})

@@ -4,15 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { getCoordinatesFromAddress } = require('./locationService');
-
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "yrao@argusoft.com", // Replace with your Gmail email
-      pass: `${process.env.GMAIL_PASS}` // Replace with your Gmail password
-    },
-  });
-
+const { transporter } = require('../util/mail');
 const registerRestaurant = async (restaurantData) => {
     const {
         name,
