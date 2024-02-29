@@ -42,8 +42,10 @@
 </template>
 
 <script>
+
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+// import eventBus from '../eventBus.js'
 export default {
   data() {
     return {
@@ -142,9 +144,17 @@ export default {
             },
           }
         );
+        
 
         console.log("Order created successfully:", response.data);
-        // Handle any additional logic or UI updates after successful order creation
+        const orderId = response.data.order_id;
+        // console.log('event bus : ',this.$eventBus)
+        // this.$eventBus.emit('orderConfirmed', orderId);
+        console.log(orderId)
+        
+        localStorage.setItem('orderId', orderId);
+        this.$router.push('/checks');
+        
       } catch (error) {
         console.error("Error confirming order:", error);
       }

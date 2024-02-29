@@ -22,7 +22,7 @@
       <button @click="clearSearch">Clear</button>
     </div>
 
-
+<div v-if="nearbyRestaurants.length>0">
     <h2>Restaurants near you</h2>
     <div class="card-section">
       <div v-for="(row, rowIndex) in rows2" :key="rowIndex" class="card-row">
@@ -37,6 +37,7 @@
         />
       </div>
     </div>
+  </div>
 
     <h2>All Restaurants</h2>
     <div class="card-section">

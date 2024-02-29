@@ -41,8 +41,11 @@ authController.post("/login-user", async (req, res) => {
 
     if (result.token) {
         res.json(result);
-    } else {
-        res.status(401).json(result);
+    } else if(result.error){
+        res.json(result);
+    }
+    else{
+        res.status(401).json(result)
     }
 });
 

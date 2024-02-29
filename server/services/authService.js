@@ -152,7 +152,7 @@ const loginCustomer = async (email, password) => {
 
         // Check if the customer exists
         if (!customer) {
-            return { error: 'No user found' };
+            return { error: 'This user is not registered' };
         }
 
         if (customer.counter === 3) {

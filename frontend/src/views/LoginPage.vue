@@ -2,7 +2,9 @@
   <div id="app" class="login-container">
     <h3 class="login-header">Log in</h3>
     <form @submit.prevent="login" class="login-form">
-      <p class="signup-link">Need an account? <a href="/register">Sign up</a></p>
+      <p class="signup-link">
+        Need an account? <a href="/register">Sign up</a>
+      </p>
       <!-- <router-link to = '/'>Jaoo</router-link> -->
 
       <div class="form-group">
@@ -58,19 +60,20 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+// import VueCookies from "vue-cookies";
 export default {
   data() {
     return {
       email: "",
       password: "",
-      role:"",
+      role: "",
       errors: {},
       showPassword: false,
     };
   },
   methods: {
-   async login() {
+    async login() {
       // Reset errors
       this.errors = {};
 
@@ -90,45 +93,57 @@ export default {
 
       // If no errors, submit form
       if (Object.keys(this.errors).length === 0) {
-        
         try {
-          if(this.role ==='Customer')
-          {
-            const response = await axios.post('http://localhost:3000/login-user', {
-            email: this.email,
-            password: this.password,
-          });
+          if (this.role === "Customer") {
+            const response = await axios.post(
+              "http://localhost:3000/login-user",
+              {
+                email: this.email,
+                password: this.password,
+              }
+            );
 
-          console.log(response.data);
+            console.log(response.data);
 
-          if (response.data.token) {
-            
-            this.$cookies.set('token', response.data.token);
-            this.$router.push('/')
-          } else if (response.data.error) {
-            this.errors.login = response.data.error;
-            alert(response.data.error);
-          }
-          }
-          else{
-            const response = await axios.post('http://localhost:3000/login-restaurant', {
-            email: this.email,
-            password: this.password,
-          });
+            if (response.data.token) {
+              this.$cookies.set("token", response.data.token);
+              // const token = VueCookies.get("token");
+              // const role = "customer"; // Replace with your login logic
 
-          console.log(response.data);
+              // Dispatch login action
+              // this.$store.dispatch("login", {role });
+              this.$router.push("/");
+            } else if (response.data.error) {
+              this.errors.login = response.data.error;
+              alert(response.data.error);
+            }
+          } else {
+            const response = await axios.post(
+              "http://localhost:3000/login-restaurant",
+              {
+                email: this.email,
+                password: this.password,
+              }
+            );
 
-          if (response.data.token) {
-            alert('Logged in successfully!');
-            this.$cookies.set('token', response.data.token);
-            this.$router.push('/restaurant-dashboard')
-          } else if (response.data.error) {
-            this.errors.login = response.data.error;
-            alert(response.data.error);
-          }
+            console.log(response.data);
+
+            if (response.data.token) {
+              alert("Logged in successfully!");
+              this.$cookies.set("token", response.data.token);
+              // const token = VueCookies.get("token");
+              const role = "restaurant"; // Replace with your login logic
+
+              // Dispatch login action
+              this.$store.dispatch("login", { role });
+              this.$router.push("/restaurant-dashboard");
+            } else if (response.data.error) {
+              this.errors.login = response.data.error;
+              alert(response.data.error);
+            }
           }
         } catch (error) {
-          console.error('Failed to make the API request:', error);
+          console.error("Failed to make the API request:", error);
         }
       }
     },
