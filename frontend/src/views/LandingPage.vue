@@ -124,43 +124,52 @@ export default {
     },
 
     async fetchUserAddressAndFetchRestaurants() {
-      const token = this.$cookies.get("token");
-      const decoded = jwtDecode(token);
-      console.log("customer id : ", decoded);
-      try {
-        // Replace 'get-user-address' with your actual endpoint
-        const userAddressResponse = await axios.get(
-          `http://localhost:3000/get-user-address/${decoded.customerId}`
-        ); // Replace '123' with the actual user ID or username
+  const token = this.$cookies.get("token");
 
-        // Extract user's address from the response
-        const userAddress = userAddressResponse.data.address;
-        console.log("userAddress : ", userAddressResponse);
-        // Use user's address to fetch coordinates
-        const coordinatesResponse = await axios.get(
-          `http://localhost:3000/coordinates-from-address?address=${encodeURIComponent(
-            userAddress
-          )}`
-        );
+  // Check if token is null
+  if (!token) {
+    console.error("Token is null. User is not authenticated.");
+    return;
+  }
 
-        // Extract latitude and longitude from the response
-        const customerLat = coordinatesResponse.data.data.latitude;
-        const customerLong = coordinatesResponse.data.data.longitude;
-        console.log("lati : ", customerLat);
-        console.log("longi : ", customerLong);
-        // Use latitude and longitude to fetch nearby restaurants
-        const restaurantsResponse = await axios.get(
-          `http://localhost:3000/restaurants/sort-by-distance/${customerLat}/${customerLong}`
-        );
+  const decoded = jwtDecode(token);
 
-        // Update the restaurants data in the component
-        this.nearbyRestaurants = restaurantsResponse.data.data;
-        console.log("distance filetered res : ", this.nearbyRestaurants);
-        this.rows2 = this.chunkArray(this.nearbyRestaurants, 5);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    },
+  try {
+    // Replace 'get-user-address' with your actual endpoint
+    const userAddressResponse = await axios.get(
+      `http://localhost:3000/get-user-address/${decoded.customerId}`
+    );
+
+    // Extract user's address from the response
+    const userAddress = userAddressResponse.data.address;
+
+    // Use user's address to fetch coordinates
+    const coordinatesResponse = await axios.get(
+      `http://localhost:3000/coordinates-from-address?address=${encodeURIComponent(
+        userAddress
+      )}`
+    );
+
+    // Extract latitude and longitude from the response
+    const customerLat = coordinatesResponse.data.data.latitude;
+    const customerLong = coordinatesResponse.data.data.longitude;
+
+    // Use latitude and longitude to fetch nearby restaurants
+    const restaurantsResponse = await axios.get(
+      `http://localhost:3000/restaurants/sort-by-distance/${customerLat}/${customerLong}`
+    );
+
+    // Update the restaurants data in the component
+    this.nearbyRestaurants = restaurantsResponse.data.data;
+    this.rows2 = this.chunkArray(this.nearbyRestaurants, 5);
+  } catch (error) {
+    // Handle errors during API requests
+    console.error("Error fetching data:", error);
+
+    // Optionally, you can show a user-friendly error message to the user
+    // this.errorMessage = "An error occurred while fetching data. Please try again.";
+  }
+},
   },
   created() {
     console.log(this.$cookies.get("token"));

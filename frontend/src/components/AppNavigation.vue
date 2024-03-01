@@ -140,13 +140,14 @@ export default {
 
     logout() {
       // Clear token from cookies
+      this.$router.push("/");
       VueCookies.remove("token");
 
       // Update isLoggedIn state
       this.isLoggedIn = false;
 
       // Redirect to home page or any desired route
-      this.$router.push("/");
+      
     },
   },
 };
