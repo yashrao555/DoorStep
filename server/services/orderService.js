@@ -50,25 +50,27 @@ async function createOrder(customer_id){
     return order
 }
 
-async function getAllCustomerOrders(id){
+async function getAllCustomerOrders(id) {
     const orders = await Order.findAll({
-        where: {
-            customer_id:id,
-        },
-        
-    })
+      where: {
+        customer_id: id,
+      },
+      order: [['createdAt', 'DESC']],
+    });
+  
     return orders;
-}
-
-async function getAllRestaurantOrders(id){
+  }
+  
+  async function getAllRestaurantOrders(id) {
     const orders = await Order.findAll({
-        where: {
-            restaurant_id:id,
-        },
-    })
+      where: {
+        restaurant_id: id,
+      },
+      order: [['createdAt', 'DESC']], 
+    });
+  
     return orders;
-}
-
+  }
 async function getOrderById(order_id){
     console.log(order_id);
     const order = await Order.findOne({
