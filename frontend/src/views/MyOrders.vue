@@ -58,7 +58,7 @@ export default {
       // Listen for real-time updates
       this.socket.on('orders', (order) => {
         console.log('emitted event ',order)
-         this.orders.push(order);
+         this.orders.unshift(order);
       });
     },
   },

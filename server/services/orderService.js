@@ -80,7 +80,9 @@ async function getAllRestaurantOrders(id, callback) {
     const orders = await Order.findAll({
       where: {
         restaurant_id: id,
+        
       },
+      order: [['createdAt', 'DESC']],
     });
   
     // Emit real-time updates to connected clients
