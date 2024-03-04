@@ -2,55 +2,84 @@ const express = require('express')
 const { createOrder, getAllCustomerOrders, getAllRestaurantOrders ,getOrderById, updateOrderStatus} = require('../services/orderService')
 const { authenticateToken } = require('../util/verifyToken')
 
-const io = require('../app').io
 
 const orderController = express.Router()
 
 orderController.post('/create-order',authenticateToken,async(req,res)=>{
     const {customer_id} = req.body
     try {
-        const result = await createOrder(customer_id);
+        const result = await createOrder(customer_id,(order)=>{
+            req.app.get('io').emit('orders',order)
+        });
+        
         res.status(201).json(result)
     } catch (error) {
         res.status(500).json(error)
     }
 })
 
-orderController.get('/orders',authenticateToken,async(req,res)=>{
-    if(req.customerId){
-        try {
-            const result = await getAllCustomerOrders(req.customerId)
-            res.status(201).json(result)
-        } catch (error) {
-            res.status(500).json(error)
-        }
-    }
-    else{
-        try {
-            const result = await getAllRestaurantOrders(req.restaurantId)
-            res.status(201).json(result)
-        } catch (error) {
-            res.status(500).json(error)
-        }
-    }
-})
+// orderController.get('/orders',authenticateToken,async(req,res)=>{
+//     if(req.customerId){
+//         try {
+//             const result = await getAllCustomerOrders(req.customerId)
+//             res.status(201).json(result)
+//         } catch (error) {
+//             res.status(500).json(error)
+//         }
+//     }
+//     else{
+//         try {
+//             const result = await getAllRestaurantOrders(req.restaurantId)
+//             console.log("is IO",req.app.get('io'));
+//             res.status(201).json(result)
+//         } catch (error) {
+//             res.status(500).json(error)
+//         }
+//     }
+// })
+orderController.get('/orders', authenticateToken, async (req, res) => {
+    try {
+      let result;
+  
+      if (req.customerId) {
+        // Handle customer orders
+        result = await getAllCustomerOrders(req.customerId, (orders) => {
+            // Emit real-time updates to connected clients
+            console.log("Before",orders);
+            //req.app.get('io').emit('orders', orders);
+            console.log("After",orders);
+  
+          });
+      } else {
+        // Handle restaurant orders and pass the io instance
+        result = await getAllRestaurantOrders(req.restaurantId, (orders) => {
+          // Emit real-time updates to connected clients
+          console.log("Before",orders);
+          //req.app.get('io').emit('orders', orders);
+          console.log("After",orders);
 
+        });
+      }
+  
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
+// Assuming you have 'io' as your WebSocket server instance
 // orderController.get('/orders', authenticateToken, async (req, res) => {
-//     try {
-//       let result;
-  
-//       if (req.customerId) {
-//         result = await getAllCustomerOrders(req.customerId);
-//       } else {
-//         result = await getAllRestaurantOrders(req.restaurantId);
+//     if (req.customerId) {
+//       // Handle customer orders
+//       result = await getAllCustomerOrders(req.customerId);
+//       res.status(201).json(result)
+//     } else {
+//       try {
+//         const result = await getAllRestaurantOrders(req.restaurantId, req.app.get('io'));
+//         res.status(201).json(result);
+//       } catch (error) {
+//         res.status(500).json(error);
 //       }
-  
-//       // Emit the updated data to all connected clients
-//       io.emit('orders', result);
-  
-//       res.status(200).json(result);
-//     } catch (error) {
-//       res.status(500).json(error);
 //     }
 //   });
   

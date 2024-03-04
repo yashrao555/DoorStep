@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require('http');
+const socketIO = require('socket.io');
 const cors = require('cors')
 
 const dotenv = require('dotenv')
@@ -13,6 +15,10 @@ const orderController = require("./controllers/orderController");
 const locationController = require("./controllers/locationController");
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
+app.set('io', io);
+// ... (other middleware and route setups)
 
 
 
@@ -33,27 +39,19 @@ app.use(cartController)
 app.use(orderController)
 app.use(locationController)
 
-
-
-
 const sequelize = require("./util/database");
 
-
-
-
-
-
-
-
-
-
-app.listen(3000, () => {
+server.listen(3000, () => {
   sequelize
     .sync()
     .then(() => {
       console.log("Database and tables synced");
+
     })
     .catch((err) => {
       console.error("Error syncing database:", err);
     });
 });
+
+
+module.exports = { io };

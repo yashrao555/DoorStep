@@ -5,7 +5,7 @@ const Restaurant = require('../models/restaurant')
 const { transporter } = require('../util/mail')
 const { getCartByCustomerAndRestaurant } = require('./cartService')
 
-async function createOrder(customer_id){
+async function createOrder(customer_id,callback){
     const cart = await getCartByCustomerAndRestaurant(customer_id)
     
     const {restaurant_id,items,total_amount} = cart
@@ -46,28 +46,45 @@ async function createOrder(customer_id){
         }
     });
     await cart.destroy()
+    callback(order)
 
     return order
 }
 
-async function getAllCustomerOrders(id) {
+async function getAllCustomerOrders(id,callback) {
     const orders = await Order.findAll({
       where: {
         customer_id: id,
       },
       order: [['createdAt', 'DESC']],
     });
+    callback(orders);
   
     return orders;
   }
+//   async function getAllRestaurantOrders(id, io) {
+//     const orders = await Order.findAll({
+//       where: {
+//         restaurant_id: id,
+//       },
+//     });
   
-  async function getAllRestaurantOrders(id) {
+//     // Emit real-time updates to connected clients
+//     console.log(io);
+//     io.emit('restaurantOrdersUpdate', orders);
+  
+//     return orders;
+//   }
+  
+async function getAllRestaurantOrders(id, callback) {
     const orders = await Order.findAll({
       where: {
         restaurant_id: id,
       },
-      order: [['createdAt', 'DESC']], 
     });
+  
+    // Emit real-time updates to connected clients
+    callback(orders);
   
     return orders;
   }
