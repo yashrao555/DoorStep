@@ -13,6 +13,7 @@
         </div>
   
         <p class="order-amount">Total: {{ order.total_amount }}</p>
+        <p class="order-amount">Status: {{ order.status }}</p>
       </div>
     </div>
   </template>

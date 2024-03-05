@@ -1,21 +1,35 @@
-<!-- OrderModal.vue -->
-
 <template>
   <div v-if="orderDetails" class="order-modal">
-    {{ orderDetails }}
-    <div v-if="role === 'restaurant'">
-      <div class="form-group">
-        <label for="status" class="form-label">Status</label>
-        <select v-model="status" id="status" class="form-select">
-          <option selected>Choose...</option>
-          <option>Pending</option>
-          <option>Approved</option>
-          <option>Completed</option>
-          <option>Rejected</option>
-        </select>
-      </div>
-      <button @click="updateStatus" class="close-button">Update</button>
+    <div class="restaurant-details">
+      <h2 class="restaurant-name">{{ name }}</h2>
+      <p class="restaurant-address">{{ address }}</p>
     </div>
+
+    <div class="order-items">
+      <div v-for="(item, index) in orderDetails.items" :key="index" class="item">
+        <p class="item-name">{{ item.name }}</p>
+        <p class="item-details">
+          <span class="quantity">Quantity: {{ item.quantity }}</span>
+          <span class="price">{{ item.price }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div v-if="role === 'restaurant'" class="form-group">
+      <label for="status" class="form-label">Status</label>
+      <select v-model="status" id="status" class="form-select">
+        <option selected>Choose...</option>
+        <option>Pending</option>
+        <option>Approved</option>
+        <option>Completed</option>
+        <option>Rejected</option>
+      </select>
+    </div>
+    <p class="total-amount">Status: {{ orderDetails.status }}</p>
+    <p class="total-amount">Total Amount: {{ orderDetails.total_amount }}</p>
+
+    <button @click="updateStatus" class="update-button" v-if="role === 'restaurant'">Update Status</button>
+
     <button @click="closeModal" class="close-button">Close</button>
   </div>
 </template>
@@ -30,6 +44,8 @@ export default {
       status: "",
       role: "",
       token: null,
+      name: null,
+      address: null,
     };
   },
   props: {
@@ -41,12 +57,11 @@ export default {
     },
 
     async updateStatus() {
-      console.log(this.status)
       const token = this.$cookies.get("token");
+      console.log(this.orderDetails.order_id)
       const response = await axios.post(`http://localhost:3000/orders/${this.orderDetails.order_id}/update-order-status`,{
         orderStatus:this.status
-      },
-      {
+      },{
             headers: {
               Authorization: `${token}`,
             },
@@ -56,7 +71,25 @@ export default {
       console.log('response after update : ',response)
     },
 
+    async getRestaurant(orderDetails) {
+        try {
+          // const decoded = jwtDecode(this.token)
+          const restaurantId = orderDetails.restaurant_id;
+          const response = await axios.get(
+            `http://localhost:3000/restaurants/${restaurantId}`
+          );
+          const restaurantData = response.data.data;
+            console.log(restaurantData)
+          this.address = restaurantData.address;
+          this.name = restaurantData.name;
+        } catch (error) {
+          console.log(error);
+        }
+      },
+
+
     checkRole() {
+      
       this.token = VueCookies.get("token");
       if (this.token === null) {
         this.role = "customer";
@@ -72,44 +105,117 @@ export default {
   },
   mounted(){
     this.checkRole();
-  }
+    // this.getRestaurant();
+  },
+  watch: {
+  orderDetails: {
+    handler: 'getRestaurant',
+    immediate: true, // Call getRestaurant immediately when the component is created
+  },
+},
+
 };
 </script>
 
 <style scoped>
-/* Your styles for OrderModal */
+
 .order-modal {
-  /* Style your modal, center it on the screen */
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
 }
 
-.close-button {
-  /* Style your close button */
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  cursor: pointer;
-  background-color: #3498db;
-  color: #fff;
+.restaurant-details {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.restaurant-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.restaurant-address {
+  font-size: 16px;
+  color: #555;
+}
+
+.order-items {
+  margin-bottom: 20px;
+}
+
+.item {
+  margin-bottom: 15px;
+}
+
+.item-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.item-details {
+  font-size: 14px;
+  color: #555;
+}
+
+.quantity {
+  margin-right: 10px;
+}
+
+.price {
+  font-weight: bold;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .form-label {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 18px;
+  margin-bottom: 10px;
   color: #333;
 }
+
+.form-select {
+  padding: 10px;
+  font-size: 16px;
+}
+
+.total-amount {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.update-button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #27ae60;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #e74c3c;
+  color: #fff;
+}
+
 </style>
