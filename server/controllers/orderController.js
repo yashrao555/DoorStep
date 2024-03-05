@@ -97,18 +97,22 @@ orderController.get('/orders/:orderId',async(req,res)=>{
 })
 module.exports=orderController
 
-orderController.post('/orders/:orderId/update-order-status',authenticateToken,async(req,res)=>{
-    const {orderId} = req.params
-    const {orderStatus} = req.body
-    const restaurant_id = req.restaurantId
-    
-    try{
-        if(restaurant_id){
-            const result = await updateOrderStatus(orderId,orderStatus)
-        return res.status(201).json(result)
-        }
-        
-    }catch(error){
-        return res.status(500).json(error)
+orderController.post('/orders/:orderId/update-order-status', authenticateToken, async (req, res) => {
+    const { orderId } = req.params;
+    const { orderStatus } = req.body;
+    const restaurant_id = req.restaurantId;
+  
+    try {
+      if (restaurant_id) {
+        const result = await updateOrderStatus(orderId, orderStatus);
+  
+        req.app.get('io').emit('updatedOrderStatus', { orderId: orderId, status: orderStatus },()=>{
+            console.log("Event emmited");
+        });
+  
+        return res.status(201).json(result);
+      }
+    } catch (error) {
+      return res.status(500).json(error);
     }
-})
+  });

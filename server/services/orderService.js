@@ -102,6 +102,7 @@ async function getOrderById(order_id){
 }
 
 async function updateOrderStatus(order_id,status){
+    console.log("entered");
     const order = await Order.findOne({
         where:{
             order_id:order_id
