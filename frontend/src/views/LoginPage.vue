@@ -132,10 +132,10 @@ export default {
               alert("Logged in successfully!");
               this.$cookies.set("token", response.data.token);
               // const token = VueCookies.get("token");
-              const role = "restaurant"; // Replace with your login logic
+              // const role = "restaurant"; // Replace with your login logic
 
               // Dispatch login action
-              this.$store.dispatch("login", { role });
+              // this.$store.dispatch("login", { role });
               this.$router.push("/restaurant-dashboard");
             } else if (response.data.error) {
               this.errors.login = response.data.error;

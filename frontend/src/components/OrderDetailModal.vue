@@ -41,9 +41,16 @@ export default {
     },
 
     async updateStatus() {
+      console.log(this.status)
+      const token = this.$cookies.get("token");
       const response = await axios.post(`http://localhost:3000/orders/${this.orderDetails.order_id}/update-order-status`,{
         orderStatus:this.status
-      })
+      },
+      {
+            headers: {
+              Authorization: `${token}`,
+            },
+          })
       this.closeModal()
 
       console.log('response after update : ',response)
