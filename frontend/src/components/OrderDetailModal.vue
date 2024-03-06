@@ -25,7 +25,7 @@
         <option>Rejected</option>
       </select>
     </div>
-    <p class="total-amount">Status: {{ orderDetails.status }}</p>
+    <p class="total-amount">Status: {{ tempStatus||orderDetails.status }}</p>
     <p class="total-amount">Total Amount: {{ orderDetails.total_amount }}</p>
 
     <button @click="updateStatus" class="update-button" v-if="role === 'restaurant'">Update Status</button>
@@ -38,6 +38,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import VueCookies from "vue-cookies";
+import io from 'socket.io-client';
 export default {
   data() {
     return {
@@ -46,6 +47,7 @@ export default {
       token: null,
       name: null,
       address: null,
+      tempStatus:null,
     };
   },
   props: {
@@ -102,10 +104,30 @@ export default {
         this.role = "customer";
       }
     },
+
+    initializeSocket() {
+      this.socket = io('http://localhost:3000', {
+    transports: ['websocket'],
+  });
+
+       this.socket.on('updatedOrderStatus', (updatedOrder) => {
+        console.log('emitted event ', updatedOrder);
+          // Update the status of the matched order
+          this.tempStatus = updatedOrder.status;
+        
+      });
+    },
   },
   mounted(){
     this.checkRole();
+    this.initializeSocket();
     // this.getRestaurant();
+  },
+   beforeUnmount() {
+    // Close the socket connection when the component is destroyed
+    if (this.socket) {
+      this.socket.close();
+    }
   },
   watch: {
   orderDetails: {

@@ -60,6 +60,19 @@ export default {
         console.log('emitted event ',order)
          this.orders.unshift(order);
       });
+
+       this.socket.on('updatedOrderStatus', (updatedOrder) => {
+        console.log('emitted event ', updatedOrder);
+        console.log('orders ',this.orders)
+        const index = this.orders.findIndex((order) => order.order_id == updatedOrder.orderId);
+        console.log('index ',index)
+
+        if (index !== -1) {
+          // Update the status of the matched order
+          this.orders[index].status = updatedOrder.status;
+          console.log('orders ',this.orders)
+        }
+      });
     },
   },
   mounted() {
