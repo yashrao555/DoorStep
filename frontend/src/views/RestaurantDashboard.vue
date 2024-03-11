@@ -144,7 +144,7 @@ export default {
         },
 
         deleteFoodItem(){
-          const foodItemId = this.selectedFoodItem.food_item_id;
+          const foodItemId = this.selectedFoodItem.id;
             console.log('id :',foodItemId)
             const token = this.$cookies.get('token');
             axios.delete(`http://localhost:3000/restaurants/delete-food-item/${foodItemId}`,{
@@ -166,7 +166,7 @@ export default {
 
         updateFoodItem(updatedFoodItemData) {
             // Call your API to update the food item
-            const foodItemId = this.selectedFoodItem.food_item_id;
+            const foodItemId = this.selectedFoodItem.id;
             console.log('id :',foodItemId)
             const token = this.$cookies.get('token');
             axios.put(`http://localhost:3000/restaurants/update-food-item/${foodItemId}`,updatedFoodItemData,{

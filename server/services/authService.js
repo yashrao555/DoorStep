@@ -1,4 +1,4 @@
-const Customer = require('../models/customer');
+const Customer = require('../models/customer.js');
 const { generateOTP } = require('./otpService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -25,12 +25,8 @@ const registerCustomer = async (userData) => {
        
     } = userData;
     try {
-        // Check if the user already exists
-        const existingCustomer = await Customer.findOne({
-            where: {
-                email: email,
-            },
-        });
+        //Check if the user already exists
+        const existingCustomer = await Customer.findOne({ where: { email: email } });
 
         if (existingCustomer) {
             return { error: 'Customer with this email already exists' };
@@ -205,7 +201,7 @@ const loginCustomer = async (email, password) => {
             // Check if the customer is verified
             if (customer.is_verified) {
                 // Generate JWT token
-                const token = jwt.sign({ customerId: customer.customer_id }, 'your_secret_key', {
+                const token = jwt.sign({ customerId: customer.id }, 'your_secret_key', {
                     expiresIn: '8h', // Token expiration time (e.g., 1 hour)
                 });
 

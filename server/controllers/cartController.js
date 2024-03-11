@@ -12,9 +12,11 @@ const cartController = express.Router()
 
 cartController.get('/get-cart',authenticateToken,async(req,res)=>{
     const customer_id = req.customerId
+    console.log(customer_id);
     try {
         // Check if a cart for the customer already exists
         const result = await getCartByCustomerAndRestaurant(customer_id)
+        console.log(result);
         res.json({ message: 'Cart fetched successfully', data: result });
         
       } catch (error) {
@@ -25,6 +27,7 @@ cartController.get('/get-cart',authenticateToken,async(req,res)=>{
 
 cartController.post('/add-to-cart',authenticateToken,async (req, res) => {
   customer_id=req.customerId;
+  console.log("CUST",customer_id);
     const {restaurant_id, items } = req.body;
   
     try {
@@ -40,7 +43,7 @@ cartController.post('/add-to-cart',authenticateToken,async (req, res) => {
        } 
       else {
         // If the cart doesn't exist, create a new cart
-        const newCartItem = await createCart(customer_id, restaurant_id, items);
+        const newCartItem = await createCart(customer_id, restaurant_id,items);
         console.log('nci',newCartItem)
         res.json({ message: 'Cart created successfully', data: newCartItem });
       }

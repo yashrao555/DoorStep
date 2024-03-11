@@ -160,7 +160,7 @@ export default {
       axios.post('http://localhost:3000/add-to-cart', {
         restaurant_id: this.foodItem.restaurant_id,
         items: {
-          food_item_id: this.foodItem.food_item_id,
+          id: this.foodItem.id,
           name: this.foodItem.name,
           price: this.foodItem.price,
           // Add other necessary details from your food item
@@ -190,7 +190,7 @@ export default {
       axios.post('http://localhost:3000/add-to-cart', {
         restaurant_id: this.foodItem.restaurant_id,
         items: {
-          food_item_id: this.foodItem.food_item_id,
+          id: this.foodItem.id,
           name:this.foodItem.name,
           price:this.foodItem.price,
         },
@@ -211,7 +211,7 @@ export default {
         axios.post('http://localhost:3000/delete-from-cart', {
           restaurant_id: this.foodItem.restaurant_id,
           items: {
-            food_item_id: this.foodItem.food_item_id,
+            id: this.foodItem.id,
           name:this.foodItem.name,
           price:this.foodItem.price,
           },

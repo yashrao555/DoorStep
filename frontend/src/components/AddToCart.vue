@@ -147,7 +147,7 @@ export default {
         
 
         console.log("Order created successfully:", response.data);
-        const orderId = response.data.order_id;
+        const orderId = response.data.id;
         // console.log('event bus : ',this.$eventBus)
         // this.$eventBus.emit('orderConfirmed', orderId);
         console.log(orderId)

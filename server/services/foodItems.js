@@ -1,4 +1,4 @@
-const FoodItem = require('../models/foodItem')
+const FoodItem = require('../models/fooditem')
 const Restaurant = require('../models/restaurant')
 
 
@@ -74,6 +74,7 @@ const addFoodItem = async (restaurantId, foodItemData) => {
 
   const getFoodItemsByRestaurantId = async (restaurantId) => {
     try {
+      console.log("RestId",restaurantId);
       // Find all FoodItems with the specified restaurant_id
       const foodItems = await FoodItem.findAll({
         where: {

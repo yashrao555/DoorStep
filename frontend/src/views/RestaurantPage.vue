@@ -8,7 +8,7 @@
     <div class="food-items-section">
       <h2 class="section-title">Menu</h2>
       <div class="menu-container">
-        <div v-for="foodItem in restaurantMenu" :key="foodItem.food_item_id">
+        <div v-for="foodItem in restaurantMenu" :key="foodItem.id">
           <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId"/>
         </div>
       </div>
@@ -40,7 +40,7 @@ export default {
   },
   mounted() {
     this.restaurantId = parseInt(this.$route.params.id);
-    console.log(this.restaurantId)
+    console.log('rest id is : ',this.restaurantId)
 
   this.fetchRestaurantDetails(this.restaurantId);
 

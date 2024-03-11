@@ -3,7 +3,7 @@
 <template>
   <div>
     <!-- <h1>My Orders</h1> -->
-    <OrderCard v-for="order in orders" :key="order.order_id" :order="order" @open-modal="openOrderModal" />
+    <OrderCard v-for="order in orders" :key="order.id" :order="order" @open-modal="openOrderModal" />
     <OrderDetailModal :orderDetails="selectedOrderDetails" @close-modal="closeOrderModal" />
   </div>
 </template>
@@ -58,13 +58,14 @@ export default {
       // Listen for real-time updates
       this.socket.on('orders', (order) => {
         console.log('emitted event ',order)
+        order.items = JSON.parse(order.items)
          this.orders.unshift(order);
       });
 
        this.socket.on('updatedOrderStatus', (updatedOrder) => {
         console.log('emitted event ', updatedOrder);
         console.log('orders ',this.orders)
-        const index = this.orders.findIndex((order) => order.order_id == updatedOrder.orderId);
+        const index = this.orders.findIndex((order) => order.id == updatedOrder.orderId);
         console.log('index ',index)
 
         if (index !== -1) {

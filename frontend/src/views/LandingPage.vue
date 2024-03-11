@@ -33,7 +33,7 @@
           :opensAt="card.opens_at"
           :closesAt="card.closes_at"
           :address="card.address"
-          :id="card.restaurant_id"
+          :id="card.id"
         />
       </div>
     </div>
@@ -49,7 +49,7 @@
           :opensAt="card.opens_at"
           :closesAt="card.closes_at"
           :address="card.address"
-          :id="card.restaurant_id"
+          :id="card.id"
         />
       </div>
     </div>

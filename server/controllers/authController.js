@@ -68,7 +68,7 @@ authController.get('/get-user-address/:userId', async (req, res) => {
 
       const user = await Customer.findOne({
         where: {
-            customer_id: userId,
+            id: userId,
         },
     });
       const userAddress = `${user.address},${user.city},${user.state},${user.zip}`;

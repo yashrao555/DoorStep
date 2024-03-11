@@ -1,24 +1,27 @@
 // cartService.js
 
-const Cart = require("../models/cartItems");
+const Cart = require("../models/cart");
 
 async function getCartByCustomerAndRestaurant(customer_id) {
-  return await Cart.findOne({
+  const cart = await Cart.findOne({
     where: {
       customer_id: customer_id,
     },
   });
+  if(cart)
+  cart.items = JSON.parse(cart.items)
+  return cart;
 }
 
 async function updateCart(cart, newItem) {
   // Copy the existing items array to avoid direct references
-  console.log(newItem);
-  console.log(cart);
+ 
+
   let existingItems = cart.items;
 
   // Find the index of the item with the same food_item_id in the existing items array
   const existingItemIndex = existingItems.findIndex(
-    (item) => item.food_item_id === newItem.food_item_id
+    (item) => item.name=== newItem.name
   );
   if (existingItemIndex !== -1) {
     // If the item already exists, log the current quantity and attempt to update it
@@ -31,15 +34,10 @@ async function updateCart(cart, newItem) {
     existingItems.push(newItem);
   }
 
-  // Set the updated items array to the Cart instance
   cart.setDataValue("items", existingItems);
-  console.log('amount is : ',cart.total_amount)
-  console.log('new item price is : ',newItem.price)
-  // Update other properties as needed
-  // cart.total_amount = cart.total_amount + newItem.price;
-  console.log('updated amount : ',cart.total_amount)
-  cart.setDataValue("total_amount", cart.total_amount + newItem.price);
 
+  cart.setDataValue("total_amount", cart.total_amount + newItem.price);
+  cart.items=JSON.stringify(cart.items)
   await cart.save({ fields: ["items"] });
   await cart.save({ fields: ["total_amount"] });
   await cart.reload();
@@ -54,7 +52,7 @@ async function deleteFromCart(cart, newItem, total_amount) {
 
   // Find the index of the item with the same food_item_id in the existing items array
   const existingItemIndex = existingItems.findIndex(
-    (item) => item.food_item_id === newItem.food_item_id
+    (item) => item.name === newItem.name
   );
   if (existingItemIndex !== -1) {
     {
@@ -70,11 +68,11 @@ async function deleteFromCart(cart, newItem, total_amount) {
   }
 
   // Set the updated items array to the Cart instance
-  cart.setDataValue("items", existingItems);
+  cart.setDataValue("items",existingItems);
 
   // Update other properties as needed
   cart.setDataValue("total_amount", cart.total_amount - newItem.price);
-
+  cart.items=JSON.stringify(cart.items)
   await cart.save({ fields: ["items"] });
   await cart.save({ fields: ["total_amount"] });
   await cart.reload();
@@ -92,10 +90,11 @@ return await cart.destroy();
 }
 async function createCart(customer_id, restaurant_id, items) {
   items.quantity=1;
+  let newItems  = JSON.stringify([items])
   return await Cart.create({
     customer_id,
     restaurant_id,
-    items: [items],
+    items: newItems,
     total_amount:items.price,
   });
 }

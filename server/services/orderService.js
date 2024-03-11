@@ -8,7 +8,9 @@ const { getCartByCustomerAndRestaurant } = require('./cartService')
 async function createOrder(customer_id,callback){
     const cart = await getCartByCustomerAndRestaurant(customer_id)
     
-    const {restaurant_id,items,total_amount} = cart
+    let {restaurant_id,items,total_amount} = cart
+    items = JSON.stringify(items)
+    console.log(typeof(items));
     console.log(customer_id,restaurant_id,items,total_amount)
      const order= await Order.create({
         customer_id,
@@ -20,13 +22,13 @@ async function createOrder(customer_id,callback){
 
     const user = await Customer.findOne({
         where: {
-            customer_id:customer_id,
+            id:customer_id,
         },
         
     })
     const restaurant = await Restaurant.findOne({
         where:{
-            restaurant_id:restaurant_id
+            id:restaurant_id
         }
     })
 
@@ -58,9 +60,15 @@ async function getAllCustomerOrders(id,callback) {
       },
       order: [['createdAt', 'DESC']],
     });
-    callback(orders);
-  
-    return orders;
+    const parsedOrders = orders.map(order => {
+        order.items = JSON.parse(order.items);
+        return order;
+    });
+
+    // Emit real-time updates to connected clients
+    callback(parsedOrders);
+
+    return parsedOrders;
   }
 //   async function getAllRestaurantOrders(id, io) {
 //     const orders = await Order.findAll({
@@ -75,29 +83,35 @@ async function getAllCustomerOrders(id,callback) {
   
 //     return orders;
 //   }
-  
 async function getAllRestaurantOrders(id, callback) {
     const orders = await Order.findAll({
-      where: {
-        restaurant_id: id,
-        
-      },
-      order: [['createdAt', 'DESC']],
+        where: {
+            restaurant_id: id,
+        },
+        order: [['createdAt', 'DESC']],
     });
-  
+
+    // Parse the stringified JSON array in each order's items
+    const parsedOrders = orders.map(order => {
+        order.items = JSON.parse(order.items);
+        return order;
+    });
+
     // Emit real-time updates to connected clients
-    callback(orders);
-  
-    return orders;
-  }
+    callback(parsedOrders);
+
+    return parsedOrders;
+}
+
 async function getOrderById(order_id){
     console.log(order_id);
     const order = await Order.findOne({
         where:{
-            order_id:order_id
+        id:order_id
         }
     })
     console.log(order);
+    order.items = JSON.parse(order.items)
     return order;
 }
 
@@ -105,7 +119,7 @@ async function updateOrderStatus(order_id,status){
     console.log("entered");
     const order = await Order.findOne({
         where:{
-            order_id:order_id
+            id:order_id
         }
     })
 
@@ -117,13 +131,13 @@ async function updateOrderStatus(order_id,status){
 
         const restaurant = await Restaurant.findOne({
             where:{
-                restaurant_id:order.restaurant_id
+            id:order.restaurant_id
             }
         })
 
         const user = await Customer.findOne({
             where: {
-                customer_id:order.customer_id,
+                id:order.customer_id,
             },
             
         })

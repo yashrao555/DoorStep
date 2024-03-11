@@ -6,7 +6,7 @@
   
         <div
           v-for="item in order.items"
-          :key="item.food_item_id"
+          :key="item.id"
           class="order-item"
         >
           <span>{{ item.name }} ({{ item.quantity }})</span>
@@ -49,7 +49,7 @@
 
       async openOrderModal() {
       try {
-        const response = await axios.get(`http://localhost:3000/orders/${this.order.order_id}`);
+        const response = await axios.get(`http://localhost:3000/orders/${this.order.id}`);
         const orderDetails = response.data;
         this.$emit('open-modal', orderDetails);
       } catch (error) {

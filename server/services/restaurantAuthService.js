@@ -138,7 +138,7 @@ const loginRestaurant = async (email, password) => {
                 email: email,
             },
         });
-
+        console.log(restaurant);
         // Check if the customer exists
         if (!restaurant) {
             return { error: 'No user found' };
@@ -178,7 +178,7 @@ const loginRestaurant = async (email, password) => {
             // Check if the customer is verified
             if (restaurant.is_verified) {
                 // Generate JWT token
-                const token = jwt.sign({ restaurantId: restaurant.restaurant_id }, 'your_secret_key', {
+                const token = jwt.sign({ restaurantId: restaurant.id }, 'your_secret_key', {
                     expiresIn: '1h', // Token expiration time (e.g., 1 hour)
                 });
                 console.log(token)

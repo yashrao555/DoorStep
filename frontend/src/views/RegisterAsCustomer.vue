@@ -211,7 +211,7 @@
       },
       validateZip(zip) {
         // Simple ZIP code validation, you can enhance it as needed
-        const zipRegex = /^\d{5}$/;
+        const zipRegex = /^\d{6}$/;
         return zipRegex.test(zip);
       },
       validateContact(phone) {

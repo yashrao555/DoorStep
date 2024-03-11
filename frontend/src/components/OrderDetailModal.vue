@@ -25,7 +25,7 @@
         <option>Rejected</option>
       </select>
     </div>
-    <p class="total-amount">Status: {{ tempStatus||orderDetails.status }}</p>
+    <p class="total-amount">Status: {{ tempStatus }}</p>
     <p class="total-amount">Total Amount: {{ orderDetails.total_amount }}</p>
 
     <button @click="updateStatus" class="update-button" v-if="role === 'restaurant'">Update Status</button>
@@ -48,6 +48,7 @@ export default {
       name: null,
       address: null,
       tempStatus:null,
+      currentId:null
     };
   },
   props: {
@@ -61,7 +62,7 @@ export default {
     async updateStatus() {
       const token = this.$cookies.get("token");
       console.log(this.orderDetails.order_id)
-      const response = await axios.post(`http://localhost:3000/orders/${this.orderDetails.order_id}/update-order-status`,{
+      const response = await axios.post(`http://localhost:3000/orders/${this.orderDetails.id}/update-order-status`,{
         orderStatus:this.status
       },{
             headers: {
@@ -77,6 +78,8 @@ export default {
         try {
           // const decoded = jwtDecode(this.token)
           const restaurantId = orderDetails.restaurant_id;
+          this.tempStatus = orderDetails.status;
+          this.currentId = orderDetails.id
           const response = await axios.get(
             `http://localhost:3000/restaurants/${restaurantId}`
           );
@@ -112,8 +115,10 @@ export default {
 
        this.socket.on('updatedOrderStatus', (updatedOrder) => {
         console.log('emitted event ', updatedOrder);
-          // Update the status of the matched order
-          this.tempStatus = updatedOrder.status;
+          if(updatedOrder.orderId == this.currentId){
+            this.tempStatus = updatedOrder.status;
+          }
+          
         
       });
     },
