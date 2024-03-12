@@ -16,15 +16,17 @@
     <div class="cart-items" v-if="cartItems.length > 0">
       <div
         v-for="cartItem in cartItems"
-        :key="cartItem.food_item_id"
+        :key="cartItem.id"
         class="cart-item separator-line"
       >
         <div class="item-details">
           <h5>{{ cartItem.name }}</h5>
           <div class="quantity-box">
-            <span class="quantity-buttons">-</span>
+            <span class="quantity-buttons" @click="decrementQuantity(cartItem)">-</span>
             <span class="quantity">{{ cartItem.quantity }}</span>
-            <span class="quantity-buttons">+</span>
+            <span class="quantity-buttons" @click="incrementQuantity(cartItem)"
+              >+</span
+            >
             <span class="price">{{ cartItem.quantity * cartItem.price }}</span>
           </div>
         </div>
@@ -42,7 +44,6 @@
 </template>
 
 <script>
-
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 // import eventBus from '../eventBus.js'
@@ -52,7 +53,6 @@ export default {
       restaurant: null,
       cartItems: [],
       totalAmount: 0,
-      
     };
   },
   mounted() {
@@ -76,6 +76,7 @@ export default {
           },
         }); // Adjust the URL based on your backend setup
         const cartData = response.data.data;
+        console.log("this is my cart data : ", cartData);
         if (cartData) {
           this.cartItems = cartData.items;
           this.totalAmount = cartData.total_amount;
@@ -131,8 +132,8 @@ export default {
     async confirmOrder() {
       try {
         const token = this.$cookies.get("token");
-        const decoded = jwtDecode(token)
-        console.log(decoded)
+        const decoded = jwtDecode(token);
+        console.log(decoded);
         const response = await axios.post(
           "http://localhost:3000/create-order",
           {
@@ -144,22 +145,76 @@ export default {
             },
           }
         );
-        
 
         console.log("Order created successfully:", response.data);
         const orderId = response.data.id;
         // console.log('event bus : ',this.$eventBus)
         // this.$eventBus.emit('orderConfirmed', orderId);
-        console.log(orderId)
-        
-        localStorage.setItem('orderId', orderId);
-        this.$router.push('/checks');
-        
+        console.log(orderId);
+
+        localStorage.setItem("orderId", orderId);
+        this.$router.push("/checks");
       } catch (error) {
         console.error("Error confirming order:", error);
       }
     },
-    
+
+    incrementQuantity(cartItem) {
+      const token = this.$cookies.get("token");
+      axios
+        .post(
+          "http://localhost:3000/add-to-cart",
+          {
+            restaurant_id: this.cartItems.restaurant_id,
+            items: {
+              id: cartItem.id,
+              name: cartItem.name,
+              price: cartItem.price,
+            },
+          },
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response)
+          cartItem.quantity++;
+        
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Error updating cart:", error);
+        });
+    },
+
+    decrementQuantity(cartItem) {
+      const token = this.$cookies.get('token');
+  
+        axios.post('http://localhost:3000/delete-from-cart', {
+          restaurant_id: this.cartItems.restaurant_id,
+          items: {
+            id: cartItem.id,
+          name:cartItem.name,
+          price:cartItem.price,
+          },
+        },{
+            headers: {
+                Authorization: `${token}`
+            }
+          })
+          .then((response) => {
+          console.log(response)
+          cartItem.quantity--;
+        
+          location.reload();
+        })
+        .catch(error => {
+          console.error('Error updating cart:', error);
+        });
+      
+    },
   },
 };
 </script>

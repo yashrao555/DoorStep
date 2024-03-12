@@ -9,7 +9,9 @@ orderController.post('/create-order',authenticateToken,async(req,res)=>{
     const {customer_id} = req.body
     try {
         const result = await createOrder(customer_id,(order)=>{
-            req.app.get('io').emit('orders',order)
+            req.app.get('io').emit('orders',order,()=>{
+              console.log("event emitteddddd")
+            })
         });
         
         res.status(201).json(result)
