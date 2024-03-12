@@ -13,6 +13,7 @@ import axios from 'axios';
 import OrderCard from '../components/OrderCard.vue';
 import OrderDetailModal from '@/components/OrderDetailModal.vue';
 import io from 'socket.io-client';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   components: {
@@ -51,6 +52,8 @@ export default {
       this.isOrderModalOpen = false;
     },
     initializeSocket() {
+      const token = this.$cookies.get('token')
+      const decoded = jwtDecode(token)
       this.socket = io('http://localhost:3000', {
     transports: ['websocket'],
   });
@@ -58,8 +61,11 @@ export default {
       // Listen for real-time updates
       this.socket.on('orders', (order) => {
         console.log('emitted event ',order)
-        order.items = JSON.parse(order.items)
-         this.orders.unshift(order);
+        if(decoded.restaurantId == order.restaurant_id){
+          order.items = JSON.parse(order.items)
+          this.orders.unshift(order);
+        }
+        
       });
 
        this.socket.on('updatedOrderStatus', (updatedOrder) => {
