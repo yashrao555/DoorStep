@@ -1,10 +1,73 @@
 const express = require('express');
-const { addFoodItem,getFoodItemsByRestaurantId, updateFoodItem, deleteFoodItem } = require('../services/foodItems');
+const multer = require('multer');
+const csvParser = require('csv-parser');
+const fs = require('fs');
+const { addFoodItem,getFoodItemsByRestaurantId, updateFoodItem, deleteFoodItem, updateOrInsertFoodItem} = require('../services/foodItems');
 const { authenticateToken } = require('../util/verifyToken');
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, '../uploads/') // Specify the directory where files will be stored
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.originalname) // Use the original file name
+  }
+});
+const upload = multer({ storage: storage });
 const foodController = express.Router()
 
-foodController.post('/restaurants/addFoodItems', authenticateToken,async (req, res) => {
+foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.single('file'), async (req, res) => {
+  const restaurantId = req.restaurantId;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const filePath = file.path;
+  const io=req.app.get('io')
+
+  try {
+    const result = await processCSVFile(restaurantId, filePath,io);
+    return res.status(201).json({ message: 'Food items uploaded successfully',result });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Failed to upload food items' });
+  } finally {
+    // Clean up: Delete the temporary file
+    fs.unlinkSync(filePath);
+  }
+});
+
+  
+  const processCSVFile = async (restaurantId, filePath,io) => {
+    return new Promise((resolve, reject) => {
+      let processedCount=0;
+      const stream = fs.createReadStream(filePath)
+        .pipe(csvParser())
+        .on('data', async (foodItemData) => {
+          try {
+            await updateOrInsertFoodItem(restaurantId, foodItemData);
+            processedCount++;
+            io.emit('progress',{processedCount},()=>{
+              console.log("event emitteddddd")
+            })
+          } catch (error) {
+            console.error('Error processing food item:', error);
+            reject('Failed to process food items');
+          }
+        })
+        .on('end', () => {
+          resolve();
+        })
+        .on('error', (error) => {
+          console.error('Error reading CSV file:', error);
+          reject('Failed to read CSV file');
+        });
+    });
+  };
+
+  foodController.post('/restaurants/addFoodItems', authenticateToken,async (req, res) => {
     const restaurantId  = req.restaurantId;
     const foodItemData = req.body;
     
@@ -17,6 +80,7 @@ foodController.post('/restaurants/addFoodItems', authenticateToken,async (req, r
       res.status(500).json({ error: 'Failed to add FoodItem' });
     }
   });
+
 
   foodController.put('/restaurants/update-food-item/:food_item_id',authenticateToken,async(req,res)=>{
     const food_item_id=req.params.food_item_id

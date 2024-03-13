@@ -2,6 +2,47 @@ const FoodItem = require('../models/fooditem')
 const Restaurant = require('../models/restaurant')
 
 
+
+const updateOrInsertFoodItem = async (restaurantId, foodItemData) => {
+  try {
+    // Check if the restaurant with the given ID exists
+    const restaurant = await Restaurant.findByPk(restaurantId);
+
+    if (!restaurant) {
+      throw new Error('Restaurant not found');
+    }
+
+    // Check if the food item with the given name already exists for the restaurant
+    const existingFoodItem = await FoodItem.findOne({
+      where: {
+        restaurant_id: restaurantId,
+        name: foodItemData.name,
+      },
+    });
+
+    if (existingFoodItem) {
+      // Update existing food item
+      await existingFoodItem.update({
+        ...foodItemData,
+      });
+
+      console.log('FoodItem updated:', existingFoodItem.toJSON());
+    } else {
+      // Create a new FoodItem associated with the specified Restaurant
+      const newFoodItem = await FoodItem.create({
+        ...foodItemData,
+        restaurant_id: restaurantId,
+      });
+
+      console.log('New FoodItem created:', newFoodItem.toJSON());
+    }
+  } catch (error) {
+    console.error('Error updating or inserting FoodItem:', error);
+    throw error;
+  }
+};
+
+
 const addFoodItem = async (restaurantId, foodItemData) => {
     try {
       // Check if the restaurant with the given ID exists
@@ -90,4 +131,4 @@ const addFoodItem = async (restaurantId, foodItemData) => {
   };
   
 
-  module.exports = { addFoodItem ,getFoodItemsByRestaurantId,updateFoodItem,deleteFoodItem};
+  module.exports = { addFoodItem ,getFoodItemsByRestaurantId,updateFoodItem,deleteFoodItem, updateOrInsertFoodItem};

@@ -21,7 +21,7 @@ export default {
     OrderDetailModal,
   },
   data() {
-    return {
+    return {              
       orders: [],
       selectedOrderDetails: null,
       isOrderModalOpen: false,

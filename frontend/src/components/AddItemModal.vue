@@ -20,14 +20,21 @@
           <label for="image_url">Image URL:</label>
           <input v-model="FoodItemData.image_url" id="image_url" placeholder="Image URL" class="rounded-input" />
         </div>
+        
   
         <button class="update-button" @click="addFoodItem">Add</button>
         <button class="close-button" @click="closeModal">Close</button>
+        <p class="or">or</p>
+        <form @submit.prevent="uploadFile">
+          <input  type="file" ref="fileInput" accept=".csv" required />
+          <button class="update-button" type="submit">Upload</button>
+        </form>
       </div>
     </div>
   </template>
   
   <script>
+    import axios from 'axios';
   export default {
     props: {
       showModal: Boolean,
@@ -52,6 +59,42 @@
       addFoodItem() {
         this.$emit('addFoodItem', this.FoodItemData);
       },
+
+      async uploadFile() {
+      const fileInput = this.$refs.fileInput;
+      const file = fileInput.files[0];
+      // console.log('fike is ',file)
+
+      if (!file) {
+        alert("Please select a CSV file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      console.log(formData.get("file"));
+      const token = this.$cookies.get("token");
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/restaurants/uploadFoodItems",
+          formData,
+          {
+            headers: {
+              Authorization: `${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log(response);
+        alert("Successfully uploaded file.")
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        alert("Failed to upload file.");
+      } finally {
+        // Clear the file input after submission
+        fileInput.value = null;
+      }
+    },
     },
   };
   </script>
@@ -111,10 +154,15 @@
     border-radius: 8px;
     cursor: pointer;
     margin-right: 10px;
+    
   }
   
   .close-button {
     background-color: #666;
+  }
+
+  .or{
+    margin-top: 8px;
   }
   </style>
   
