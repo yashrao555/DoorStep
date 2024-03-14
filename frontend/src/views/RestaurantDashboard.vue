@@ -16,6 +16,8 @@
         </form> -->
       </div>
     </div>
+    
+
 
     <!-- Card Section -->
     <div class="card-section">
@@ -37,6 +39,8 @@
         </div>
       </div>
     </div>
+
+    
 
     <AddItemModal
       :showModal="showAddModal"
@@ -68,7 +72,7 @@ import { jwtDecode } from "jwt-decode";
 import UpdateModal from "@/components/UpdateModal.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import AddItemModal from "../components/AddItemModal.vue";
-import io from "socket.io-client";
+
 
 export default {
   name: "FoodItems",
@@ -80,17 +84,9 @@ export default {
       showAddModal: false,
       selectedFoodItem: null,
       restaurantId: null, // Variable to store the restaurant id
-      socket: null,
     };
   },
-  beforeUnmount() {
-    // Close the socket connection when the component is destroyed
-    if (this.socket) {
-      this.socket.close();
-    }
-  },
   mounted() {
-    this.initializeSocket();
     // Retrieve restaurant id from cookies
     this.restaurantId = VueCookies.get("token")
       ? this.decodeToken(VueCookies.get("token")).restaurantId
@@ -101,6 +97,7 @@ export default {
       this.fetchFoodItems(this.restaurantId);
     }
   },
+  
   methods: {
     // Additional methods if needed
     decodeToken(token) {
@@ -217,20 +214,6 @@ export default {
           // Handle error as needed
         });
     },
-
-    initializeSocket() {
-      // const token = this.$cookies.get("token");
-      // const decoded = jwtDecode(token);
-      this.socket = io("http://localhost:3000", {
-        transports: ["websocket"],
-      });
-
-      // Listen for real-time updates
-      this.socket.on("progress", (processedCount) => {
-        console.log("emitted event ", processedCount);
-      
-      });
-    },
   },
   components: { UpdateModal, DeleteModal, AddItemModal },
 };
@@ -320,4 +303,6 @@ h2 {
 .food-details {
   margin-top: 10px;
 }
+
+
 </style>
