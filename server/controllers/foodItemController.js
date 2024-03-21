@@ -40,25 +40,67 @@ foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.si
 });
 
   
-  const processCSVFile = async (restaurantId, filePath,io) => {
-    return new Promise((resolve, reject) => {
-      let processedCount=0;
+  // const processCSVFile = async (restaurantId, filePath,io) => {
+  //   return new Promise((resolve, reject) => {
+  //     let processedCount=0;
       
+  //     const stream = fs.createReadStream(filePath)
+  //       .pipe(csvParser())
+  //       .on('data', async (foodItemData) => {
+  //         try {
+  //           await updateOrInsertFoodItem(restaurantId, foodItemData);
+  //           processedCount++;
+  //           io.emit('progress',{processedCount},()=>{
+  //             console.log("event emitteddddd")
+  //           })
+  //         } catch (error) {
+  //           console.error('Error processing food item:', error);
+  //           reject('Failed to process food items');
+  //         }
+  //       })
+  //       .on('end', () => {
+  //         resolve();
+  //       })
+  //       .on('error', (error) => {
+  //         console.error('Error reading CSV file:', error);
+  //         reject('Failed to read CSV file');
+  //       });
+  //   });
+  // };
+
+  const processCSVFile = async (restaurantId, filePath, io) => {
+    return new Promise((resolve, reject) => {
+      let buffer = [];
       const stream = fs.createReadStream(filePath)
         .pipe(csvParser())
         .on('data', async (foodItemData) => {
-          try {
-            await updateOrInsertFoodItem(restaurantId, foodItemData);
-            processedCount++;
-            io.emit('progress',{processedCount},()=>{
-              console.log("event emitteddddd")
-            })
-          } catch (error) {
-            console.error('Error processing food item:', error);
-            reject('Failed to process food items');
+          buffer.push(foodItemData);
+          if (buffer.length === 5) {
+            // Pause the stream after filling the buffer
+            stream.pause();
+            try {
+              // Process the buffer
+              await processBuffer(restaurantId, buffer);
+              // Clear the buffer
+              buffer = [];
+              // Resume the stream
+              stream.resume();
+            } catch (error) {
+              console.error('Error processing buffer:', error);
+              reject('Failed to process buffer');
+            }
           }
         })
-        .on('end', () => {
+        .on('end', async () => {
+          // Process remaining items in the buffer if any
+          if (buffer.length > 0) {
+            try {
+              await processBuffer(restaurantId, buffer);
+            } catch (error) {
+              console.error('Error processing remaining buffer:', error);
+              reject('Failed to process remaining buffer');
+            }
+          }
           resolve();
         })
         .on('error', (error) => {
@@ -67,6 +109,17 @@ foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.si
         });
     });
   };
+  const processBuffer = async (restaurantId, buffer) => {
+    for (const foodItemData of buffer) {
+      try {
+        await updateOrInsertFoodItem(restaurantId, foodItemData);
+      } catch (error) {
+        console.error('Error processing food item:', error);
+        throw new Error('Failed to process food items');
+      }
+    }
+  };
+
 
   foodController.post('/restaurants/addFoodItems', authenticateToken,async (req, res) => {
     const restaurantId  = req.restaurantId;
