@@ -43,15 +43,7 @@ foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.si
   const processCSVFile = async (restaurantId, filePath,io) => {
     return new Promise((resolve, reject) => {
       let processedCount=0;
-      fs.readFile(filePath, function (err, data) {
-        if (!err) {
-            let lines = data.toString().split('\n');
-            let rowCount = Object.keys(lines).length - 2;
-            io.emit('rowcount',{rowCount},()=>{
-              // console.log("event emitteddddd")
-            })
-        }
-    })
+      
       const stream = fs.createReadStream(filePath)
         .pipe(csvParser())
         .on('data', async (foodItemData) => {
