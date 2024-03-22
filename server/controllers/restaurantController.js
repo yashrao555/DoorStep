@@ -55,5 +55,4 @@ restaurantController.get('/restaurants/sort-by-distance/:customer_lat/:customer_
 
     
   })
-
   module.exports = restaurantController

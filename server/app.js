@@ -13,6 +13,7 @@ const restaurantController = require('./controllers/restaurantController')
 const cartController = require('./controllers/cartController')
 const orderController = require("./controllers/orderController");
 const locationController = require("./controllers/locationController");
+const staffController = require("./controllers/staffController");
 
 const app = express();
 const server = http.createServer(app);
@@ -38,8 +39,10 @@ app.use(restaurantController)
 app.use(cartController)
 app.use(orderController)
 app.use(locationController)
+app.use(staffController)
 
 const sequelize = require("./util/database");
+
 
 server.listen(3000, () => {
   sequelize

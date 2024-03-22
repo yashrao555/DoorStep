@@ -42,4 +42,6 @@ restaurantAuthController.post("/login-restaurant", async (req, res) => {
     }
 });
 
+
+
 module.exports = restaurantAuthController
