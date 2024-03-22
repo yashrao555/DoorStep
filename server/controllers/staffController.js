@@ -1,5 +1,6 @@
 const express = require('express');
-const { registerStaff, getAllStaff, loginStaff } = require('../services/staffService');
+const { registerStaff, getAllStaff, loginStaff, accessProtectedStaffResource } = require('../services/staffService');
+const { authenticateToken } = require('../util/verifyToken');
 
 const staffController = express.Router()
 
@@ -42,7 +43,15 @@ staffController.get('/get-all-staff',async(req,res)=>{
     }
 })
 
-staffController.post('/login-staff',async(req,res)=>{
 
-})
+staffController.get('/protected-staff-resource', authenticateToken, (req, res) => {
+    const result = accessProtectedStaffResource(req);
+
+    if (result.message) {
+        res.json(result);
+    } else {
+        res.status(500).json(result);
+    }
+});
+
 module.exports = staffController

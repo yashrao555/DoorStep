@@ -55,7 +55,7 @@ const loginStaff = async (email, password) => {
       const token = jwt.sign(
         {
           staffId: staff.id,
-          restaurantId: staff.restaurant_id,
+          restaurant_Id: staff.restaurant_id,
           role: staff.role,
         },
         "your_secret_key",
@@ -90,4 +90,18 @@ const getAllStaff = async () => {
   }
 };
 
-module.exports = { registerStaff, getAllStaff, loginStaff };
+const accessProtectedStaffResource = (req) => {
+    try {
+        // Access the customer ID from the decoded token payload attached to the request
+        const staffId = req.staffId;
+
+        // Perform actions with the customer ID or respond accordingly
+        return { message: `Protected resource accessed by customer ID: ${staffId}` };
+    } catch (error) {
+        console.error('Error accessing protected resource:', error);
+        return { error: 'Failed to access protected resource' };
+    }
+};
+
+
+module.exports = { registerStaff, getAllStaff, loginStaff,accessProtectedStaffResource };
