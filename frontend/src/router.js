@@ -14,6 +14,7 @@ import VerifyOTPpage from "./views/VerifyOTPpage.vue";
 import VerifyOTPrestaurant from "./views/VerifyOTPrestaurant.vue";
 import MyOrders from './views/MyOrders.vue'
 import RestaurantDashboard from './views/RestaurantDashboard.vue';
+import RegisterStaff from "./views/RegisterStaff.vue";
 
 const routes = [
   { path: "/", component: LandingPage },
@@ -28,6 +29,7 @@ const routes = [
   { path: "/verifyRestaurantOTP", component: VerifyOTPrestaurant },
   { path: "/restaurant-dashboard", component: RestaurantDashboard},
   { path: "/myOrders", component: MyOrders, beforeEnter: guardLoggedIn },
+  { path: "/register/staff", component: RegisterStaff, beforeEnter: guardLoggedIn },
 ];
 
 const router = createRouter({

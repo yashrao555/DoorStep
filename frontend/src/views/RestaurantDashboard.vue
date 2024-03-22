@@ -9,6 +9,7 @@
         <h1>DoorStep</h1>
         <p>From Our Kitchen To Your Doorstep!</p>
         <h2 @click="openAddModal" class="add-item-link">Add food items?</h2>
+        <h5 @click="navigateToRegisterStaff" class="add-item-link">Register staff members ?</h5>
         <!-- <h2>Food Item Upload</h2>
         <form @submit.prevent="uploadFile">
           <input type="file" ref="fileInput" accept=".csv" required />
@@ -214,6 +215,10 @@ export default {
           // Handle error as needed
         });
     },
+
+    navigateToRegisterStaff(){
+      this.$router.push('/register/staff')
+    }
   },
   components: { UpdateModal, DeleteModal, AddItemModal },
 };
