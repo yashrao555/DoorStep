@@ -2,9 +2,9 @@
   <div id="app" class="login-container">
     <h3 class="login-header">Register a staff member</h3>
     <form @submit.prevent="register" class="login-form">
-      <!-- <p class="signup-link">
-          Need an account? <a href="/register">Sign up</a>
-        </p> -->
+      <p class="signup-link">
+          Already registered? <a href="/login">Login</a>
+        </p>
       <!-- <router-link to = '/'>Jaoo</router-link> -->
 
       <div class="form-group">
@@ -60,6 +60,7 @@
           <option selected>Choose...</option>
           <option>Owner</option>
           <option>Order Manager</option>
+          <option>Item Manager</option>
         </select>
       </div>
 
@@ -113,7 +114,14 @@ export default {
 
           // Handle success response
           console.log("Staff registered successfully:", response.data);
-          alert('Staff registered successfully')
+          if(response.data.error){
+            alert(response.data.error)
+          }
+          else{
+            alert('Staff registered successfully')
+          }
+          
+          this.$router.push('/login')
         } catch (error) {
           // Handle error response
           console.error("Error registering staff:", error.response.data);

@@ -19,8 +19,35 @@
         type="text"
         placeholder="Search for restaurants..."
       />
+
+      <div class="filter-dropdown" v-if="cities.length > 0">
+        <select v-model="selectedCity" @change="searchByCity(selectedCity)">
+          <option value="">Select a city</option>
+          <option v-for="city in cities" :key="city.id" :value="city.id" >
+            {{ city.name }}
+          </option>
+        </select>
+      </div>
       <button @click="clearSearch">Clear</button>
     </div>
+
+    <div v-if="filteredRestaurant.length>0">
+    <h2>Restaurants according to selected city</h2>
+    <div class="card-section">
+      <div v-for="(row, rowIndex) in rows3" :key="rowIndex" class="card-row">
+        <food-cards
+          v-for="(card, cardIndex) in row"
+          :key="cardIndex"
+          :title="card.name"
+          :opensAt="card.opens_at"
+          :closesAt="card.closes_at"
+          :address="card.address"
+          :id="card.id"
+          :cityId='selectedCity'
+        />
+      </div>
+    </div>
+  </div>
 
 <div v-if="nearbyRestaurants.length>0">
     <h2>Restaurants near you</h2>
@@ -34,12 +61,13 @@
           :closesAt="card.closes_at"
           :address="card.address"
           :id="card.id"
+          :cityId = "currentCityId"
         />
       </div>
     </div>
   </div>
 
-    <h2>All Restaurants</h2>
+    <!-- <h2>All Restaurants</h2>
     <div class="card-section">
       <div v-for="(row, rowIndex) in rows1" :key="rowIndex" class="card-row">
         <food-cards
@@ -52,7 +80,7 @@
           :id="card.id"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -72,15 +100,73 @@ export default {
       nearbyRestaurants: [],
       rows1: [], // Array to store rows of cards
       rows2: [],
+      rows3:[],
       searchTerm: "",
+      cities: [], // Array to store cities fetched from the backend
+      selectedCity: "",
+      filteredRestaurant:[],
+      currentCityId:null,
     };
   },
   mounted() {
     this.fetchRestaurants();
     this.fetchUserAddressAndFetchRestaurants();
+    this.fetchCities();
     // Initialize rows with 4 cards each
   },
   methods: {
+
+    async fetchCities() {
+      try {
+        const response = await axios.get("http://localhost:3000/get-all-cities");
+        this.cities = response.data; // Assuming your API returns an array of cities
+      } catch (error) {
+        console.error("Failed to fetch cities:", error);
+      }
+    },
+
+
+    async searchByCity(cityId) {
+
+      // console.log('city : ',cityName)
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/search-by-city",
+           {cityId} 
+        );
+
+        // Extract restaurant IDs from the response
+        const restaurantIds = response.data.restaurantIds;
+
+        // Fetch restaurant details using restaurant IDs
+        await this.fetchRestaurantDetails(restaurantIds);
+      } catch (error) {
+        console.error("Error searching restaurants by city:", error);
+      }
+    },
+
+
+    async fetchRestaurantDetails(restaurantIds) {
+      try {
+        const promises = restaurantIds.map(restaurantId =>
+          axios.get(`http://localhost:3000/restaurants/${restaurantId}`)
+        );
+
+        const responses = await Promise.all(promises);
+
+        // Extract restaurant details from the responses
+        const restaurants = responses.map(response => response.data.data);
+
+        // Update the restaurants data in the component
+        this.filteredRestaurant = restaurants;
+        this.rows3 = this.chunkArray(this.filteredRestaurant, 5);
+      } catch (error) {
+        console.error("Error fetching restaurant details:", error);
+      }
+    },
+
+
+
     // Helper function to chunk the array into rows
     chunkArray(array, size) {
       const chunkedArray = [];
@@ -142,6 +228,12 @@ export default {
 
     // Extract user's address from the response
     const userAddress = userAddressResponse.data.address;
+    const cityName = userAddressResponse.data.city
+
+    const cityIdResponse = await axios.post('http://localhost:3000/getCityId',{cityName})
+    this.currentCityId = cityIdResponse.data.cityId
+
+    console.log('current city is ',this.currentCityId);
 
     // Use user's address to fetch coordinates
     const coordinatesResponse = await axios.get(
@@ -246,5 +338,14 @@ h1 {
   padding: 0.5rem 1rem;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-dropdown {
+  margin-left: 1rem; /* Adjust margin as needed */
+}
+
+.filter-dropdown select {
+  padding: 0.5rem;
+  border-radius: 4px;
 }
 </style>

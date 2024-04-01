@@ -2,8 +2,15 @@
 
 <template>
   <div>
+
+    <div class="filter-dropdown">
+      <select v-model="selectedCityId" @change="filterOrdersByCity">
+        <option value="">All Cities</option>
+        <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
+      </select>
+    </div>
     <!-- <h1>My Orders</h1> -->
-    <OrderCard v-for="order in orders" :key="order.id" :order="order" @open-modal="openOrderModal" />
+    <OrderCard v-for="order in filterOrdersByCity()" :key="order.id" :order="order" @open-modal="openOrderModal" />
     <OrderDetailModal :orderDetails="selectedOrderDetails" @close-modal="closeOrderModal" />
   </div>
 </template>
@@ -26,8 +33,17 @@ export default {
       selectedOrderDetails: null,
       isOrderModalOpen: false,
       socket: null,
+      cities: [],
+      selectedCityId: '',
+      // filteredOrders:[]
     };
   },
+  // computed: {
+  //   filteredOrders() {
+  //     // Initially, display all orders
+  //     return this.orders;
+  //   },
+  // },
   methods: {
     async getAllOrders() {
       const token = this.$cookies.get('token');
@@ -43,6 +59,33 @@ export default {
         console.log('Error displaying orders:', error);
       }
     },
+
+    async getCitiesForRestaurant() {
+      try {
+        const token = this.$cookies.get("token");
+        const response = await axios.get('http://localhost:3000/cities-for-restaurant', {
+            headers: {
+              Authorization: `${token}`,
+            },
+          });
+        this.cities = response.data;
+      } catch (error) {
+        console.log('Error retrieving cities:', error);
+      }
+    },
+
+    filterOrdersByCity() {
+      // Filter orders based on selected city
+      console.log('selected city id ',this.selectedCityId);
+      if (this.selectedCityId) {
+        console.log('orders ',this.orders);
+        return this.orders.filter(order => order.cityId === this.selectedCityId);
+      } else {
+        return this.orders; // Show all orders if no city is selected
+      }
+    },
+
+
     openOrderModal(orderDetails) {
       this.selectedOrderDetails = orderDetails;
       this.isOrderModalOpen = true;
@@ -85,6 +128,7 @@ export default {
   mounted() {
     this.getAllOrders();
     this.initializeSocket();
+    this.getCitiesForRestaurant();
   },
   beforeUnmount() {
     // Close the socket connection when the component is destroyed

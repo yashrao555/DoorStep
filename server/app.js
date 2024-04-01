@@ -14,6 +14,7 @@ const cartController = require('./controllers/cartController')
 const orderController = require("./controllers/orderController");
 const locationController = require("./controllers/locationController");
 const staffController = require("./controllers/staffController");
+const cityController = require('./controllers/cityController')
 
 const app = express();
 const server = http.createServer(app);
@@ -40,8 +41,10 @@ app.use(cartController)
 app.use(orderController)
 app.use(locationController)
 app.use(staffController)
+app.use(cityController)
 
 const sequelize = require("./util/database");
+
 
 
 server.listen(3000, () => {

@@ -9,7 +9,13 @@
         <h1>DoorStep</h1>
         <p>From Our Kitchen To Your Doorstep!</p>
         <h2 @click="openAddModal" class="add-item-link">Add food items?</h2>
-        <h5 @click="navigateToRegisterStaff" class="add-item-link">Register staff members ?</h5>
+        <h5
+          v-if="!isStaff"
+          @click="navigateToRegisterStaff"
+          class="add-item-link"
+        >
+          Register staff members ?
+        </h5>
         <!-- <h2>Food Item Upload</h2>
         <form @submit.prevent="uploadFile">
           <input type="file" ref="fileInput" accept=".csv" required />
@@ -17,8 +23,22 @@
         </form> -->
       </div>
     </div>
-    
 
+    <!-- Button to trigger the dropdown menu -->
+    <div>
+      <button class="add-branch-button" @click="toggleDropdown">
+        Add Branch
+      </button>
+
+      <!-- Dropdown menu for selecting the city -->
+      <div v-if="showDropdown" class="city-dropdown">
+        <ul>
+          <li v-for="city in cities" :key="city.id" @click="addBranch(city.id)">
+            {{ city.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
     <!-- Card Section -->
     <div class="card-section">
@@ -40,8 +60,6 @@
         </div>
       </div>
     </div>
-
-    
 
     <AddItemModal
       :showModal="showAddModal"
@@ -74,7 +92,6 @@ import UpdateModal from "@/components/UpdateModal.vue";
 import DeleteModal from "@/components/DeleteModal.vue";
 import AddItemModal from "../components/AddItemModal.vue";
 
-
 export default {
   name: "FoodItems",
   data() {
@@ -85,9 +102,15 @@ export default {
       showAddModal: false,
       selectedFoodItem: null,
       restaurantId: null, // Variable to store the restaurant id
+      isStaff: false,
+      showDropdown: false,
+      cities: [],
     };
   },
   mounted() {
+    if (this.decodeToken(VueCookies.get("token")).staffId) {
+      this.isStaff = true;
+    }
     // Retrieve restaurant id from cookies
     this.restaurantId = VueCookies.get("token")
       ? this.decodeToken(VueCookies.get("token")).restaurantId
@@ -97,10 +120,28 @@ export default {
     if (this.restaurantId) {
       this.fetchFoodItems(this.restaurantId);
     }
+
+    this.fetchCities();
   },
-  
+
   methods: {
     // Additional methods if needed
+
+    async fetchCities() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/get-all-cities"
+        );
+        this.cities = response.data; // Assuming response.data is an array of cities
+      } catch (error) {
+        console.error("Failed to fetch cities:", error);
+      }
+    },
+
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown; // Toggle the dropdown visibility
+    },
+
     decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
@@ -122,15 +163,18 @@ export default {
         console.error("Failed to fetch food items:", error);
       }
     },
+
     openUpdateModal(foodItem) {
       this.selectedFoodItem = foodItem;
       console.log(this.selectedFoodItem);
       this.showUpdateModal = true;
     },
+
     openDeleteModal(foodItem) {
       this.selectedFoodItem = foodItem;
       this.showDeleteModal = true;
     },
+
     openAddModal() {
       this.showAddModal = true;
     },
@@ -216,8 +260,33 @@ export default {
         });
     },
 
-    navigateToRegisterStaff(){
-      this.$router.push('/register/staff')
+    navigateToRegisterStaff() {
+      this.$router.push("/register/staff");
+    },
+
+    addBranch(cityId) {
+      // Call your API to add the branch (restaurant city) to the restaurant
+      const restaurantId = this.restaurantId; // Assuming you have the restaurantId stored in data
+      axios
+        .post(`http://localhost:3000/create-entry`, {
+          restaurantId,
+          cityId
+        })
+        .then(response => {
+          // Handle success, e.g., show a success message
+          console.log("Branch added successfully:", response.data);
+          alert(response.data.message)
+          // Optionally, you can refresh the list of branches (if needed)
+          // this.fetchFoodItems(this.restaurantId);
+        })
+        .catch(error => {
+          console.error("Failed to add branch:", error);
+          alert('Cannot add same branch again')
+          // Handle error as needed
+        })
+        .finally(() => {
+          this.showDropdown = false; // Close the dropdown after adding the branch
+        });
     }
   },
   components: { UpdateModal, DeleteModal, AddItemModal },
@@ -309,5 +378,38 @@ h2 {
   margin-top: 10px;
 }
 
+.add-branch-button {
+  margin-top: 20px;
+  background-color: #ffa500;
+  color: #fff;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
+.city-dropdown {
+  position: absolute;
+  top: 550px; /* Adjust the position based on your layout */
+  left: 120px;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.city-dropdown ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.city-dropdown ul li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.city-dropdown ul li:hover {
+  background-color: #f0f0f0;
+}
 </style>

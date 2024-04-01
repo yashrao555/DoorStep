@@ -2,7 +2,7 @@
     <div class="order-card" @click="openOrderModal">
       <div class="card-content">
         <h3 class="restaurant-name">{{ name }}</h3>
-        <p class="restaurant-address">{{ address }}</p>
+        <p class="restaurant-address">{{ city }}</p>
   
         <div
           v-for="item in order.items"
@@ -27,7 +27,8 @@
     data() {
       return {
         name: null,
-        address: null,
+        
+        city:null
       };
     },
   
@@ -35,12 +36,14 @@
       async getRestaurant() {
         try {
           const restaurantId = this.order.restaurant_id;
+          const cityId = this.order.cityId;
           const response = await axios.get(
             `http://localhost:3000/restaurants/${restaurantId}`
           );
           const restaurantData = response.data.data;
-            console.log(restaurantData)
-          this.address = restaurantData.address;
+          const cityResponse = await axios.post('http://localhost:3000/getCityName',{cityId})
+          this.city = cityResponse.data.city.name
+          
           this.name = restaurantData.name;
         } catch (error) {
           console.log(error);

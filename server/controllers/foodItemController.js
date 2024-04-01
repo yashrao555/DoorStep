@@ -161,6 +161,7 @@ foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.si
 
   foodController.get('/restaurants/:restaurantId/getAllFoodItems',async(req,res)=>{
     const restaurantId  = req.params.restaurantId;
+    console.log('rest idjhjj ',restaurantId);
   
     try {
       const allFoodItems = await getFoodItemsByRestaurantId(restaurantId);

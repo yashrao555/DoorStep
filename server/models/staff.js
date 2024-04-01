@@ -20,7 +20,8 @@ Staff.init(
     email: DataTypes.STRING,
     password:DataTypes.STRING,
     role: DataTypes.TEXT,
-    restaurant_id:DataTypes.INTEGER
+    restaurant_id:DataTypes.INTEGER,
+    cityId: DataTypes.TEXT
   },
   {
     sequelize,

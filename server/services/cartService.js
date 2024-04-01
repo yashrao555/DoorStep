@@ -88,7 +88,8 @@ async function deleteCart(customer_id){
 })
 return await cart.destroy();
 }
-async function createCart(customer_id, restaurant_id, items) {
+async function createCart(customer_id, restaurant_id, items,cityId) {
+  console.log('city id inside service ',cityId);
   items.quantity=1;
   let newItems  = JSON.stringify([items])
   return await Cart.create({
@@ -96,6 +97,7 @@ async function createCart(customer_id, restaurant_id, items) {
     restaurant_id,
     items: newItems,
     total_amount:items.price,
+    cityId:cityId,
   });
 }
 

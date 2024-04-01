@@ -9,7 +9,7 @@
       <h2 class="section-title">Menu</h2>
       <div class="menu-container">
         <div v-for="foodItem in restaurantMenu" :key="foodItem.id">
-          <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId"/>
+          <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId" :currentCityId="cityId"/>
         </div>
       </div>
       <!-- <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link> -->
@@ -35,12 +35,14 @@ export default {
       // Use a computed property to find the restaurant based on the route parameter
       restaurant: null,
       restaurantMenu: [],
-      restaurantId:0
+      restaurantId:0,
+      cityId:0
     };
   },
   mounted() {
-    this.restaurantId = parseInt(this.$route.params.id);
-    console.log('rest id is : ',this.restaurantId)
+    this.restaurantId = parseInt(this.$route.params.id1);
+    this.cityId = parseInt(this.$route.params.id2);
+    console.log('city id is : ',this.cityId)
 
   this.fetchRestaurantDetails(this.restaurantId);
 
@@ -63,6 +65,7 @@ export default {
         const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`);
         const { data } = response.data;
         this.restaurantMenu = data; // Update the restaurantMenu with the fetched data
+        console.log('menu ',this.restaurantMenu)
       } catch (error) {
         console.error('Error fetching restaurant menu:', error);
       }

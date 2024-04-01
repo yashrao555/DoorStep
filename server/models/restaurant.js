@@ -1,10 +1,12 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../util/database');
+const City = require('./city');
 
 class Restaurant extends Model {
   static associate(models) {
-    // Define associations here, if any
-    // For example: Restaurant.hasMany(models.Order);
+    Restaurant.associate = function(models) {
+      Restaurant.belongsToMany(City, { through: 'RestaurantCity' });
+    };
   }
 
   // You can add custom methods or configurations here if needed

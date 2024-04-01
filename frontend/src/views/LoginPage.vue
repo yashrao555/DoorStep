@@ -13,6 +13,7 @@
           <option selected>Choose...</option>
           <option>Customer</option>
           <option>Restaurant</option>
+          <option>Staff</option>
         </select>
       </div>
 
@@ -61,6 +62,7 @@
 
 <script>
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 // import VueCookies from "vue-cookies";
 export default {
   data() {
@@ -117,7 +119,7 @@ export default {
               this.errors.login = response.data.error;
               alert(response.data.error);
             }
-          } else {
+          } else if (this.role === "Restaurant"){
             const response = await axios.post(
               "http://localhost:3000/login-restaurant",
               {
@@ -137,6 +139,36 @@ export default {
               // Dispatch login action
               // this.$store.dispatch("login", { role });
               this.$router.push("/restaurant-dashboard");
+            } else if (response.data.error) {
+              this.errors.login = response.data.error;
+              alert(response.data.error);
+            }
+          }
+          else{
+            const response = await axios.post(
+              "http://localhost:3000/login-staff",
+              {
+                email: this.email,
+                password: this.password,
+              }
+            );
+
+            console.log(response.data);
+
+            if (response.data.token) {
+              alert("Logged in successfully!");
+              this.$cookies.set("token", response.data.token);
+              const token = this.$cookies.get('token')
+              const decoded = jwtDecode(token)
+              console.log('token for staff :',decoded)
+
+              if(decoded.role === "order manager"){
+                this.$router.push('/myOrders')
+              }
+              else if(decoded.role === "Item Manager"){
+                this.$router.push('/restaurant-dashboard')
+              }
+              // this.$router.push("/restaurant-dashboard");
             } else if (response.data.error) {
               this.errors.login = response.data.error;
               alert(response.data.error);

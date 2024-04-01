@@ -1,6 +1,6 @@
 // src/router.js
 import VueCookies from "vue-cookies";
-// import {jwtDecode} from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "./views/HomePage.vue";
 import RegisterAsCustomer from "./views/RegisterAsCustomer.vue";
@@ -22,14 +22,18 @@ const routes = [
   { path: "/register/customer", component: RegisterAsCustomer },
   { path: "/register/restaurant", component: RegisterAsRestaurant },
   { path: "/login", component: LoginPage },
-  { path: "/restaurant/:id", component: RestaurantPage },
-  { path: "/cart", component: AddToCart,  beforeEnter: guardLoggedIn },
+  { path: "/restaurant/:id1/:id2", component: RestaurantPage },
+  // { path: "/cart", component: AddToCart,  beforeEnter: guardLoggedIn },
+  { path: "/cart", component: AddToCart },
   { path: "/checks", component: CheckPage },
   { path: "/verifyOTP", component: VerifyOTPpage },
   { path: "/verifyRestaurantOTP", component: VerifyOTPrestaurant },
+  // { path: "/restaurant-dashboard", component: RestaurantDashboard, beforeEnter: guardRestaurantLoggedIn},
+  // { path: "/myOrders", component: MyOrders, beforeEnter: guardRestaurantLoggedIn },
+  // { path: "/register/staff", component: RegisterStaff, beforeEnter: guardLoggedIn },
   { path: "/restaurant-dashboard", component: RestaurantDashboard},
-  { path: "/myOrders", component: MyOrders, beforeEnter: guardLoggedIn },
-  { path: "/register/staff", component: RegisterStaff, beforeEnter: guardLoggedIn },
+  { path: "/myOrders", component: MyOrders},
+  { path: "/register/staff", component: RegisterStaff},
 ];
 
 const router = createRouter({
@@ -38,31 +42,72 @@ const router = createRouter({
 });
 
 
-function guardLoggedIn(to, from, next) {
-  const token = VueCookies.get("token");
+// function guardLoggedIn(to, from, next) {
+//   const token = VueCookies.get("token");
   
-  if (token) {
-    // User is logged in, allow access
-    next();
-  } else {
-    // User is not logged in, redirect to login page
-    next('/login');
-  }
-}
+//   if (token) {
+//     // User is logged in, allow access
+//     next();
+//   } else {
+//     // User is not logged in, redirect to login page
+//     next('/login');
+//   }
+// }
 
 // function guardRestaurantLoggedIn(to, from, next) {
 //   const token = VueCookies.get('token'); 
-//       if(token===null){
-//         next('/');
-//         return;
-//       }
+      
 //       const decodedToken = jwtDecode(token);
-//       if(decodedToken.restaurantId){
-//         next('/restaurant-dashboard');
+//       console.log('this is dt : ',decodedToken)
+//       if(decodedToken.staffId){
+//         if(decodedToken.role === 'order manager'){
+//           next('/myOrders');
+//         }
+//         else if(decodedToken.role === 'Item Manager'){
+//           next();
+//         }
+//         else{
+//           next();
+//         }
 //       }
 //       else{
-//         next('/');
+//         next();
 //       }
+const publicRoutes = ['/login', '/', '/register','/register/customer',"/register/restaurant","/restaurant/:id1/:id2","/verifyOTP","/verifyRestaurantOTP",];
+
+router.beforeEach((to, from, next) => {
+  const token = VueCookies.get('token'); 
+
+  // Check if token exists
+  if (publicRoutes.includes(to.path)) {
+    // Allow access to public routes
+    next();
+  } else if (!token) {
+    // Redirect to login if token is null or undefined
+    next('/login');
+  }  else {
+    // Decode the token
+    const decoded = jwtDecode(token);
+
+    // Check if decoded token has staffId
+    if (decoded.staffId) {
+      // Check the role and redirect accordingly
+      if (decoded.role === 'order manager' && to.path !== '/myOrders') {
+        next('/myOrders');
+      } else if (decoded.role === 'Item Manager' && to.path !== '/restaurant-dashboard') {
+        next('/restaurant-dashboard');
+      } else {
+        // Allow access to the requested route
+        next();
+      }
+    } else {
+      // Redirect to login if staffId is not present
+      next();
+    }
+  }
+});
+
+
 // }
 // router.beforeEach(async (to, from, next) => {
 //   const check = ["/login", "/register"].reduce(

@@ -28,7 +28,7 @@ cartController.get('/get-cart',authenticateToken,async(req,res)=>{
 cartController.post('/add-to-cart',authenticateToken,async (req, res) => {
   customer_id=req.customerId;
   console.log("CUST",customer_id);
-    const {restaurant_id, items } = req.body;
+    const {restaurant_id, items, cityId} = req.body;
   
     try {
       // Check if a cart for the customer already exists
@@ -43,7 +43,8 @@ cartController.post('/add-to-cart',authenticateToken,async (req, res) => {
        } 
       else {
         // If the cart doesn't exist, create a new cart
-        const newCartItem = await createCart(customer_id, restaurant_id,items);
+        // console.log('city id inside create', typeof(cityId));
+        const newCartItem = await createCart(customer_id, restaurant_id,items,cityId);
         console.log('nci',newCartItem)
         res.json({ message: 'Cart created successfully', data: newCartItem });
       }

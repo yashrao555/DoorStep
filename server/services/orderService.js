@@ -8,7 +8,7 @@ const { getCartByCustomerAndRestaurant } = require('./cartService')
 async function createOrder(customer_id,callback){
     const cart = await getCartByCustomerAndRestaurant(customer_id)
     
-    let {restaurant_id,items,total_amount} = cart
+    let {restaurant_id,items,total_amount,cityId} = cart
     items = JSON.stringify(items)
     console.log(typeof(items));
     console.log(customer_id,restaurant_id,items,total_amount)
@@ -17,7 +17,8 @@ async function createOrder(customer_id,callback){
         restaurant_id,
         items,
         total_amount,
-        status:"Pending"
+        status:"Pending",
+        cityId
     })
 
     const user = await Customer.findOne({

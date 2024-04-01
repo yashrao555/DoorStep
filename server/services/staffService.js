@@ -55,7 +55,7 @@ const loginStaff = async (email, password) => {
       const token = jwt.sign(
         {
           staffId: staff.id,
-          restaurant_Id: staff.restaurant_id,
+          restaurantId: staff.restaurant_id,
           role: staff.role,
         },
         "your_secret_key",

@@ -2,7 +2,7 @@
   <div v-if="orderDetails" class="order-modal">
     <div class="restaurant-details">
       <h2 class="restaurant-name">{{ name }}</h2>
-      <p class="restaurant-address">{{ address }}</p>
+      <p class="restaurant-address">{{ city }}</p>
     </div>
 
     <div class="order-items">
@@ -48,7 +48,8 @@ export default {
       name: null,
       address: null,
       tempStatus:null,
-      currentId:null
+      currentId:null,
+      city:null
     };
   },
   props: {
@@ -76,17 +77,22 @@ export default {
 
     async getRestaurant(orderDetails) {
         try {
+          // console.log('order details ',orderDetails);
           // const decoded = jwtDecode(this.token)
           const restaurantId = orderDetails.restaurant_id;
+          const cityId = orderDetails.cityId
           this.tempStatus = orderDetails.status;
           this.currentId = orderDetails.id
           const response = await axios.get(
             `http://localhost:3000/restaurants/${restaurantId}`
           );
           const restaurantData = response.data.data;
-            console.log(restaurantData)
+            console.log('rd',restaurantData)
           this.address = restaurantData.address;
           this.name = restaurantData.name;
+          
+          const cityResponse = await axios.post('http://localhost:3000/getCityName',{cityId})
+          this.city = cityResponse.data.city.name
         } catch (error) {
           console.log(error);
         }

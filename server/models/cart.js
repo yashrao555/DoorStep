@@ -24,7 +24,8 @@ Cart.init(
     customer_id: DataTypes.INTEGER,
     restaurant_id: DataTypes.INTEGER,
     items: DataTypes.TEXT,
-    total_amount: DataTypes.FLOAT
+    total_amount: DataTypes.FLOAT,
+    cityId:DataTypes.INTEGER
   },
   {
     sequelize,

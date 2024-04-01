@@ -30,6 +30,10 @@ export default {
       type: Number,
       required: true,
     },
+    currentCityId: {
+      type: Number,
+      required: true,
+    },
   },
 
   data() {
@@ -44,6 +48,7 @@ export default {
       return (this.foodItem.price * this.quantity).toFixed(2);
     },
   },
+  
   methods: {
   //   addToCart() {
   //   const token = this.$cookies.get('token');
@@ -165,6 +170,7 @@ export default {
           price: this.foodItem.price,
           // Add other necessary details from your food item
         },
+        cityId:this.currentCityId
       }, {
         headers: {
           Authorization: `${token}`,

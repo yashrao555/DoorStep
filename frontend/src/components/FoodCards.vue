@@ -7,7 +7,7 @@
         <p class="cards-times">Opens at - {{ opensAt }}</p>
         <p class="cards-times">Closes at - {{ closesAt }}</p>
         <p class="card-text">{{ address }}</p>
-        <a :href="generateRestaurantLink(id)" class="btn btn-success">View Restaurant</a>
+        <a :href="generateRestaurantLink(id,cityId)" class="btn btn-success">View Restaurant</a>
       </div>
     </div>
   </template>
@@ -19,13 +19,14 @@
       opensAt: String,
       closesAt:String,
       address:String,
-      id:Number
+      id:Number,
+      cityId:Number,
     },
 
     methods: {
-    generateRestaurantLink(id) {
+    generateRestaurantLink(id,cityId) {
       // Assuming your route path is '/restaurant/:id'
-      return `/restaurant/${id}`;
+      return `/restaurant/${id}/${cityId}`;
     },
   },
   }

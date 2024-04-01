@@ -35,6 +35,7 @@ Order.init(
     items: DataTypes.TEXT,
     total_amount: DataTypes.FLOAT,
     status: DataTypes.STRING,
+    cityId:DataTypes.INTEGER
   },
   {
     sequelize,

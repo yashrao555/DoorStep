@@ -73,7 +73,7 @@ authController.get('/get-user-address/:userId', async (req, res) => {
     });
       const userAddress = `${user.address},${user.city},${user.state},${user.zip}`;
   
-      res.json({ address: userAddress });
+      res.json({ address: userAddress, city:user.city});
     } catch (error) {
       console.error('Error fetching user address:', error);
       res.status(500).json({ error: 'Internal Server Error' });
