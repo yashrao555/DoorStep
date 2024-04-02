@@ -66,6 +66,7 @@
 
           <li class="nav-item dropdown">
             <a
+              v-if="role === 'restaurant'"
               class="nav-link navbar-brand dropdown-toggle"
               href="#"
               id="navbarDropdown"

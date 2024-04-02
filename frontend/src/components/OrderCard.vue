@@ -27,7 +27,6 @@
     data() {
       return {
         name: null,
-        
         city:null
       };
     },
@@ -41,10 +40,13 @@
             `http://localhost:3000/restaurants/${restaurantId}`
           );
           const restaurantData = response.data.data;
+          
           const cityResponse = await axios.post('http://localhost:3000/getCityName',{cityId})
-          this.city = cityResponse.data.city.name
+          this.city = cityResponse.data.cityName;
+          
           
           this.name = restaurantData.name;
+     
         } catch (error) {
           console.log(error);
         }

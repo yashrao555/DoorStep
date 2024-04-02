@@ -92,7 +92,7 @@ export default {
           this.name = restaurantData.name;
           
           const cityResponse = await axios.post('http://localhost:3000/getCityName',{cityId})
-          this.city = cityResponse.data.city.name
+          this.city = cityResponse.data.cityName
         } catch (error) {
           console.log(error);
         }
