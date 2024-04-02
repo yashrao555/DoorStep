@@ -275,7 +275,7 @@ export default {
         .then(response => {
           // Handle success, e.g., show a success message
           console.log("Branch added successfully:", response.data);
-          alert(response.data.message)
+          alert("Branch added successfully")
           // Optionally, you can refresh the list of branches (if needed)
           // this.fetchFoodItems(this.restaurantId);
         })
