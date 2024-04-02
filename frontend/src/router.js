@@ -77,9 +77,12 @@ const publicRoutes = ['/login', '/', '/register','/register/customer',"/register
 
 router.beforeEach((to, from, next) => {
   const token = VueCookies.get('token'); 
-
+  console.log(to);
   // Check if token exists
-  if (publicRoutes.includes(to.path)) {
+  if (publicRoutes.some(route => {
+    const regex = new RegExp(`^${route.replace(/:\w+/g, '\\w+')}$`);
+    return regex.test(to.path);
+  })) {
     // Allow access to public routes
     next();
   } else if (!token) {

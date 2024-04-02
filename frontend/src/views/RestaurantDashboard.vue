@@ -24,22 +24,6 @@
       </div>
     </div>
 
-    <!-- Button to trigger the dropdown menu -->
-    <div>
-      <button class="add-branch-button" @click="toggleDropdown">
-        Add Branch
-      </button>
-
-      <!-- Dropdown menu for selecting the city -->
-      <div v-if="showDropdown" class="city-dropdown">
-        <ul>
-          <li v-for="city in cities" :key="city.id" @click="addBranch(city.id)">
-            {{ city.name }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
     <!-- Card Section -->
     <div class="card-section">
       <div
@@ -103,8 +87,6 @@ export default {
       selectedFoodItem: null,
       restaurantId: null, // Variable to store the restaurant id
       isStaff: false,
-      showDropdown: false,
-      cities: [],
     };
   },
   mounted() {
@@ -121,27 +103,13 @@ export default {
       this.fetchFoodItems(this.restaurantId);
     }
 
-    this.fetchCities();
+    
   },
 
   methods: {
     // Additional methods if needed
 
-    async fetchCities() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/get-all-cities"
-        );
-        this.cities = response.data; // Assuming response.data is an array of cities
-      } catch (error) {
-        console.error("Failed to fetch cities:", error);
-      }
-    },
-
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown; // Toggle the dropdown visibility
-    },
-
+  
     decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
@@ -264,30 +232,7 @@ export default {
       this.$router.push("/register/staff");
     },
 
-    addBranch(cityId) {
-      // Call your API to add the branch (restaurant city) to the restaurant
-      const restaurantId = this.restaurantId; // Assuming you have the restaurantId stored in data
-      axios
-        .post(`http://localhost:3000/create-entry`, {
-          restaurantId,
-          cityId
-        })
-        .then(response => {
-          // Handle success, e.g., show a success message
-          console.log("Branch added successfully:", response.data);
-          alert("Branch added successfully")
-          // Optionally, you can refresh the list of branches (if needed)
-          // this.fetchFoodItems(this.restaurantId);
-        })
-        .catch(error => {
-          console.error("Failed to add branch:", error);
-          alert('Cannot add same branch again')
-          // Handle error as needed
-        })
-        .finally(() => {
-          this.showDropdown = false; // Close the dropdown after adding the branch
-        });
-    }
+    
   },
   components: { UpdateModal, DeleteModal, AddItemModal },
 };

@@ -2,9 +2,7 @@
   <div id="app" class="login-container">
     <h3 class="login-header">Register a staff member</h3>
     <form @submit.prevent="register" class="login-form">
-      <p class="signup-link">
-          Already registered? <a href="/login">Login</a>
-        </p>
+      <p class="signup-link">Already registered? <a href="/login">Login</a></p>
       <!-- <router-link to = '/'>Jaoo</router-link> -->
 
       <div class="form-group">
@@ -64,6 +62,25 @@
         </select>
       </div>
 
+      <div class="form-group">
+        <label class="form-label">Select Branch:</label>
+        <div class="form-check" v-for="city in cities" :key="city.id">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            :id="'city-' + city.id"
+            :value="city.id"
+            v-model="selectedCityIds"
+          />
+          <label class="form-check-label" :for="'city-' + city.id">{{
+            city.name
+          }}</label>
+        </div>
+      </div>
+
+      
+     
+
       <button type="submit" class="btn btn-primary">Register</button>
     </form>
   </div>
@@ -81,9 +98,32 @@ export default {
       role: "",
       errors: {},
       showPassword: false,
+      selectedCityIds: [],
+      cities: [],
     };
   },
+  mounted() {
+    this.getCities();
+  },
+
   methods: {
+    async getCities() {
+      try {
+        const token = this.$cookies.get("token");
+        const response = await axios.get(
+          "http://localhost:3000/cities-for-restaurant",
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+        this.cities = response.data;
+      
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async register() {
       // Reset errors
       this.errors = {};
@@ -105,23 +145,25 @@ export default {
       // If no errors, submit form
       if (Object.keys(this.errors).length === 0) {
         try {
-          const response = await axios.post("http://localhost:3000/create-staff", {
-            name: this.username,
-            email: this.email,
-            password: this.password,
-            role: this.role,
-          });
+          const response = await axios.post(
+            "http://localhost:3000/create-staff",
+            {
+              name: this.username,
+              email: this.email,
+              password: this.password,
+              role: this.role,
+            }
+          );
 
           // Handle success response
           console.log("Staff registered successfully:", response.data);
-          if(response.data.error){
-            alert(response.data.error)
+          if (response.data.error) {
+            alert(response.data.error);
+          } else {
+            alert("Staff registered successfully");
           }
-          else{
-            alert('Staff registered successfully')
-          }
-          
-          this.$router.push('/login')
+
+          this.$router.push("/login");
         } catch (error) {
           // Handle error response
           console.error("Error registering staff:", error.response.data);
