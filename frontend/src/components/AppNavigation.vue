@@ -154,10 +154,14 @@ export default {
       // Call your API to add the branch (restaurant city) to the restaurant
       const restaurantId = decoded.restaurantId; // Assuming you have the restaurantId stored in data
       axios
-        .post(`http://localhost:3000/create-entry`, {
+        .post(`http://localhost:3000/create-entry`,{
           restaurantId,
           cityId
-        })
+        },{
+            headers: {
+              Authorization: `${this.token}`,
+            },
+          })
         .then(response => {
           // Handle success, e.g., show a success message
           console.log("Branch added successfully:", response.data);

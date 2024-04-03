@@ -127,6 +127,7 @@ export default {
       }
     },
     async register() {
+      const token = this.$cookies.get("token");
       // Reset errors
       this.errors = {};
 
@@ -147,6 +148,7 @@ export default {
       // If no errors, submit form
       if (Object.keys(this.errors).length === 0) {
         try {
+          // console.log('selected id ',this.selectedCityIds)
           const response = await axios.post(
             "http://localhost:3000/create-staff",
             {
@@ -155,7 +157,11 @@ export default {
               password: this.password,
               role: this.role,
               cityId : this.selectedCityIds
-            }
+            },{
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
           );
 
           // Handle success response
