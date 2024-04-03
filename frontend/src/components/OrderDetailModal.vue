@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div v-if="role === 'restaurant'" class="form-group">
+    <div v-if="role === 'restaurant' || role==='staff'" class="form-group">
       <label for="status" class="form-label">Status</label>
       <select v-model="status" id="status" class="form-select">
         <option selected>Choose...</option>
@@ -28,7 +28,7 @@
     <p class="total-amount">Status: {{ tempStatus }}</p>
     <p class="total-amount">Total Amount: {{ orderDetails.total_amount }}</p>
 
-    <button @click="updateStatus" class="update-button" v-if="role === 'restaurant'">Update Status</button>
+    <button @click="updateStatus" class="update-button" v-if="role === 'restaurant' || role === 'staff'">Update Status</button>
 
     <button @click="closeModal" class="close-button">Close</button>
   </div>
@@ -109,8 +109,11 @@ export default {
       const decodedToken = jwtDecode(this.token);
       if (decodedToken.restaurantId) {
         this.role = "restaurant";
-      } else {
-        this.role = "customer";
+      } else if (decodedToken.staffId){
+        this.role = "staff";
+      }
+      else{
+        this.role = "customer"
       }
     },
 

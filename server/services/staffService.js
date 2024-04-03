@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const registerStaff = async (staffData) => {
   try {
     // Destructure staff data
-    const { name, email, password, role } = staffData;
+    const { name, email, password, role,cityId } = staffData;
 
     // Check if staff with the same email already exists
     const existingStaff = await Staff.findOne({ where: { email: email } });
@@ -17,12 +17,14 @@ const registerStaff = async (staffData) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new staff member in the database
+    console.log(cityId);
     const newStaff = await Staff.create({
       name: name,
       email: email,
       password: hashedPassword,
       role: role,
       restaurant_id: 1,
+      cityId:JSON.stringify(cityId)
     });
 
     // Return success message
@@ -55,7 +57,7 @@ const loginStaff = async (email, password) => {
       const token = jwt.sign(
         {
           staffId: staff.id,
-          restaurantId: staff.restaurant_id,
+          restaurant_Id: staff.restaurant_id,
           role: staff.role,
         },
         "your_secret_key",

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllCities, createEntry, searchByCity, getCityId, getCityName, getCitiesForRestaurant } = require('../services/cityService');
+const { getAllCities, createEntry, searchByCity, getCityId, getCityName, getCitiesForRestaurant, getBranchForRestaurant} = require('../services/cityService');
 const RestaurantCity  = require('../models/restaurantcity')
 const City = require('../models/city')
 
@@ -20,12 +20,13 @@ cityController.get('/get-all-cities',async(req,res)=>{
     }
 })
 
-cityController.post('/create-entry', async (req, res) => {
+cityController.post('/create-entry',authenticateToken, async (req, res) => {
   const { restaurantId, cityId } = req.body;
     try {
+      if(req.restaurantId){
         const result = await createEntry(restaurantId,cityId)
         return res.status(201).json({message:result})
-
+      }
     } catch (error) {
         
         return res.status(500).json({ message: 'Internal server error' });
@@ -77,9 +78,27 @@ cityController.post('/getCityName', async (req, res) => {
 
 cityController.get('/cities-for-restaurant', authenticateToken, async (req, res) => {
   try {
+    if(req.restaurantId){
       const restaurantId = req.restaurantId;
       const cities = await getCitiesForRestaurant(restaurantId);
       res.status(201).json(cities);
+    }
+      
+  } catch (error) {
+      console.error('Error retrieving cities for restaurant:', error);
+      res.status(500).json({ error: error.message });
+  }
+});
+
+cityController.get('/branch-for-restaurant', authenticateToken, async (req, res) => {
+  try {
+    if(req.staffId){
+      const staffId = req.staffId;
+      
+      const cities = await getBranchForRestaurant(staffId);
+      res.status(201).json(cities);
+    }
+      
   } catch (error) {
       console.error('Error retrieving cities for restaurant:', error);
       res.status(500).json({ error: error.message });

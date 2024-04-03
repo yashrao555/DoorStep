@@ -1,5 +1,6 @@
 const City = require("../models/city.js");
 const RestaurantCity = require("../models/restaurantcity.js");
+const Staff = require("../models/staff.js");
 
 
 
@@ -85,5 +86,20 @@ async function getCitiesForRestaurant(restaurantId) {
 }
 
 
+async function getBranchForRestaurant(staffId) {
+  try {
+    console.log('kjhgfdsa');
+      const staff = await Staff.findOne({ where: { id:staffId } });
 
-  module.exports = { getAllCities,createEntry,searchByCity,getCityId,getCityName,getCitiesForRestaurant };
+      const cityIds = JSON.parse(staff.cityId) 
+      console.log('city ids ',typeof(cityIds));
+      //const cityIds = [...new Set(restaurantCities.map(restaurantCity => restaurantCity.cityId))];
+      const cities = await City.findAll({ where: { id: cityIds } });
+      return cities;
+  } catch (error) {
+      throw new Error('Internal server error');
+  }
+}
+
+
+  module.exports = { getAllCities,createEntry,searchByCity,getCityId,getCityName,getCitiesForRestaurant,getBranchForRestaurant };

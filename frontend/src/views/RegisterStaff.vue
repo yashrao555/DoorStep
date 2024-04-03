@@ -88,6 +88,7 @@
 
 <script>
 import axios from "axios";
+// import { jwtDecode } from 'jwt-decode';
 // import VueCookies from "vue-cookies";
 export default {
   data() {
@@ -110,6 +111,7 @@ export default {
     async getCities() {
       try {
         const token = this.$cookies.get("token");
+        
         const response = await axios.get(
           "http://localhost:3000/cities-for-restaurant",
           {
@@ -152,6 +154,7 @@ export default {
               email: this.email,
               password: this.password,
               role: this.role,
+              cityId : this.selectedCityIds
             }
           );
 

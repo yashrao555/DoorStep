@@ -80,8 +80,11 @@ export default {
     async getCitiesForRestaurant() {
       try {
         const token = this.$cookies.get("token");
+        const decoded = jwtDecode(token)
+        console.log('decoded ',decoded);
+        console.log('lkjhgfds');
         const response = await axios.get(
-          "http://localhost:3000/cities-for-restaurant",
+          "http://localhost:3000/branch-for-restaurant",
           {
             headers: {
               Authorization: `${token}`,
@@ -89,6 +92,7 @@ export default {
           }
         );
         this.cities = response.data;
+      
       } catch (error) {
         console.log("Error retrieving cities:", error);
       }

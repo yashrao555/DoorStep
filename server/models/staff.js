@@ -21,7 +21,8 @@ Staff.init(
     password:DataTypes.STRING,
     role: DataTypes.TEXT,
     restaurant_id:DataTypes.INTEGER,
-    // cityId: DataTypes.TEXT
+    cityId:DataTypes.TEXT
+    
   },
   {
     sequelize,

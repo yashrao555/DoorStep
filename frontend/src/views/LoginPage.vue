@@ -162,7 +162,7 @@ export default {
               const decoded = jwtDecode(token)
               console.log('token for staff :',decoded)
 
-              if(decoded.role === "order manager"){
+              if(decoded.role === "Order Manager"){
                 this.$router.push('/myOrders')
               }
               else if(decoded.role === "Item Manager"){

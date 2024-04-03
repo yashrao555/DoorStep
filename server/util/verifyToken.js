@@ -17,7 +17,9 @@ const authenticateToken = (req, res, next) => {
     else if (decoded.restaurantId) req.restaurantId = decoded.restaurantId;
     else if(decoded.staffId) {
       req.staffId = decoded.staffId 
+      req.restaurantId=decoded.restaurant_Id
       console.log(req.staffId);
+      console.log(req.restaurant_Id);
     }
     next();
   });
