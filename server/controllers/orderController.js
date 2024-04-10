@@ -1,5 +1,5 @@
 const express = require('express')
-const { createOrder, getAllCustomerOrders, getAllRestaurantOrders ,getOrderById, updateOrderStatus} = require('../services/orderService')
+const { createOrder, getAllCustomerOrders, getAllRestaurantOrders ,getOrderById, updateOrderStatus, getStaffOrder} = require('../services/orderService')
 const { authenticateToken } = require('../util/verifyToken')
 
 
@@ -20,25 +20,6 @@ orderController.post('/create-order',authenticateToken,async(req,res)=>{
     }
 })
 
-// orderController.get('/orders',authenticateToken,async(req,res)=>{
-//     if(req.customerId){
-//         try {
-//             const result = await getAllCustomerOrders(req.customerId)
-//             res.status(201).json(result)
-//         } catch (error) {
-//             res.status(500).json(error)
-//         }
-//     }
-//     else{
-//         try {
-//             const result = await getAllRestaurantOrders(req.restaurantId)
-//             console.log("is IO",req.app.get('io'));
-//             res.status(201).json(result)
-//         } catch (error) {
-//             res.status(500).json(error)
-//         }
-//     }
-// })
 orderController.get('/orders', authenticateToken, async (req, res) => {
     try {
       let result;
@@ -46,20 +27,10 @@ orderController.get('/orders', authenticateToken, async (req, res) => {
       if (req.customerId) {
         // Handle customer orders
         result = await getAllCustomerOrders(req.customerId, (orders) => {
-            // Emit real-time updates to connected clients
-            console.log("Before",orders);
-            //req.app.get('io').emit('orders', orders);
-            console.log("After",orders);
-  
           });
       } else {
         // Handle restaurant orders and pass the io instance
-        result = await getAllRestaurantOrders(req.restaurantId, (orders) => {
-          // Emit real-time updates to connected clients
-          console.log("Before",orders);
-          //req.app.get('io').emit('orders', orders);
-          console.log("After",orders);
-
+        result = await getAllRestaurantOrders(req.restaurantId, (orders) => {       
         });
       }
   
@@ -69,21 +40,28 @@ orderController.get('/orders', authenticateToken, async (req, res) => {
     }
   });
 
-// Assuming you have 'io' as your WebSocket server instance
-// orderController.get('/orders', authenticateToken, async (req, res) => {
-//     if (req.customerId) {
-//       // Handle customer orders
-//       result = await getAllCustomerOrders(req.customerId);
-//       res.status(201).json(result)
-//     } else {
-//       try {
-//         const result = await getAllRestaurantOrders(req.restaurantId, req.app.get('io'));
-//         res.status(201).json(result);
-//       } catch (error) {
-//         res.status(500).json(error);
-//       }
-//     }
-//   });
+  orderController.get('/orders-for-staff',authenticateToken, async (req, res) => {
+    try {
+   
+      if (!req.session.staff) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      
+      if(req.session.staff.role==="Order Manager" || req.session.staff.role==="Owner")
+      {
+        const result = await getStaffOrder(req,(orders) => {       
+        });
+        res.status(200).json(result);
+      }
+      else{
+        res.status(401).json('Permission Denied');
+      }
+      // Fetch orders for staff using session data
+      
+    } catch (error) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
   
 
 orderController.get('/orders/:orderId',async(req,res)=>{
@@ -97,7 +75,7 @@ orderController.get('/orders/:orderId',async(req,res)=>{
         res.status(500).json(error)
     }
 })
-module.exports=orderController
+
 
 orderController.post('/orders/:orderId/update-order-status', authenticateToken, async (req, res) => {
     const { orderId } = req.params;
@@ -118,3 +96,5 @@ orderController.post('/orders/:orderId/update-order-status', authenticateToken, 
       return res.status(500).json(error);
     }
   });
+
+  module.exports=orderController

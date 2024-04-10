@@ -27,7 +27,7 @@ staffController.post('/create-staff',authenticateToken,async(req,res)=>{
 staffController.post('/login-staff',async(req,res)=>{
     const {email,password} = req.body;
     try {
-        const result = await loginStaff(email,password);
+        const result = await loginStaff(req,email,password);
         if (result) {
             res.json(result);
         } else {

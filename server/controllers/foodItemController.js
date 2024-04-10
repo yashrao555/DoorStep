@@ -39,34 +39,7 @@ foodController.post('/restaurants/uploadFoodItems',  authenticateToken,upload.si
   }
 });
 
-  
-  // const processCSVFile = async (restaurantId, filePath,io) => {
-  //   return new Promise((resolve, reject) => {
-  //     let processedCount=0;
-      
-  //     const stream = fs.createReadStream(filePath)
-  //       .pipe(csvParser())
-  //       .on('data', async (foodItemData) => {
-  //         try {
-  //           await updateOrInsertFoodItem(restaurantId, foodItemData);
-  //           processedCount++;
-  //           io.emit('progress',{processedCount},()=>{
-  //             console.log("event emitteddddd")
-  //           })
-  //         } catch (error) {
-  //           console.error('Error processing food item:', error);
-  //           reject('Failed to process food items');
-  //         }
-  //       })
-  //       .on('end', () => {
-  //         resolve();
-  //       })
-  //       .on('error', (error) => {
-  //         console.error('Error reading CSV file:', error);
-  //         reject('Failed to read CSV file');
-  //       });
-  //   });
-  // };
+
 
   const processCSVFile = async (restaurantId, filePath, io) => {
     return new Promise((resolve, reject) => {

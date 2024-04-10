@@ -1,7 +1,9 @@
 const express = require("express");
+const session = require('express-session')
 const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors')
+const cookieParser = require('cookie-parser');
 
 const dotenv = require('dotenv')
 
@@ -28,10 +30,22 @@ app.set('io', io);
 const corsOptions = {
     origin:true,
     credentials:true
-}
+};
+
 dotenv.config()
 app.use(cors(corsOptions));
+app.use(session({
+  secret: 'my-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 3600000 // 1 hour in milliseconds
+  }
+}))
 app.use(express.json());
+app.use(cookieParser());
+
+
 
 app.use(authController)
 app.use(restaurantAuthController)

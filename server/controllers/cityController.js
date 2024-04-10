@@ -3,7 +3,7 @@ const { getAllCities, createEntry, searchByCity, getCityId, getCityName, getCiti
 const RestaurantCity  = require('../models/restaurantcity')
 const City = require('../models/city')
 
-const { authenticateToken } = require('../util/verifyToken');
+const { authenticateToken, checkStaffRole } = require('../util/verifyToken');
 
 const cityController = express.Router()
 
@@ -51,7 +51,7 @@ cityController.post('/search-by-city', async (req, res) => {
         const { cityName } = req.body; 
         const { cityId, error } = await getCityId(cityName);
 
-        if (error) {
+        if (error) {rf
             return res.status(404).json({ message: error }); 
         }
 
@@ -90,18 +90,14 @@ cityController.get('/cities-for-restaurant', authenticateToken, async (req, res)
   }
 });
 
-cityController.get('/branch-for-restaurant', authenticateToken, async (req, res) => {
+
+cityController.get('/branch-for-restaurant', authenticateToken, checkStaffRole, async (req, res) => {
   try {
-    if(req.staffId){
-      const staffId = req.staffId;
-      
-      const cities = await getBranchForRestaurant(staffId);
-      res.status(201).json(cities);
-    }
-      
+    const cities = await getBranchForRestaurant(req);
+    res.status(201).json(cities);
   } catch (error) {
-      console.error('Error retrieving cities for restaurant:', error);
-      res.status(500).json({ error: error.message });
+    console.error('Error retrieving cities for restaurant:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 

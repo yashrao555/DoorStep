@@ -86,12 +86,12 @@ async function getCitiesForRestaurant(restaurantId) {
 }
 
 
-async function getBranchForRestaurant(staffId) {
+async function getBranchForRestaurant(req) {
   try {
     console.log('kjhgfdsa');
-      const staff = await Staff.findOne({ where: { id:staffId } });
+      //const staff = await Staff.findOne({ where: { id:staffId } });
 
-      const cityIds = JSON.parse(staff.cityId) 
+      const cityIds = JSON.parse(req.session.staff.cityId) 
       console.log('city ids ',typeof(cityIds));
       //const cityIds = [...new Set(restaurantCities.map(restaurantCity => restaurantCity.cityId))];
       const cities = await City.findAll({ where: { id: cityIds } });

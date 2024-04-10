@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { getCoordinatesFromAddress } = require('./locationService');
 const { transporter } = require('../util/mail');
+const { getCityId, createEntry } = require('./cityService');
 const registerRestaurant = async (restaurantData) => {
     const {
         name,
@@ -108,6 +109,11 @@ const verifyRestaurantOTP = async (email, otp) => {
             if (restaurant.otp_expiration && new Date(restaurant.otp_expiration) > new Date()) {
                 // Update customer verification status and save customer data to the database
                 restaurant.is_verified = true;
+                const cityName=restaurant.city
+                const cityId=await getCityId(cityName)
+                await createEntry(restaurant.id,cityId.cityId);
+
+
                 // Optionally, you can save customer data to the database
                 // For example, using a database connection and an ORM like Sequelize or Mongoose
                 await restaurant.save(); // Save the updated customer data
@@ -175,9 +181,8 @@ const loginRestaurant = async (email, password) => {
         const isPasswordValid = await bcrypt.compare(password, restaurant.password);
 
         if (isPasswordValid) {
-            // Check if the customer is verified
             if (restaurant.is_verified) {
-                // Generate JWT token
+
                 const token = jwt.sign({ restaurantId: restaurant.id }, 'your_secret_key', {
                     expiresIn: '1h', // Token expiration time (e.g., 1 hour)
                 });

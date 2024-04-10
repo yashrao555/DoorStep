@@ -18,11 +18,21 @@ const authenticateToken = (req, res, next) => {
     else if(decoded.staffId) {
       req.staffId = decoded.staffId 
       req.restaurantId=decoded.restaurant_Id
-      console.log(req.staffId);
-      console.log(req.restaurant_Id);
     }
     next();
   });
 };
 
-module.exports = { authenticateToken };
+const checkStaffRole = (req, res, next) => {
+  if (!req.staffId) {
+    return res.status(401).json("Unauthorized: Staff ID missing");
+  }
+
+  if (!(req.session.staff.role === "Order Manager" || req.session.staff.role === "Owner")) {
+    return res.status(401).json("Unauthorized: Insufficient role permissions");
+  }
+
+  next();
+};
+
+module.exports = { authenticateToken,checkStaffRole };

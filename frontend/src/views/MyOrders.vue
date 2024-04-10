@@ -64,15 +64,35 @@ export default {
   methods: {
     async getAllOrders() {
       const token = this.$cookies.get("token");
+      const decoded = jwtDecode(token);
       try {
+        
+      
+      if(decoded.customerId || decoded.restaurantId){
         const response = await axios.get("http://localhost:3000/orders", {
           headers: {
             Authorization: `${token}`,
           },
         });
+        
 
         this.orders = response.data;
-      } catch (error) {
+      }
+      else if(decoded.staffId){
+        const response = await axios.get("http://localhost:3000/orders-for-staff", {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        console.log('dedcoded ',decoded);
+
+        this.orders = response.data;
+        // this.orders.items = JSON.parse(this.orders.items)
+        console.log("order for staff ",this.orders)
+
+      }
+      }
+       catch (error) {
         console.log("Error displaying orders:", error);
       }
     },

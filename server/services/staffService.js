@@ -35,7 +35,7 @@ const registerStaff = async (staffData) => {
   }
 };
 
-const loginStaff = async (email, password) => {
+const loginStaff = async (req,email, password) => {
   try {
     // Find the staff member by email
     const staff = await Staff.findOne({
@@ -65,7 +65,9 @@ const loginStaff = async (email, password) => {
           expiresIn: "8h", // Token expiration time (e.g., 1 hour)
         }
       );
-
+      
+      req.session.staff=staff
+      console.log('sid',req.session);
       return {
         message: "Login successful",
         token: token,
@@ -96,7 +98,8 @@ const accessProtectedStaffResource = (req) => {
     try {
         // Access the customer ID from the decoded token payload attached to the request
         const staffId = req.staffId;
-
+        console.log('session is',req.session);
+        console.log('sid',req.sessionId);
         // Perform actions with the customer ID or respond accordingly
         return { message: `Protected resource accessed by customer ID: ${staffId}` };
     } catch (error) {

@@ -1,9 +1,42 @@
 const Restaurant  = require('../models/restaurant'); // Adjust the path accordingly
 const {Sequelize} = require("sequelize");
+const { Op } = require('sequelize');
 // Service function to fetch all restaurants
+// const getAllRestaurants = async () => {
+//   try {
+//     const restaurants = await Restaurant.findAll();
+//     return restaurants;
+//   } catch (error) {
+//     console.error('Error fetching restaurants:', error);
+//     throw new Error('Failed to fetch restaurants');
+//   }
+// };
+
+
+
 const getAllRestaurants = async () => {
   try {
-    const restaurants = await Restaurant.findAll();
+    // Get current time
+    const currentTime = new Date();
+    
+    // Extract current time in the format HH:MM:SS
+    const currentHours = currentTime.getHours();
+    const currentMinutes = currentTime.getMinutes();
+    const currentSeconds = currentTime.getSeconds();
+    const currentTimeString = `${currentHours}:${currentMinutes}:${currentSeconds}`;
+
+    // Find restaurants where the current time is between opens_at and closes_at
+    const restaurants = await Restaurant.findAll({
+      where: {
+        opens_at: {
+          [Op.lte]: currentTimeString // opens_at <= current time
+        },
+        closes_at: {
+          [Op.gte]: currentTimeString // closes_at >= current time
+        }
+      }
+    });
+
     return restaurants;
   } catch (error) {
     console.error('Error fetching restaurants:', error);

@@ -104,6 +104,46 @@ async function getAllRestaurantOrders(id, callback) {
     return parsedOrders;
 }
 
+// async function getStaffOrder(req){
+//     console.log('sessipon in staff ',req.session);
+//     const cityIds = JSON.parse(req.session.staff.cityId)
+//     // console.log("orders",typeof(cityIds),cityIds[0]);
+//     const orders = await Order.findAll({
+//         where: {
+//             cityId:cityIds,
+//             restaurant_id:req.session.staff.restaurant_id
+//           }
+//     })
+    
+// return orders;
+// }
+async function getStaffOrder(req, callback) {
+    try {
+        console.log('session in staff:', req.session);
+        const cityIds = JSON.parse(req.session.staff.cityId);
+        const orders = await Order.findAll({
+            where: {
+                cityId: cityIds,
+                restaurant_id: req.session.staff.restaurant_id
+            }
+        });
+        
+        // Parse the stringified JSON array in each order's items
+        const parsedOrders = orders.map(order => {
+            order.items = JSON.parse(order.items);
+            return order;
+        });
+        
+        // Emit real-time updates to connected clients
+        callback(parsedOrders);
+
+        return parsedOrders;
+    } catch (error) {
+        console.error('Error fetching staff orders:', error);
+        return [];
+    }
+}
+
 async function getOrderById(order_id){
     console.log(order_id);
     const order = await Order.findOne({
@@ -162,4 +202,4 @@ async function updateOrderStatus(order_id,status){
 
 
 }
-module.exports = {createOrder,getAllCustomerOrders,getAllRestaurantOrders,getOrderById,updateOrderStatus}
+module.exports = {createOrder,getAllCustomerOrders,getAllRestaurantOrders,getOrderById,updateOrderStatus,getStaffOrder}
