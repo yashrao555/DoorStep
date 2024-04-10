@@ -1,15 +1,8 @@
-<!-- YourComponent.vue -->
-
 <template>
   <div>
-    <!-- <div class="filter-dropdown">
-      <select v-model="selectedCityId" @change="filterOrdersByCity">
-        <option value="">All Cities</option>
-        <option v-for="city in cities" :key="city.id" :value="city.id">{{ city.name }}</option>
-      </select>
-    </div> -->
+    <h1 class="order-heading">My Orders</h1>
 
-    <div class="filter-container">
+    <div class="filter-container" v-if="cities.length>0">
       <label for="city-filter" class="filter-label">Select Branch:</label>
       <div class="filter-dropdown">
         <select
@@ -25,7 +18,7 @@
       </div>
     </div>
 
-    <!-- <h1>My Orders</h1> -->
+    
     <OrderCard
       v-for="order in filterOrdersByCity()"
       :key="order.id"
@@ -201,6 +194,17 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap');
+
+.order-heading{
+  margin:2rem 900px;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 55px;
+}
+
 .filter-container {
   display: flex;
   align-items: center;

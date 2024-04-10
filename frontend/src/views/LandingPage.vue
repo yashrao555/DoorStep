@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Banner Image -->
-    <div class="banner">
+    <!-- <div class="banner">
       <img
         src="https://www.shutterstock.com/image-photo/healthy-meal-diet-plan-daily-260nw-1756843007.jpg"
         alt="Banner Image"
@@ -10,29 +10,36 @@
         <h1>DoorStep</h1>
         <p>From Our Kitchen To Your Doorstep !</p>
       </div>
-    </div>
+    </div> -->
 
     <div class="search-bar">
+      <div class="filter-dropdown" v-if="cities.length > 0">
+        <select v-model="selectedCity" @change="searchByCity(selectedCity)">
+          
+          <option value="">Select a city</option>
+          
+
+          <option v-for="city in cities" :key="city.id" :value="city.id" >
+            {{ city.name }}
+          </option>
+        </select>
+      </div>
       <input
         v-model="searchTerm"
         @input="searchRestaurants"
         type="text"
         placeholder="Search for restaurants..."
       />
-
-      <div class="filter-dropdown" v-if="cities.length > 0">
-        <select v-model="selectedCity" @change="searchByCity(selectedCity)">
-          <option value="">Select a city</option>
-          <option v-for="city in cities" :key="city.id" :value="city.id" >
-            {{ city.name }}
-          </option>
-        </select>
-      </div>
       <button @click="clearSearch">Clear</button>
-    </div>
 
-    <div v-if="filteredRestaurant.length>0">
-    <h2>Restaurants according to selected city</h2>
+      
+      
+    </div>
+    
+    <hr class="solid" />
+
+    <div class="card-container" v-if="filteredRestaurant.length>0">
+    <h2 class="heading">Restaurants according to selected city</h2>
     <div class="card-section">
       <div v-for="(row, rowIndex) in rows3" :key="rowIndex" class="card-row">
         <food-cards
@@ -47,10 +54,14 @@
         />
       </div>
     </div>
+    
   </div>
+  <hr v-if="filteredRestaurant.length>0" class="solid" />
 
-<div v-if="nearbyRestaurants.length>0">
-    <h2>Restaurants near you</h2>
+  
+
+<div class="card-container" v-if="nearbyRestaurants.length>0">
+    <h2 class="heading">Restaurants near you</h2>
     <div class="card-section">
       <div v-for="(row, rowIndex) in rows2" :key="rowIndex" class="card-row">
         <food-cards
@@ -65,7 +76,11 @@
         />
       </div>
     </div>
+    
   </div>
+  <hr v-if="nearbyRestaurants.length>0" class="solid" />
+
+  
 
     <!-- <h2>All Restaurants</h2>
     <div class="card-section">
@@ -159,6 +174,7 @@ export default {
 
         // Update the restaurants data in the component
         this.filteredRestaurant = restaurants;
+        console.log('filtered ',this.filteredRestaurant);
         this.rows3 = this.chunkArray(this.filteredRestaurant, 5);
       } catch (error) {
         console.error("Error fetching restaurant details:", error);
@@ -257,9 +273,6 @@ export default {
   } catch (error) {
     // Handle errors during API requests
     console.error("Error fetching data:", error);
-
-    // Optionally, you can show a user-friendly error message to the user
-    // this.errorMessage = "An error occurred while fetching data. Please try again.";
   }
 },
   },
@@ -270,30 +283,9 @@ export default {
 </script>
 
 <style scoped>
-/* Add your component-specific styles here */
+/* @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Kalnia:wght@500&display=swap');
 
-.banner {
-  position: relative;
-  width: 100%;
-  height: 60vh; /* Adjust the height as needed */
-  overflow: hidden;
-}
-
-.banner img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.banner-text {
-  position: absolute;
-  top: 20%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: #ffa500;
-  font-size: 180%;
-}
 
 h1 {
   font-size: 250%;
@@ -302,7 +294,7 @@ h1 {
 .card-section {
   display: flex;
   flex-wrap: wrap; /* Enable wrapping for cards */
-  justify-content: center; /* Center the row of cards horizontally */
+  /* justify-content: center;  */
   padding: 2rem;
 }
 
@@ -319,15 +311,18 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1rem 0;
+  margin: 4rem 0;
 }
 
 .search-bar input {
   border: 1px solid #ddd;
   border-radius: 20px;
-  padding: 0.5rem;
+  padding: 1.5rem;
   margin-right: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 600px;
+  height: 6vh;
+  font-size: 22px;
 }
 
 .search-bar button {
@@ -335,17 +330,51 @@ h1 {
   background-color: #3498db;
   color: #fff;
   border-radius: 20px;
-  padding: 0.5rem 1rem;
+  /* padding: 0.1rem 0.5rem; */
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100px;
+  height: 6vh;
+  font-size: 22px;
 }
 
 .filter-dropdown {
-  margin-left: 1rem; /* Adjust margin as needed */
+  margin-right: 0.5rem;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  font-size: 20px;
 }
 
 .filter-dropdown select {
+  border-radius: 20px;
   padding: 0.5rem;
-  border-radius: 4px;
+  width: 150px;
+  height: 6vh;
+  background-color: #ddd;
+  color: #0d0c0c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* margin-top: 0.5rem; */
+  /* border-radius: 4px; */
+}
+
+hr.solid {
+  border-top: 3px solid #bbb;
+  margin:3rem 210px;
+  
+}
+
+.card-container{
+  margin-left:180px;
+  margin-right: 180px;
+}
+
+.heading{
+  font-family: "Kalnia", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+  margin-left:30px;
+  /* font-size:xx-large; */
 }
 </style>

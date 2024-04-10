@@ -50,60 +50,6 @@ export default {
   },
   
   methods: {
-  //   addToCart() {
-  //   const token = this.$cookies.get('token');
-  //     if(!token){
-  //       alert('Please log in before adding items to cart. Log in?')
-  //       this.$router.push('/login')
-  //     }
-  //   // Fetch existing items in the cart
-  //   axios.get('http://localhost:3000/get-cart', {
-  //     headers: {
-  //       Authorization: `${token}`,
-  //     },
-  //   })
-  //     .then(response => {
-  //       const cartItems = response.data.data;
-  //       console.log('cart items : ',cartItems)
-
-  //       // Check if there are items in the cart
-  //       if (cartItems !== null) {
-  //         // Check if the current item in the cart belongs to the same restaurant
-  //         if (cartItems.restaurant_id !== this.foodItem.restaurant_id) {
-  //           alert('Cannot add food item. Please clear your previous cart')
-  //           console.error('Cannot add items from different restaurants to the cart.');
-  //           return;
-  //         }
-  //       }
-        
-
-  //       // If the cart is empty or items belong to the same restaurant, proceed to add the item
-  //       axios.post('http://localhost:3000/add-to-cart', {
-  //         restaurant_id: this.foodItem.restaurant_id,
-  //         items: {
-  //           food_item_id: this.foodItem.food_item_id,
-  //           name: this.foodItem.name,
-  //           price: this.foodItem.price,
-  //           // Add other necessary details from your food item
-  //         },
-  //       }, {
-  //         headers: {
-  //           Authorization: `${token}`,
-  //         },
-  //       })
-  //         .then(response => {
-  //           console.log('res : ', response);
-  //           this.showQuantityButtons = true;
-  //         })
-  //         .catch(error => {
-  //           console.error('Error adding to cart:', error);
-  //         });
-        
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching cart:', error);
-  //     });
-  // },
 
 
   addToCart() {
@@ -226,7 +172,13 @@ export default {
                 Authorization: `${token}`
             }
           })
-        .then(this.quantity--)
+        .then(response =>{
+          console.log(response);
+          this.quantity--;
+          if(this.quantity<1){
+            this.showQuantityButtons=false;
+          }
+        })
         .catch(error => {
           console.error('Error updating cart:', error);
         });
@@ -237,6 +189,10 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
+
 .food-item-container {
   width: 70vw; /* Set the width to 70% of the viewport width */
   max-width: 600px; /* Set a maximum width if needed */
@@ -255,9 +211,11 @@ export default {
 }
 
 .food-item-name {
-  font-size: 18px;
+  font-size: 24px;
+  /* font-weight: bold; */
+  font-family: "Tenor Sans", sans-serif;
   font-weight: bold;
-  margin-bottom: 5px;
+  font-style: normal;
 }
 
 .food-item-description {
@@ -268,6 +226,9 @@ export default {
 .food-item-price {
   font-size: 16px;
   color: #27ae60;
+  font-family: "Tenor Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .food-item-image {

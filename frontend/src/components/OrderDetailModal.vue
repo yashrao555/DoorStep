@@ -12,6 +12,7 @@
           <span class="quantity">Quantity: {{ item.quantity }}</span>
           <span class="price">{{ item.price }}</span>
         </p>
+        <hr>
       </div>
     </div>
 
@@ -26,7 +27,7 @@
       </select>
     </div>
     <p class="total-amount">Status: {{ tempStatus }}</p>
-    <p class="total-amount">Total Amount: {{ orderDetails.total_amount }}</p>
+    <p class="total-amount">Total Amount: {{ (orderDetails.total_amount).toFixed(2) }}</p>
 
     <button @click="updateStatus" class="update-button" v-if="role === 'restaurant' || role === 'staff'">Update Status</button>
 

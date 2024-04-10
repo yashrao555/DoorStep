@@ -5,8 +5,8 @@
         <h1 class="restaurant-name">{{ restaurant.name }}</h1>
         <p class="restaurant-address">{{ restaurant.address }}</p>
         <p class="restaurant-timings">
-          Opening Time: {{ restaurant.opens_at }} - Closing Time:
-          {{ restaurant.closes_at }}
+          Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
+          {{ closesAtHours }}:{{ closesAtMinutes }}
         </p>
         <p class="restaurant-distance">Distance: {{ distance }} km away</p>
       </div>
@@ -38,13 +38,38 @@ export default {
   },
   data(){
     return{
-      distance:NaN
+      distance:NaN,
+      opensAtHours:'',
+      opensAtMinutes:'',
+      closesAtHours:'',
+      closesAtMinutes:''
     }
   },
   mounted(){
     this.calculateDistance();
+    this.timeHandler()
   },
   methods: {
+
+    timeHandler() {
+      const timestamp1 = this.restaurant.opens_at;
+      const date1 = new Date(timestamp1);
+
+      const timestamp2 = this.restaurant.closes_at;
+      const date2 = new Date(timestamp2);
+
+      const istOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds (5.5 hours)
+      const istDate1 = new Date(date1.getTime() + istOffset);
+      const istDate2 = new Date(date2.getTime() + istOffset);
+
+      this.opensAtHours = istDate1.getHours().toString().padStart(2, '0'); 
+      this.opensAtMinutes = istDate1.getMinutes().toString().padStart(2, '0'); 
+
+      this.closesAtHours = istDate2.getHours().toString().padStart(2, '0'); 
+      this.closesAtMinutes = istDate2.getMinutes().toString().padStart(2, '0'); 
+    },
+
+
     async calculateDistance() {
       const token = this.$cookies.get("token");
 
@@ -134,6 +159,10 @@ export default {
 </script>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Tilt+Warp&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
+
 .restaurant-info-container {
   max-width: 800px;
   margin: 0 auto;
@@ -141,6 +170,7 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 20px; /* Optional: Add margin to separate multiple restaurants */
+  
 }
 
 .restaurant-details {
@@ -154,13 +184,23 @@ export default {
 }
 
 .restaurant-name {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+  font-family: "Tilt Warp", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "XROT" 0,
+    "YROT" 0;
 }
 
 .restaurant-address {
-  font-size: 14px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .rating {
@@ -170,6 +210,10 @@ export default {
 .rating-text {
   font-size: 16px;
   margin-bottom: 5px;
+  margin-top: 10px;
+  font-family: "Tenor Sans", sans-serif;
+  font-weight: bold;
+  font-style: normal;
 }
 
 .stars-container {
@@ -183,8 +227,11 @@ export default {
 
 .restaurant-timings,
 .restaurant-distance {
-  font-size: 14px;
-  margin-top: 5px;
+  font-size: 16px;
+  margin-top: 10px;
   color: #555;
+  font-family: "Tenor Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 </style>

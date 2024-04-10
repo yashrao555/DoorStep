@@ -6,7 +6,9 @@
     </div>
 
     <div class="food-items-section">
+      <hr class="solid1">
       <h2 class="section-title">Menu</h2>
+      <hr class="solid2">
       <div class="menu-container">
         <div v-for="foodItem in restaurantMenu" :key="foodItem.id">
           <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId" :currentCityId="cityId"/>
@@ -89,6 +91,9 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+
+
 .restaurant-page {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
@@ -107,10 +112,31 @@ export default {
 }
 
 .section-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 32px;
+  /* font-weight: bold; */
+  margin-bottom: 40px;
+  margin-top: 40px;
+  font-family: "Titan One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
+
+hr.solid1 {
+  border-top: 3px solid #141212;
+  /* margin:3rem 210px; */
+  margin-left: 620px;
+  margin-top: 20px;
+  width: 320px;
+  
+}
+
+hr.solid2 {
+  border-top: 3px solid #141212;
+  margin-left: 1100px;
+  width: 320px;
+  margin-bottom: 20px;
+}
+
 
 .go-to-cart-button {
   display: inline-block;

@@ -1,7 +1,7 @@
 <template>
   <div :key="isLoggedIn">
     <nav class="navbar navbar-expand-sm navbar-dark">
-      <a class="navbar-brand" href="/">DoorStep</a>
+      <a class="navbar-brand ml-2" href="/">DoorStep</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -235,5 +235,10 @@ export default {
 <style scoped>
 .navbar {
   background: #ffa500;
+  box-shadow: 0 2px 4px rgba(253, 247, 247, 0.951) !important;
+}
+
+.ml-2{
+  margin-left: 210px !important;
 }
 </style>
