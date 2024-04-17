@@ -1,14 +1,14 @@
 <template>
   <div class="restaurant-info-container">
-    <div class="restaurant-details">
+    <div class="restaurant-details ">
       <div class="name-address">
-        <h1 class="restaurant-name">{{ restaurant.name }}</h1>
-        <p class="restaurant-address">{{ restaurant.address }}</p>
+        <h1 class="restaurant-name ">{{ restaurant.name }}</h1>
+        <p class="restaurant-address ">{{ restaurant.address }}</p>
         <p class="restaurant-timings">
           Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
           {{ closesAtHours }}:{{ closesAtMinutes }}
         </p>
-        <p class="restaurant-distance">Distance: {{ distance }} km away</p>
+        <p class="restaurant-distance ">Distance: {{ distance }} km away</p>
       </div>
       <div class="rating">
         <p class="rating-text">Rating:</p>
@@ -164,14 +164,16 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
 
 .restaurant-info-container {
-  max-width: 800px;
+  /* max-width: 800px; */
+  max-width: 37vw;
   margin: 0 auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 20px; /* Optional: Add margin to separate multiple restaurants */
+  /* margin-bottom: 20px;  */
   
 }
+
 
 .restaurant-details {
   display: flex;
@@ -181,10 +183,12 @@ export default {
 
 .name-address {
   text-align: left;
+  width: 22vw;
+  
 }
 
 .restaurant-name {
-  font-size: 32px;
+  font-size: 2vw;
   font-weight: bold;
   margin-bottom: 8px;
   font-family: "Tilt Warp", sans-serif;
@@ -197,7 +201,7 @@ export default {
 }
 
 .restaurant-address {
-  font-size: 20px;
+  font-size: 1vw;
   font-weight: bold;
   margin-bottom: 10px;
   margin-top: 10px;
@@ -205,10 +209,12 @@ export default {
 
 .rating {
   text-align: right;
+  width: 8vw;
+  
 }
 
 .rating-text {
-  font-size: 16px;
+  font-size: 0.9vw;
   margin-bottom: 5px;
   margin-top: 10px;
   font-family: "Tenor Sans", sans-serif;
@@ -217,7 +223,7 @@ export default {
 }
 
 .stars-container {
-  font-size: 24px;
+  font-size: 1.3vw;
 }
 
 .star {
@@ -227,7 +233,7 @@ export default {
 
 .restaurant-timings,
 .restaurant-distance {
-  font-size: 16px;
+  font-size: 0.8vw;
   margin-top: 10px;
   color: #555;
   font-family: "Tenor Sans", sans-serif;

@@ -1,7 +1,7 @@
 <template>
-  <div :key="isLoggedIn">
-    <nav class="navbar navbar-expand-sm navbar-dark">
-      <a class="navbar-brand ml-2" href="/">DoorStep</a>
+  <div   :key="isLoggedIn">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <a class="navbar-brand fs-1 ms-5" href="/">DoorStep</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -14,43 +14,33 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-          <!-- <li class="nav-item active">
-            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/register"
-              >Register</a
-            >
-          </li>
-          <li class="nav-item">
-            <a v-if="!isLoggedIn" class="nav-link navbar-brand" href="/login"
-              >Login</a
-            >
-          </li> -->
+        <ul class="navbar-nav ms-auto text-center "> 
 
           <li class="nav-item active" v-if="showRegisterButton">
-            <router-link class="nav-link navbar-brand" to="/register"
+            <router-link class="nav-link navbar-brand fs-4" to="/register"
               >Register</router-link
             >
           </li>
           <li class="nav-item" v-if="showLoginButton">
-            <router-link class="nav-link navbar-brand" to="/login"
+            <router-link class="nav-link navbar-brand fs-4" to="/login"
               >Login</router-link
             >
           </li>
           <li class="nav-item">
             <a
               v-if="role === 'customer'"
-              class="nav-link navbar-brand"
+              class="nav-link navbar-brand fs-4"
               href="/cart"
               >My Cart</a
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link navbar-brand" href="/myOrders">My Orders</a>
+            <a class="nav-link navbar-brand fs-4" href="/myOrders">My Orders</a>
           </li>
           <li class="nav-item">
             <a
               v-if="role === 'customer'"
-              class="nav-link navbar-brand"
+              class="nav-link navbar-brand fs-4"
               href="/register"
               >A Restaurant?</a
             >
@@ -58,7 +48,7 @@
           <li class="nav-item">
             <a
               v-if="role === 'restaurant'"
-              class="nav-link navbar-brand"
+              class="nav-link navbar-brand fs-4"
               href="/restaurant-dashboard"
               >Restaurant Dashboard</a
             >
@@ -67,7 +57,7 @@
           <li class="nav-item dropdown">
             <a
               v-if="role === 'restaurant'"
-              class="nav-link navbar-brand dropdown-toggle"
+              class="nav-link navbar-brand dropdown-toggle fs-4"
               href="#"
               id="navbarDropdown"
               role="button"
@@ -99,7 +89,7 @@
             <button
               v-if="showLogoutButton"
               @click="logout"
-              class="btn btn-link nav-link navbar-brand"
+              class="btn btn-link nav-link navbar-brand fs-4"
             >
               Logout
             </button>
@@ -234,11 +224,12 @@ export default {
 
 <style scoped>
 .navbar {
+  /* width: 100% !important; */
   background: #ffa500;
   box-shadow: 0 2px 4px rgba(253, 247, 247, 0.951) !important;
 }
 
-.ml-2{
-  margin-left: 210px !important;
+.ms-5{
+  margin-left: 10vw!important;
 }
 </style>

@@ -1,16 +1,18 @@
 <template>
-  <div class="food-item-container">
-    <div class="food-item-details">
-      <h2 class="food-item-name">{{ foodItem.name }}</h2>
-      <p class="food-item-price">Price: {{ foodItem.price }}</p>
+  <div class="food-item-container bg-danger">
+    <div class="food-item-details bg-primary">
+      <h2 class="food-item-name bg-warning">{{ foodItem.name }}</h2>
+      <p class="food-item-price bg-secondary">Price: {{ foodItem.price }}</p>
       <div v-if="showQuantityButtons" class="add-to-cart">
         <span class="quantity-button" @click="decrementQuantity">-</span>
         <span class="quantity">{{ quantity }}</span>
         <span class="quantity-button" @click="incrementQuantity">+</span>
       </div>
-      <button v-else class="add-to-cart-button" @click="addToCart">Add to Cart</button>
+      <button v-else class="add-to-cart-button" @click="addToCart">
+        Add to Cart
+      </button>
     </div>
-    
+
     <div class="food-item-image">
       <img :src="foodItem.image_url" alt="Food Item Image" />
     </div>
@@ -18,8 +20,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 export default {
   props: {
     foodItem: {
@@ -39,7 +41,7 @@ export default {
   data() {
     return {
       quantity: 1,
-      showQuantityButtons : false,
+      showQuantityButtons: false,
     };
   },
   computed: {
@@ -48,154 +50,194 @@ export default {
       return (this.foodItem.price * this.quantity).toFixed(2);
     },
   },
-  
+
   methods: {
-
-
-  addToCart() {
-  const token = this.$cookies.get('token');
-  if (!token) {
-    alert('Please log in before adding items to cart. Log in?');
-    this.$router.push('/login');
-    return; // Stop execution if the user is not logged in
-  }
-
-  // Check token expiration
-  try {
-    const decodedToken = jwtDecode(token);
-    const expirationTime = decodedToken.exp * 1000; // Convert seconds to milliseconds
-    console.log('decoded token : ',decodedToken)
-    console.log('exp time : ',expirationTime)
-  
-
-    if (Date.now() >= expirationTime) {
-      alert('Your session has expired. Please log in again.');
-      this.$router.push('/login');
-      return; // Stop execution if the token has expired
-    }
-
-    if(decodedToken.restaurantId){
-        alert('Please log in with customer id');
-        this.$router.push('/login');
-      return; 
+    addToCart() {
+      const token = this.$cookies.get("token");
+      if (!token) {
+        // alert('Please log in before adding items to cart. Log in?');
+        this.$toast.warning("Please log in before adding items to cart", {
+          position: "top",
+        });
+        return;
       }
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    // Handle decoding error, e.g., token is not a valid JWT
-    alert('Invalid token. Please log in again.');
-    this.$router.push('/login');
-    return; // Stop execution if there's a decoding error
-  }
 
-  // Fetch existing items in the cart
-  axios.get('http://localhost:3000/get-cart', {
-    headers: {
-      Authorization: `${token}`,
-    },
-  })
-    .then(response => {
-      const cartItems = response.data.data;
-      console.log('cart items: ', cartItems);
+      // Check token expiration
+      try {
+        const decodedToken = jwtDecode(token);
+        const expirationTime = decodedToken.exp * 1000; // Convert seconds to milliseconds
+        console.log("decoded token : ", decodedToken);
+        console.log("exp time : ", expirationTime);
+        console.log("date ", Date.now());
 
-      // Check if there are items in the cart
-      if (cartItems !== null) {
-        // Check if the current item in the cart belongs to the same restaurant
-        if (cartItems.restaurant_id !== this.foodItem.restaurant_id) {
-          alert('Cannot add food item. Please clear your previous cart.');
-          console.error('Cannot add items from different restaurants to the cart.');
+        if (Date.now() >= expirationTime) {
+          // alert('Your session has expired. Please log in again.');
+          this.$toast.error("Your session has expired. Please log in again.", {
+            position: "top",
+          });
+          this.$router.push("/login");
+          return; // Stop execution if the token has expired
+        }
+
+        if (decodedToken.restaurantId) {
+          // alert('Please log in with customer id');
+          this.$toast.warning("Please log in with customer id", {
+            position: "top",
+          });
+          // this.$router.push('/login');
           return;
         }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        // Handle decoding error, e.g., token is not a valid JWT
+        // alert('Invalid token. Please log in again.');
+        this.$toast.error("Invalid token. Please log in again.", {
+          position: "top",
+        });
+        this.$router.push("/login");
+        return; // Stop execution if there's a decoding error
       }
 
-      // If the cart is empty or items belong to the same restaurant, proceed to add the item
-      axios.post('http://localhost:3000/add-to-cart', {
-        restaurant_id: this.foodItem.restaurant_id,
-        items: {
-          id: this.foodItem.id,
-          name: this.foodItem.name,
-          price: this.foodItem.price,
-          // Add other necessary details from your food item
-        },
-        cityId:this.currentCityId
-      }, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      })
-        .then(response => {
-          console.log('res: ', response);
-          this.showQuantityButtons = true;
+      // Fetch existing items in the cart
+      axios
+        .get("http://localhost:3000/get-cart", {
+          headers: {
+            Authorization: `${token}`,
+          },
         })
-        .catch(error => {
-          console.error('Error adding to cart:', error);
+        .then((response) => {
+          const cartItems = response.data.data;
+          console.log("cart items: ", cartItems);
+
+          // Check if there are items in the cart
+          if (cartItems !== null) {
+            // Check if the current item in the cart belongs to the same restaurant
+            if (cartItems.restaurant_id !== this.foodItem.restaurant_id) {
+              // alert('Cannot add food item. Please clear your previous cart.');
+              this.$toast.error(
+                "Cannot add food item. Please clear your previous cart.",
+                {
+                  position: "top",
+                }
+              );
+              console.error(
+                "Cannot add items from different restaurants to the cart."
+              );
+              return;
+            }
+          }
+
+          // If the cart is empty or items belong to the same restaurant, proceed to add the item
+          axios
+            .post(
+              "http://localhost:3000/add-to-cart",
+              {
+                restaurant_id: this.foodItem.restaurant_id,
+                items: {
+                  id: this.foodItem.id,
+                  name: this.foodItem.name,
+                  price: this.foodItem.price,
+                  // Add other necessary details from your food item
+                },
+                cityId: this.currentCityId,
+              },
+              {
+                headers: {
+                  Authorization: `${token}`,
+                },
+              }
+            )
+            .then((response) => {
+              console.log("res: ", response);
+              this.showQuantityButtons = true;
+              this.$toast.success("Item added to cart.", {
+                position: "top-right",
+              });
+            })
+            .catch((error) => {
+              this.$toast.error("Error adding to cart.", {
+                position: "top",
+              });
+              console.error("Error adding to cart:", error);
+            });
+        })
+        .catch((error) => {
+          this.$toast.error("Error fetching cart", {
+            position: "top",
+          });
+          console.error("Error fetching cart:", error);
         });
-    })
-    .catch(error => {
-      console.error('Error fetching cart:', error);
-    });
-},
-
-
+    },
 
     incrementQuantity() {
-      const token = this.$cookies.get('token');
-      axios.post('http://localhost:3000/add-to-cart', {
-        restaurant_id: this.foodItem.restaurant_id,
-        items: {
-          id: this.foodItem.id,
-          name:this.foodItem.name,
-          price:this.foodItem.price,
-        },
-      },{
+      const token = this.$cookies.get("token");
+      axios
+        .post(
+          "http://localhost:3000/add-to-cart",
+          {
+            restaurant_id: this.foodItem.restaurant_id,
+            items: {
+              id: this.foodItem.id,
+              name: this.foodItem.name,
+              price: this.foodItem.price,
+            },
+          },
+          {
             headers: {
-                Authorization: `${token}`
-            }
-          })
-      .then(this.quantity++)
-      .catch(error => {
-        console.error('Error updating cart:', error);
-      });
+              Authorization: `${token}`,
+            },
+          }
+        )
+        .then(this.quantity++)
+        .catch((error) => {
+          console.error("Error updating cart:", error);
+        });
     },
 
     decrementQuantity() {
-      const token = this.$cookies.get('token');
-  
-        axios.post('http://localhost:3000/delete-from-cart', {
-          restaurant_id: this.foodItem.restaurant_id,
-          items: {
-            id: this.foodItem.id,
-          name:this.foodItem.name,
-          price:this.foodItem.price,
+      const token = this.$cookies.get("token");
+
+      axios
+        .post(
+          "http://localhost:3000/delete-from-cart",
+          {
+            restaurant_id: this.foodItem.restaurant_id,
+            items: {
+              id: this.foodItem.id,
+              name: this.foodItem.name,
+              price: this.foodItem.price,
+            },
           },
-        },{
+          {
             headers: {
-                Authorization: `${token}`
-            }
-          })
-        .then(response =>{
+              Authorization: `${token}`,
+            },
+          }
+        )
+        .then((response) => {
           console.log(response);
           this.quantity--;
-          if(this.quantity<1){
-            this.showQuantityButtons=false;
+          if (this.quantity < 1) {
+            this.showQuantityButtons = false;
+            this.$toast.error("Item removed from cart.",{
+          position:"top-right",
+        })
           }
         })
-        .catch(error => {
-          console.error('Error updating cart:', error);
+        .catch((error) => {
+          console.error("Error updating cart:", error);
         });
-      
     },
   },
 };
 </script>
 
 <style scoped>
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap");
 
 .food-item-container {
-  width: 70vw; /* Set the width to 70% of the viewport width */
-  max-width: 600px; /* Set a maximum width if needed */
+  width: 35vw; /* Set the width to 70% of the viewport width */
   margin: 20px auto; /* Center the container horizontally with margin */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;

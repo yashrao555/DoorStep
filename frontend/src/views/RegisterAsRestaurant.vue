@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="scroll-container">
       <!-- Dynamic Registration Form based on the selected type -->
       <div class="registration-container">
         <form class="row g-3" @submit.prevent="registerRestaurant">
@@ -148,17 +148,24 @@ export default {
 
   
   <style scoped>
+
+  .scroll-container {
+  height: 100vh; 
+  overflow-y: auto; 
+}
+
+
   .registration-container {
-    max-width: 600px; /* Set a maximum width for better readability */
+    max-width: 800px; /* Set a maximum width for better readability */
     margin: auto; /* Center the form horizontally on the screen */
     margin-top: 200px;
     padding: 20px; /* Add some padding for better spacing */
   }
   
   /* Adjust the layout for larger screens (md and above) */
-  @media (min-width: 768px) {
+  @media (max-width: 768px) {
     .registration-container {
-      max-width: 800px; /* Increase the maximum width for larger screens */
+      margin-top: 50px;
     }
   }
   

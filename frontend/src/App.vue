@@ -1,7 +1,14 @@
 <template>
-  <div>
-    <app-navigation></app-navigation>
-    <router-view></router-view>
+  <div class="custom-container ">
+
+    <div class="nav-container">
+      <app-navigation></app-navigation>
+    </div>
+
+    <div>
+      <router-view></router-view>
+    </div>
+
   </div>
 </template>
 
@@ -16,4 +23,15 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.custom-container{
+  overflow: auto !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+.nav-container{
+  width:100%;
+}
+
+</style>

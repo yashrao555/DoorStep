@@ -146,7 +146,9 @@ export default {
             },
           }
         );
-
+        this.$toast.success("Cart deleted successfully",{
+                position: "top-right",
+              });
         console.log("Cart deleted successfully:", response.data);
         this.cartItems = [];
         this.totalAmount = 0;

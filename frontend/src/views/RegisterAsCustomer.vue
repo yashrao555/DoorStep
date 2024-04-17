@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="scroll-container">
       <div class="registration-container">
         <form class="row g-3" @submit.prevent="validateForm">
           <!-- Customer Registration Form -->
@@ -116,7 +116,7 @@
             </div>
           </div>
   
-          <div class="col-12">
+          <div class="col-md-12">
             <button type="submit" class="btn btn-primary">Register</button>
           </div>
         </form>
@@ -227,17 +227,25 @@
   
   
   <style scoped>
+
+  .scroll-container {
+  height: 100vh; 
+  overflow-y: auto; 
+}
+
+
   .registration-container {
-    max-width: 600px; /* Set a maximum width for better readability */
+    max-width: 800px; /* Set a maximum width for better readability */
     margin: auto; /* Center the form horizontally on the screen */
     margin-top: 200px;
     padding: 20px; /* Add some padding for better spacing */
+    
   }
   
   /* Adjust the layout for larger screens (md and above) */
-  @media (min-width: 768px) {
+  @media (max-width: 768px) {
     .registration-container {
-      max-width: 800px; /* Increase the maximum width for larger screens */
+      margin-top: 50px;
     }
   }
   
@@ -247,7 +255,7 @@
   }
   
   .btn-primary {
-    width: 100%; /* Make the button full width */
+    width: 100%; 
   }
   
   .registration-type {

@@ -5,7 +5,7 @@
       <p class="signup-link">
         Need an account? <a href="/register">Sign up</a>
       </p>
-      <!-- <router-link to = '/'>Jaoo</router-link> -->
+     
 
       <div class="form-group">
         <label for="role" class="form-label">Login as</label>
@@ -63,8 +63,12 @@
 <script>
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+// import CustomToast from '../components/CustomToast.vue';
 // import VueCookies from "vue-cookies";
 export default {
+  // components: {
+  //   CustomToast,
+  // },
   data() {
     return {
       email: "",
@@ -108,6 +112,9 @@ export default {
             console.log(response.data);
 
             if (response.data.token) {
+              this.$toast.success("Logged in successfully",{
+                position: "top",
+              });
               this.$cookies.set("token", response.data.token);
               // const token = VueCookies.get("token");
               // const role = "customer"; // Replace with your login logic
@@ -131,7 +138,10 @@ export default {
             console.log(response.data);
 
             if (response.data.token) {
-              alert("Logged in successfully!");
+              // alert("Logged in successfully!");
+              this.$toast.success("Logged in successfully",{
+                position: "top",
+              });
               this.$cookies.set("token", response.data.token);
               // const token = VueCookies.get("token");
               // const role = "restaurant"; // Replace with your login logic
@@ -156,7 +166,9 @@ export default {
             console.log(response.data);
 
             if (response.data.token) {
-              alert("Logged in successfully!");
+              this.$toast.success("Logged in successfully",{
+                position: "top",
+              });
               this.$cookies.set("token", response.data.token);
               const token = this.$cookies.get('token')
               const decoded = jwtDecode(token)

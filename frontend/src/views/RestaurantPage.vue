@@ -1,31 +1,37 @@
 <!-- src/components/RestaurantPage.vue -->
 <template>
   <div>
-    <div v-if="restaurant" class="restaurant-page">
-      <particular-restaurant :restaurant="restaurant"></particular-restaurant>
-    </div>
+    <div v-if="loading" class="loading-spinner"></div>
 
-    <div class="food-items-section">
-      <hr class="solid1">
-      <h2 class="section-title">Menu</h2>
-      <hr class="solid2">
-      <div class="menu-container">
-        <div v-for="foodItem in restaurantMenu" :key="foodItem.id">
-          <food-items :foodItem="foodItem" :currentRestaurantId="restaurantId" :currentCityId="cityId"/>
-        </div>
+    <div v-else>
+      <div v-if="restaurant" class="restaurant-page">
+        <particular-restaurant :restaurant="restaurant"></particular-restaurant>
       </div>
-      <!-- <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link> -->
-    </div>
 
+      <div class="food-items-section">
+        <hr class="solid1" />
+        <h2 class="section-title">Menu</h2>
+        <hr class="solid2" />
+        <div class="menu-container">
+          <div v-for="foodItem in restaurantMenu" :key="foodItem.id">
+            <food-items
+              :foodItem="foodItem"
+              :currentRestaurantId="restaurantId"
+              :currentCityId="cityId"
+            />
+          </div>
+        </div>
+        <!-- <router-link @click="navigateToPage2" to="/cart" class="go-to-cart-button">Go to Cart</router-link> -->
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 import ParticularRestaurant from "@/components/ParticularRestaurant.vue";
 import FoodItems from "@/components/FoodItems.vue";
-import { mapState } from 'vuex';
-
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -34,54 +40,61 @@ export default {
   },
   data() {
     return {
-      // Use a computed property to find the restaurant based on the route parameter
+      loading:true,
       restaurant: null,
       restaurantMenu: [],
-      restaurantId:0,
-      cityId:0
+      restaurantId: 0,
+      cityId: 0,
     };
   },
   mounted() {
     this.restaurantId = parseInt(this.$route.params.id1);
     this.cityId = parseInt(this.$route.params.id2);
-    console.log('city id is : ',this.cityId)
+    console.log("city id is : ", this.cityId);
 
-  this.fetchRestaurantDetails(this.restaurantId);
+    this.fetchRestaurantDetails(this.restaurantId);
 
-  this.fetchRestaurantMenu(this.restaurantId);
+    this.fetchRestaurantMenu(this.restaurantId);
+    setTimeout(() => {
+      this.loading = false; // Set loading to false when data is loaded
+    }, 1000);
   },
   methods: {
     async fetchRestaurantDetails(restaurantId) {
-    try {
-      const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}`);
-      const { data } = response.data;
-      this.restaurant = data;
-      console.log(this.restaurant)
-    } catch (error) {
-      console.error('Error fetching restaurant details:', error);
-    }
-  },
-  async fetchRestaurantMenu(restaurantId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/restaurants/${restaurantId}`
+        );
+        const { data } = response.data;
+        this.restaurant = data;
+        console.log(this.restaurant);
+      } catch (error) {
+        console.error("Error fetching restaurant details:", error);
+      }
+    },
+    async fetchRestaurantMenu(restaurantId) {
       try {
         // Make an HTTP request to fetch food items from the backend
-        const response = await axios.get(`http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`);
+        const response = await axios.get(
+          `http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`
+        );
         const { data } = response.data;
         this.restaurantMenu = data; // Update the restaurantMenu with the fetched data
-        console.log('menu ',this.restaurantMenu)
+        console.log("menu ", this.restaurantMenu);
       } catch (error) {
-        console.error('Error fetching restaurant menu:', error);
+        console.error("Error fetching restaurant menu:", error);
       }
     },
     navigateToPage2() {
-      console.log(parseInt(this.$route.params.id))
-      this.$store.dispatch('setRestaurantId', parseInt(this.$route.params.id));
-    }
+      console.log(parseInt(this.$route.params.id));
+      this.$store.dispatch("setRestaurantId", parseInt(this.$route.params.id));
+    },
   },
   computed: {
-    ...mapState(['cartItems']),
+    ...mapState(["cartItems"]),
     foodItemQuantity() {
       const quantity = {};
-      this.cartItems.forEach(item => {
+      this.cartItems.forEach((item) => {
         quantity[item.foodItem.food_item_id] = item.quantity;
       });
       return quantity;
@@ -91,12 +104,17 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
 
+/* .scroll-container {
+  width: 100vw;
+  height: 130vh;
+  overflow-y: auto;
+} */
 
 .restaurant-page {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   margin-top: 60px;
 }
@@ -107,15 +125,15 @@ export default {
 }
 
 .menu-container {
-  max-width: 800px; /* Adjust the width as needed */
+  /* max-width: 800px;  */
   margin: 0 auto; /* Center the container horizontally */
 }
 
 .section-title {
-  font-size: 32px;
+  font-size: 2vw;
   /* font-weight: bold; */
-  margin-bottom: 40px;
-  margin-top: 40px;
+  margin-bottom: 2vh;
+  margin-top: 2vh;
   font-family: "Titan One", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -123,20 +141,18 @@ export default {
 
 hr.solid1 {
   border-top: 3px solid #141212;
-  /* margin:3rem 210px; */
-  margin-left: 620px;
-  margin-top: 20px;
-  width: 320px;
-  
+  margin-left: 31.5vw;
+  width: 15vw;
 }
 
 hr.solid2 {
   border-top: 3px solid #141212;
-  margin-left: 1100px;
+  margin-left: 53vw;
+  width: 15vw;
+  /* margin-left: 1100px;
   width: 320px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; */
 }
-
 
 .go-to-cart-button {
   display: inline-block;
@@ -149,5 +165,20 @@ hr.solid2 {
   border-radius: 5px;
   text-decoration: none;
   cursor: pointer;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 400px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
