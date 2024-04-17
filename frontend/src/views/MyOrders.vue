@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="order-heading">My Orders</h1>
+    <h1 class="order-heading">Orders</h1>
 
     <div class="filter-container" v-if="cities.length>0">
       <label for="city-filter" class="filter-label">Select Branch:</label>

@@ -5,13 +5,43 @@ const Restaurant = require('../models/restaurant')
 const { transporter } = require('../util/mail')
 const { getCartByCustomerAndRestaurant } = require('./cartService')
 
+
+const options = {
+    timeZone: 'Asia/Kolkata', // Set the desired timezone
+    hour12: false, // Use 24-hour format
+  };
+  
+
 async function createOrder(customer_id,callback){
     const cart = await getCartByCustomerAndRestaurant(customer_id)
     
-    let {restaurant_id,items,total_amount,cityId} = cart
+    let {restaurant_id,items,total_amount,cityId} = cart;
+    let restaurant;
+     restaurant = await Restaurant.findOne({
+        where:{
+            id:restaurant_id
+        }
+    })
+
+    // Current time in UTC
+const currentUTCTime = new Date();
+
+// Convert current UTC time to IST
+const currentISTTime = new Date(currentUTCTime.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+
+
+// Convert opens_at and closes_at times to IST
+
+const time1 = extractTime(restaurant.opens_at);
+const time2 = extractTime(restaurant.closes_at);
+const currentISTTimeFormatted = formatTime(currentISTTime);
+console.log(time1,time2,currentISTTimeFormatted);
+
+// Compare with the current IST time
+if (currentISTTimeFormatted >= time1 && currentISTTimeFormatted <= time2) {
+    console.log('The current time is within the opening hours.');
     items = JSON.stringify(items)
-    console.log(typeof(items));
-    console.log(customer_id,restaurant_id,items,total_amount)
+
      const order= await Order.create({
         customer_id,
         restaurant_id,
@@ -27,7 +57,7 @@ async function createOrder(customer_id,callback){
         },
         
     })
-    const restaurant = await Restaurant.findOne({
+    restaurant = await Restaurant.findOne({
         where:{
             id:restaurant_id
         }
@@ -52,6 +82,18 @@ async function createOrder(customer_id,callback){
     callback(order)
 
     return order
+     
+} else {
+    console.log('The current time is outside the opening hours.');
+    return error;
+}
+
+ 
+    console.log(restaurant.opens_at,restaurant.closes_at);
+        
+
+
+    
 }
 
 async function getAllCustomerOrders(id,callback) {
@@ -202,4 +244,20 @@ async function updateOrderStatus(order_id,status){
 
 
 }
+
+const formatTime = (date) => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+};
+
+const extractTime = (utcTimeString) => {
+    const utcTime = new Date(utcTimeString);
+    const hours = utcTime.getUTCHours().toString().padStart(2, '0');
+    const minutes = utcTime.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = utcTime.getUTCSeconds().toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+};
+
 module.exports = {createOrder,getAllCustomerOrders,getAllRestaurantOrders,getOrderById,updateOrderStatus,getStaffOrder}
