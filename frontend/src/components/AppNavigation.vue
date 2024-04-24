@@ -1,7 +1,15 @@
 <template>
   <div :key="isLoggedIn">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <a class="navbar-brand fs-1 ms-5" href="/">{{ $t('navbar.doorstep') }}</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <a class="navbar-brand fs-3 ms-5" href="/"><i class="fa-sharp fa-solid fa-door-open"></i> {{ $t('navbar.doorstep') }}</a>
+      <a 
+        class="nav-link navbar-brand fs-5 ms-4 mt-1"
+        data-bs-toggle="offcanvas"
+        href="#offcanvasWithBothOptions"
+        aria-controls="offcanvasWithBothOptions"
+      >
+        Filters <i class="fa-sharp fa-solid fa-filter"></i>
+      </a>
       <button
         class="navbar-toggler"
         type="button"
@@ -13,56 +21,62 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
+      
+
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav ms-auto text-center ">
+        <!-- <ul class="navbar-nav ms-auto text-center "> -->
+        <ul class="navbar-nav ms-auto text-center">
           <li class="nav-item active" v-if="showRegisterButton">
-            <router-link class="nav-link navbar-brand fs-4" to="/register"
-              >{{ $t('navbar.register') }}</router-link
-            >
+            <router-link class="nav-link navbar-brand fs-5" to="/register"
+              >{{ $t('navbar.register') }}</router-link>
+            
           </li>
           <li class="nav-item" v-if="showLoginButton">
-            <router-link class="nav-link navbar-brand fs-4" to="/login"
-              >{{ $t('navbar.login') }}</router-link
-            >
+            <router-link class="nav-link navbar-brand fs-5" to="/login"
+              >{{ $t('navbar.login') }}</router-link>
+            
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link navbar-brand fs-5" href="/myOrders"><i class="fa-sharp fa-solid fa-burger"></i> {{ $t('navbar.my_orders') }}</a>
           </li>
           <li class="nav-item">
             <a
               v-if="role === 'customer'"
-              class="nav-link navbar-brand fs-4"
+              class="nav-link navbar-brand fs-5"
               href="/cart"
-              >{{ $t('navbar.my_cart') }}</a
-            >
+              ><i class="fa-sharp fa-solid fa-cart-shopping"></i
+            > {{ $t('navbar.my_cart') }}</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link navbar-brand fs-4" href="/myOrders">{{ $t('navbar.my_orders') }}</a>
-          </li>
+
           <li class="nav-item">
             <a
               v-if="role === 'customer'"
-              class="nav-link navbar-brand fs-4"
+              class="nav-link navbar-brand fs-5"
               href="/register"
-              >{{ $t('navbar.a_restaurant') }}</a
-            >
+              ><i class="fa-sharp fa-solid fa-store"></i
+            >  {{ $t('navbar.a_restaurant') }}</a>
           </li>
           <li class="nav-item">
             <a
               v-if="role === 'restaurant'"
-              class="nav-link navbar-brand fs-4"
+              class="nav-link navbar-brand fs-5"
               href="/restaurant-dashboard"
-              >{{ $t('navbar.restaurant_dashboard') }}</a
+              ><i class="fa-sharp fa-solid fa-chart-simple"></i> {{ $t('navbar.restaurant_dashboard') }}</a
             >
           </li>
           <li class="nav-item dropdown">
             <a
               v-if="role === 'restaurant'"
-              class="nav-link navbar-brand dropdown-toggle fs-4"
+              class="nav-link navbar-brand dropdown-toggle fs-5"
               href="#"
               id="navbarDropdown"
               role="button"
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >
+            ><i class="fa-sharp fa-solid fa-plus"></i> 
               {{ $t('navbar.add_branch') }}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -73,13 +87,13 @@
               </ul>
             </div>
           </li>
-          <li class="nav-item ml-auto">
+          <li class="nav-item ">
             <button
               v-if="showLogoutButton"
               @click="logout"
-              class="btn btn-link nav-link navbar-brand fs-4"
+              class=" nav-link navbar-brand fs-5"
             >
-              {{ $t('navbar.logout') }}
+              <i class="fa-sharp fa-solid fa-right-from-bracket"></i> {{ $t('navbar.logout') }}
             </button>
           </li>
           <li class="nav-item">
@@ -99,6 +113,8 @@
 import VueCookies from "vue-cookies";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
+// import axios from "axios";
+// import { ref } from 'vue';
 
 export default {
   data() {
@@ -135,24 +151,34 @@ export default {
   },
   methods: {
     addBranch(cityId) {
-      const decoded  = jwtDecode(this.token);
-      const restaurantId = decoded.restaurantId;
+      const decoded = jwtDecode(this.token);
+      // console.log('decoded ',decoded);
+      // Call your API to add the branch (restaurant city) to the restaurant
+      const restaurantId = decoded.restaurantId; // Assuming you have the restaurantId stored in data
       axios
-        .post(`http://localhost:3000/create-entry`, {
-          restaurantId,
-          cityId
-        }, {
-          headers: {
-            Authorization: `${this.token}`,
+        .post(
+          `http://localhost:3000/create-entry`,
+          {
+            restaurantId,
+            cityId,
           },
-        })
-        .then(response => {
+          {
+            headers: {
+              Authorization: `${this.token}`,
+            },
+          }
+        )
+        .then((response) => {
+          // Handle success, e.g., show a success message
           console.log("Branch added successfully:", response.data);
           alert(response.data.message);
+          // Optionally, you can refresh the list of branches (if needed)
+          // this.fetchFoodItems(this.restaurantId);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Failed to add branch:", error);
-          alert('Cannot add same branch again');
+          alert("Cannot add same branch again");
+          // Handle error as needed
         })
         .finally(() => {
           this.showDropdown = false;
@@ -208,6 +234,6 @@ export default {
 }
 
 .ms-5 {
-  margin-left: 10vw!important;
+  margin-left: 10vw !important;
 }
 </style>

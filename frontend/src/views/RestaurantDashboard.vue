@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <!-- <div>
+  <div v-if="loading" class="loading-spinner"></div>
+
+  <div v-else>
     <div class="banner">
       <img
         src="https://www.shutterstock.com/image-photo/healthy-meal-diet-plan-daily-260nw-1756843007.jpg"
@@ -16,15 +19,10 @@
         >
           Register staff members ?
         </h5>
-        <!-- <h2>Food Item Upload</h2>
-        <form @submit.prevent="uploadFile">
-          <input type="file" ref="fileInput" accept=".csv" required />
-          <button type="submit">Upload</button>
-        </form> -->
       </div>
     </div>
 
-    <!-- Card Section -->
+  
     <div class="card-section">
       <div
         class="food-card"
@@ -66,6 +64,86 @@
       @deleteFoodItem="deleteFoodItem"
     />
   </div>
+</div> -->
+
+  <div>
+    
+
+    <div v-if="loading" class="loading-spinner"></div>
+
+    <div v-else class="">
+      <div class="top-section">
+        <p class="d-inline-flex gap-1">
+          <button
+            class="btn option-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+          >
+            <i class="fa-sharp fa-solid fa-circle-info"></i>
+            More Options
+          </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+          <div class="card card-body">
+            <div
+              class="d-flex flex-wrap justify-content-start align-items-center"
+            >
+              <h5 @click="openAddModal" class="add-item-link">
+                <i class="fa-sharp fa-solid fa-plus"></i> Add food items?
+              </h5>
+              <h5
+                v-if="!isStaff"
+                @click="navigateToRegisterStaff"
+                class="add-item-link ms-5"
+              >
+                <i class="fa-sharp fa-solid fa-address-card"></i>
+                Register staff members ?
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="middle-section">
+        <div v-for="(foodItem, index) in foodItems" :key="index" class=" p-3">
+          <div class="row d-flex ">
+            <div class="list-group  col-lg-1 col-sm-1 fs-4">{{ index+1 }}</div>
+            <div class="list-group col-lg-8 col-sm-11 fs-4">{{ foodItem.name }}</div>
+            <div @click="openUpdateModal(foodItem)" class="list-group col-lg-1 col-sm-4 fs-5 text-center" style="color:blue;cursor:pointer"><i class="fa-sharp fa-solid fa-pen"></i> Update</div>
+            <div @click="openDeleteModal(foodItem)" class="list-group col-lg-1 col-sm-4 fs-5 text-center" style="color:red;cursor:pointer"><i class="fa-sharp fa-solid fa-trash"></i> Delete</div>
+            <div class="list-group col-lg-1 col-sm-4 fs-4 text-center" style="cursor:pointer"><i class="fa-sharp fa-solid fa-ellipsis-vertical"></i></div>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <AddItemModal
+      :showModal="showAddModal"
+      :foodItem="selectedFoodItem"
+      @closeModal="closeModal"
+      @addFoodItem="addFoodItem"
+    />
+
+    <UpdateModal
+      :showModal="showUpdateModal"
+      :foodItem="selectedFoodItem"
+      @closeModal="closeModal"
+      @updateFoodItem="updateFoodItem"
+    />
+
+    <DeleteModal
+      :showModal="showDeleteModal"
+      :foodItem="selectedFoodItem"
+      @closeModal="closeModal"
+      @deleteFoodItem="deleteFoodItem"
+    />
+    </div>
+
+    
+  </div>
 </template>
 
 <script>
@@ -80,6 +158,7 @@ export default {
   name: "FoodItems",
   data() {
     return {
+      loading: false,
       foodItems: [],
       showUpdateModal: false,
       showDeleteModal: false,
@@ -102,14 +181,11 @@ export default {
     if (this.restaurantId) {
       this.fetchFoodItems(this.restaurantId);
     }
-
-    
   },
 
   methods: {
     // Additional methods if needed
 
-  
     decodeToken(token) {
       try {
         const decoded = jwtDecode(token);
@@ -122,6 +198,7 @@ export default {
 
     async fetchFoodItems(restaurantId) {
       try {
+        this.loading = true;
         const response = await axios.get(
           `http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`
         );
@@ -129,6 +206,8 @@ export default {
         console.log(this.foodItems);
       } catch (error) {
         console.error("Failed to fetch food items:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -190,14 +269,12 @@ export default {
           }
         )
         .then((response) => {
-          // Handle success, e.g., close the modal and refresh the food items
           console.log("res : ", response);
           this.closeModal();
           this.fetchFoodItems(this.restaurantId);
         })
         .catch((error) => {
           console.error("Failed to delete food item:", error);
-          // Handle error as needed
         });
     },
 
@@ -231,15 +308,75 @@ export default {
     navigateToRegisterStaff() {
       this.$router.push("/register/staff");
     },
-
-    
   },
   components: { UpdateModal, DeleteModal, AddItemModal },
 };
 </script>
 
 <style scoped>
-/* Add your component-specific styles here */
+.top-section {
+  margin-left: 10vw;
+  margin-top: 1.5vw;
+  width: 80vw;
+}
+
+.option-button {
+  background-color: #f3f3f3;
+  color: #ffa500;
+  font-weight: bold;
+  font-size: 0.9vw;
+  padding: 0.6vw;
+  border-color: #ffa500;
+}
+
+.add-item-link {
+  cursor: pointer;
+  margin-left: 2vh;
+  color: #f3f3f3;
+  font-size: 1.1vw;
+}
+
+.card {
+  width: 80vw !important;
+  padding: 20px; /* Adjust padding as needed */
+  border-radius: 10px; /* Adjust the radius for rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust the shadow properties */
+  background-color: #ffa500; /* Adjust the background color */
+}
+
+.middle-section {
+  margin-left: 10vw;
+  margin-top: 3vw;
+  width: 80vw;
+  padding: 20px; /* Adjust padding as needed */
+  border-radius: 10px; /* Adjust the radius for rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust the shadow properties */
+  border: 3px solid #ffa500;
+}
+
+.item-row {
+  height: 8rem;
+  margin-top: 2rem;
+  color: #ffa500;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.6vw;
+  border: 3px solid #ffa500;
+  border-radius: 10px;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+hr{
+  margin-top: 1rem;
+  color: #ffa500;
+}
+
+/* 
 .banner {
   position: relative;
   width: 100%;
@@ -265,7 +402,7 @@ export default {
 
 h1 {
   font-size: 250%;
-}
+} */
 .food-card {
   width: calc(
     33.33% - 140px
@@ -307,11 +444,6 @@ h1 {
   background-color: #e57200; /* Darker shade on hover */
 }
 
-h2 {
-  font-size: 160%;
-  cursor: pointer;
-}
-
 .card-section {
   display: flex;
   justify-content: space-around; /* Adjust spacing between cards */
@@ -323,38 +455,22 @@ h2 {
   margin-top: 10px;
 }
 
-.add-branch-button {
-  margin-top: 20px;
-  background-color: #ffa500;
-  color: #fff;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.loading-spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 400px auto;
 }
 
-.city-dropdown {
-  position: absolute;
-  top: 550px; /* Adjust the position based on your layout */
-  left: 120px;
-  width: 200px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.city-dropdown ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.city-dropdown ul li {
-  padding: 8px;
-  cursor: pointer;
-}
-
-.city-dropdown ul li:hover {
-  background-color: #f0f0f0;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

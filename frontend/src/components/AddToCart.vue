@@ -1,5 +1,9 @@
 <template>
-  <div class="cart-page-container">
+  <div>
+
+  <div class="loading-spinner" v-if="loading"></div>
+
+  <div v-else class="cart-page-container">
     <div class="restaurant-info" v-if="restaurant">
         <h2 class="restaurant-name">{{ restaurant.name }}</h2>
       <p class="location">{{ restaurant.address }}</p>
@@ -45,6 +49,7 @@
       <button class="clear-cart-button" @click="deleteCart">{{ $t('cart.clear_cart') }}</button>
     </div>
   </div>
+</div>
 </template>
 
 
@@ -55,6 +60,7 @@ import { jwtDecode } from "jwt-decode";
 export default {
   data() {
     return {
+      loading:false,
       restaurant: null,
       cartItems: [],
       totalAmount: 0,
@@ -65,8 +71,6 @@ export default {
     };
   },
   mounted() {
-    // Fetch restaurant data based on the restaurant ID from the route parameter
-    // this.$store.dispatch("fetchRestaurantData", this.restaurantId);
     this.fetchCartData();
   },
 
@@ -78,6 +82,7 @@ export default {
   methods: {
     async fetchCartData() {
       try {
+        this.loading=true;
         const token = this.$cookies.get("token");
         const response = await axios.get("http://localhost:3000/get-cart", {
           headers: {
@@ -103,10 +108,14 @@ export default {
       } catch (error) {
         console.error("Error fetching cart data:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
 
     async fetchRestaurantData(restaurantId) {
       try {
+        this.loading=true;
         const response = await axios.get(
           `http://localhost:3000/restaurants/${restaurantId}`
         ); // Adjust the URL based on your backend setup
@@ -135,10 +144,14 @@ export default {
       } catch (error) {
         console.error("Error fetching restaurant data:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
     async deleteCart() {
       const token = this.$cookies.get("token");
       try {
+        this.loading=true;
         const response = await axios.delete(
           "http://localhost:3000/delete-cart",
           {
@@ -158,10 +171,14 @@ export default {
       } catch (error) {
         console.error("Error clearing cart:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
 
     async confirmOrder() {
       try {
+        this.loading=true;
         const token = this.$cookies.get("token");
         const decoded = jwtDecode(token);
         console.log(decoded);
@@ -177,7 +194,9 @@ export default {
           }
         );
 
-        console.log("Order created successfully:", response.data);
+        this.$toast.success("Order created successfully",{
+                position: "top",
+              });
         const orderId = response.data.id;
         // console.log('event bus : ',this.$eventBus)
         // this.$eventBus.emit('orderConfirmed', orderId);
@@ -187,6 +206,9 @@ export default {
         this.$router.push("/checks");
       } catch (error) {
         console.error("Error confirming order:", error);
+      }
+      finally{
+        this.loading=false;
       }
     },
 
@@ -302,9 +324,6 @@ export default {
   transform: scale(1.05);
 }
 
-.item-details {
-  /* Add styles for item details */
-}
 
 .quantity-box {
   display: flex;
@@ -380,5 +399,20 @@ export default {
   font-family: "Tenor Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 400px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

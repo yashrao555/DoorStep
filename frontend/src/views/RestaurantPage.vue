@@ -31,7 +31,6 @@
 import axios from "axios";
 import ParticularRestaurant from "@/components/ParticularRestaurant.vue";
 import FoodItems from "@/components/FoodItems.vue";
-import { mapState } from "vuex";
 
 export default {
   components: {
@@ -40,7 +39,7 @@ export default {
   },
   data() {
     return {
-      loading:true,
+      loading:false,
       restaurant: null,
       restaurantMenu: [],
       restaurantId: 0,
@@ -55,13 +54,14 @@ export default {
     this.fetchRestaurantDetails(this.restaurantId);
 
     this.fetchRestaurantMenu(this.restaurantId);
-    setTimeout(() => {
-      this.loading = false; // Set loading to false when data is loaded
-    }, 1000);
+    // setTimeout(() => {
+    //   this.loading = false; 
+    // }, 1000);
   },
   methods: {
     async fetchRestaurantDetails(restaurantId) {
       try {
+        this.loading=true;
         const response = await axios.get(
           `http://localhost:3000/restaurants/${restaurantId}`
         );
@@ -71,9 +71,13 @@ export default {
       } catch (error) {
         console.error("Error fetching restaurant details:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
     async fetchRestaurantMenu(restaurantId) {
       try {
+        this.loading=true;
         // Make an HTTP request to fetch food items from the backend
         const response = await axios.get(
           `http://localhost:3000/restaurants/${restaurantId}/getAllFoodItems`
@@ -84,20 +88,9 @@ export default {
       } catch (error) {
         console.error("Error fetching restaurant menu:", error);
       }
-    },
-    navigateToPage2() {
-      console.log(parseInt(this.$route.params.id));
-      this.$store.dispatch("setRestaurantId", parseInt(this.$route.params.id));
-    },
-  },
-  computed: {
-    ...mapState(["cartItems"]),
-    foodItemQuantity() {
-      const quantity = {};
-      this.cartItems.forEach((item) => {
-        quantity[item.foodItem.food_item_id] = item.quantity;
-      });
-      return quantity;
+      finally{
+        this.loading=false;
+      }
     },
   },
 };

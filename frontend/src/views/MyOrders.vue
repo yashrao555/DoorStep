@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div v-if="loading" class="loading-spinner"></div>
+    <div v-else >
     <h1 class="order-heading">Orders</h1>
 
     <div class="filter-container" v-if="cities.length>0">
@@ -30,6 +32,7 @@
       @close-modal="closeOrderModal"
     />
   </div>
+  </div>
 </template>
 
 <script>
@@ -46,6 +49,7 @@ export default {
   },
   data() {
     return {
+      loading:false,
       orders: [],
       selectedOrderDetails: null,
       isOrderModalOpen: false,
@@ -59,7 +63,8 @@ export default {
       const token = this.$cookies.get("token");
       const decoded = jwtDecode(token);
       try {
-        
+      this.loading=true; 
+      console.log('loading : ',this.loading);
       
       if(decoded.customerId || decoded.restaurantId){
         const response = await axios.get("http://localhost:3000/orders", {
@@ -88,10 +93,14 @@ export default {
        catch (error) {
         console.log("Error displaying orders:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
 
     async getCitiesForRestaurant() {
       try {
+        this.loading=true;
         const token = this.$cookies.get("token");
         const decoded = jwtDecode(token);
         console.log("decoded ", decoded);
@@ -124,10 +133,12 @@ export default {
       } catch (error) {
         console.log("Error retrieving cities:", error);
       }
+      finally{
+        this.loading=false;
+      }
     },
 
     filterOrdersByCity() {
-      // Filter orders based on selected city
       console.log("selected city id ", this.selectedCityId);
       if (this.selectedCityId) {
         console.log("orders ", this.orders);
@@ -137,6 +148,7 @@ export default {
       } else {
         return this.orders; // Show all orders if no city is selected
       }
+      
     },
 
     openOrderModal(orderDetails) {
@@ -249,5 +261,20 @@ export default {
 /* Styling for dropdown options */
 .filter-dropdown select option {
   padding: 10px;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 400px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>

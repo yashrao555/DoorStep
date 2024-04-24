@@ -4,6 +4,7 @@
     <div v-if="loading" class="loading-spinner"></div>
 
     <!-- Search Bar -->
+
     <div v-else class="search-bar text-center row justify-content-md-center">
       <!-- Search Input -->
       <div class="col-lg-6 col-md-12 col-sm-12 col-12">
@@ -22,24 +23,49 @@
       <div class="col-lg-2 col-md-6 col-sm-6 col-6 ">
         <button class="my-2" @click="clearSearch">{{ $t('search.clear') }}</button>
       </div>
+    </div>
 
-      <!-- Filter Dropdown -->
-      <div class="filter-dropdown col-lg-4 col-md-6 col-sm-6 col-6" v-if="cities.length > 0">
-        <select class="my-2" v-model="selectedCity" @change="searchByCity(selectedCity)">
-          <option value="">{{ $t('search.selectCity') }}</option>
+    <div
+      class="offcanvas offcanvas-end"
+      data-bs-scroll="true"
+      tabindex="-1"
+      id="offcanvasWithBothOptions"
+      aria-labelledby="offcanvasWithBothOptionsLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+          Filters
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="filter-dropdown">
+          <select
+            class="my-2"
+            v-model="selectedCity"
+            @change="searchByCity(selectedCity)"
+          >
+            <option value="">{{ $t('search.selectCity') }}</option>
 
-          <!-- Iterate over cities -->
-          <option v-for="city in cities" :key="city.id" :value="city.id">
-            {{ city.name }}
-          </option>
-        </select>
+            <option v-for="city in cities" :key="city.id" :value="city.id">
+              {{ city.name }}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
     <!-- Separator -->
-    <hr class="solid" />
+    <!-- <hr class="solid" /> -->
 
     <!-- Restaurants according to selected city -->
+    <!-- <hr class="solid" /> -->
+
     <div class="card-container" v-if="filteredRestaurant.length > 0">
       <h2 class="heading">{{ $t('restaurants.selectedCity') }}</h2>
       <!-- Iterate over rows -->
@@ -102,15 +128,15 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       restaurants: [],
       nearbyRestaurants: [],
       rows1: [],
       rows2: [],
       rows3: [],
       searchTerm: "",
-      cities: [],
-      selectedCity: "",
+      cities: [], // Array to store cities fetched from the backend
+      selectedCity: null,
       filteredRestaurant: [],
       currentCityId: null,
       supportedLanguages: ['en', 'fr'], // Add more languages if needed
@@ -121,35 +147,47 @@ export default {
     this.fetchRestaurants();
     this.fetchUserAddressAndFetchRestaurants();
     this.fetchCities();
-    setTimeout(() => {
-      this.loading = false;
-    }, 1000);
   },
   methods: {
     // Fetch cities from the backend
     async fetchCities() {
       try {
-        const response = await axios.get("http://localhost:3000/get-all-cities");
-        this.cities = response.data;
+        this.loading = true;
+        const response = await axios.get(
+          "http://localhost:3000/get-all-cities"
+        );
+        this.cities = response.data; // Assuming your API returns an array of cities
       } catch (error) {
         console.error("Failed to fetch cities:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
     // Search restaurants by city
     async searchByCity(cityId) {
+      // console.log('city : ',cityName)
       try {
-        const response = await axios.post("http://localhost:3000/search-by-city", { cityId });
+        this.loading = true;
+        const response = await axios.post(
+          "http://localhost:3000/search-by-city",
+          { cityId }
+        );
+
+        // Extract restaurant IDs from the response
         const restaurantIds = response.data.restaurantIds;
         await this.fetchRestaurantDetails(restaurantIds);
       } catch (error) {
         console.error("Error searching restaurants by city:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
     // Fetch restaurant details
     async fetchRestaurantDetails(restaurantIds) {
       try {
+        this.loading = true;
         const promises = restaurantIds.map((restaurantId) =>
           axios.get(`http://localhost:3000/restaurants/${restaurantId}`)
         );
@@ -159,6 +197,8 @@ export default {
         this.rows3 = this.chunkArray(this.filteredRestaurant, 5);
       } catch (error) {
         console.error("Error fetching restaurant details:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -174,22 +214,33 @@ export default {
     // Fetch all restaurants
     async fetchRestaurants() {
       try {
-        const response = await axios.get("http://localhost:3000/restaurants");
+        this.loading = true;
+        const response = await axios.get("http://localhost:3000/restaurants"); // Replace with your actual backend URL
         this.restaurants = response.data.data;
         this.rows1 = this.chunkArray(this.restaurants, 5);
       } catch (error) {
         console.error("Failed to fetch restaurants:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
     // Search restaurants based on user input
     async searchRestaurants() {
       try {
-        const response = await axios.post("http://localhost:3000/restaurants/search", { name: this.searchTerm });
+        this.loading = true;
+        const response = await axios.post(
+          "http://localhost:3000/restaurants/search",
+          {
+            name: this.searchTerm,
+          }
+        );
         this.restaurants = response.data.data;
         this.rows1 = this.chunkArray(this.restaurants, 5);
       } catch (error) {
         console.error("Failed to fetch restaurants:", error);
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -212,7 +263,13 @@ export default {
       const decoded = jwtDecode(token);
 
       try {
-        const userAddressResponse = await axios.get(`http://localhost:3000/get-user-address/${decoded.customerId}`);
+        this.loading = true;
+        // Replace 'get-user-address' with your actual endpoint
+        const userAddressResponse = await axios.get(
+          `http://localhost:3000/get-user-address/${decoded.customerId}`
+        );
+
+        // Extract user's address from the response
         const userAddress = userAddressResponse.data.address;
         const cityName = userAddressResponse.data.city;
 
@@ -229,6 +286,8 @@ export default {
         this.rows2 = this.chunkArray(this.nearbyRestaurants, 5);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        this.loading = false;
       }
     },
   },
@@ -270,7 +329,7 @@ h1 {
   /* display: flex; */
   /* justify-content: center; */
   /* align-items: center; */
-  margin: 4rem 0;
+  margin: 2rem 0;
 }
 .search-bar input {
   border: 1px solid #ddd;
@@ -338,15 +397,19 @@ hr.solid {
   margin: 400px auto;
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 @media (max-width: 990px) {
   .search-bar input {
     width: 80vw;
   }
   .filter-dropdown select {
-    margin:auto
+    margin: auto;
   }
 }
 </style>
