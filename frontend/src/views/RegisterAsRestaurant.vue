@@ -9,10 +9,10 @@
               type="email"
               class="form-control"
               id="inputEmail4"
-              placeholder="name@example.com"
+              :placeholder="$t('registrationR.placeholders.email')"
               v-model="email"
             />
-            <label for="inputEmail4">Email</label>
+            <label for="inputEmail4">{{ $t('registrationR.email') }}</label>
           </div>
   
           <div class="col-md-6 form-floating">
@@ -20,53 +20,53 @@
               type="password"
               class="form-control"
               id="inputPassword4"
-              placeholder="name@example.com"
+              :placeholder="$t('registrationR.placeholders.password')"
               v-model="password"
             />
-            <label for="inputPassword4">Password</label>
+            <label for="inputPassword4">{{ $t('registrationR.password') }}</label>
           </div>
   
           <div class="col-md-6">
-            <label for="username" class="form-label">Restaurant Name</label>
+            <label for="username" class="form-label">{{ $t('registrationR.restaurant_name') }}</label>
             <input type="text" class="form-control" id="username" v-model="restaurantName"/>
           </div>
   
           <div class="col-md-4">
-            <label for="opensat" class="form-label">Opens At</label>
+            <label for="opensat" class="form-label">{{ $t('registrationR.opens_at') }}</label>
             <input type="time" id="opensat" class="form-control" v-model="opensAt"/>
           </div>
   
           <div class="col-md-2">
-            <label for="closesat" class="form-label">Closes At</label>
+            <label for="closesat" class="form-label">{{ $t('registrationR.closes_at') }}</label>
             <input type="time" id="closesat" class="form-control" v-model="closesAt"/>
           </div>
   
           <div class="col-12">
-            <label for="inputAddress2" class="form-label">Address</label>
+            <label for="inputAddress2" class="form-label">{{ $t('registrationR.address') }}</label>
             <input
               type="text"
               class="form-control"
               id="inputAddress2"
-              placeholder="Apartment, studio, or floor"
+              :placeholder="$t('registrationR.placeholders.address')"
               v-model="address"
             />
           </div>
   
           <div class="col-md-6">
-            <label for="inputCity" class="form-label">City</label>
+            <label for="inputCity" class="form-label">{{ $t('registrationR.city') }}</label>
             <input type="text" class="form-control" id="inputCity" v-model="city"/>
           </div>
   
           <div class="col-md-4">
-            <label for="inputState" class="form-label">State</label>
+            <label for="inputState" class="form-label">{{ $t('registrationR.state') }}</label>
             <select id="inputState" class="form-select" v-model="state">
-              <option selected>Choose...</option>
-              <option>gandhinagar</option>
+              <option selected>{{ $t('registrationR.placeholders.choose') }}</option>
+              <option>{{ $t('registrationR.states.gandhinagar') }}</option>
             </select>
           </div>
   
           <div class="col-md-2">
-            <label for="inputZip" class="form-label">Zip</label>
+            <label for="inputZip" class="form-label">{{ $t('registrationR.zip') }}</label>
             <input type="text" class="form-control" id="inputZip" v-model="zip" />
           </div>
   
@@ -75,19 +75,20 @@
               type="text"
               class="form-control"
               id="contact"
-              placeholder="name@example.com"
+              :placeholder="$t('registrationR.placeholders.contact_number')"
               v-model="phone"
             />
-            <label for="contact">Contact Number</label>
+            <label for="contact">{{ $t('registrationR.contact_number') }}</label>
           </div>
   
           <div class="col-12">
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">{{ $t('registrationR.register_button') }}</button>
           </div>
         </form>
       </div>
     </div>
   </template>
+
 
 
   <script>

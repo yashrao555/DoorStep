@@ -1,41 +1,42 @@
 <template>
   <div v-if="showModal" class="modal-container">
     <div class="modal-box">
-      <h2>Add Food Item</h2>
+      <h2>{{ $t('food_item.add_title') }}</h2>
 
       <!-- Your form fields for updating food items -->
       <div class="form-group">
-        <label for="name">Name:</label>
-        <input v-model="FoodItemData.name" id="name" placeholder="Name" class="rounded-input" />
+        <label for="name">{{ $t('food_item.name') }}:</label>
+        <input v-model="FoodItemData.name" id="name" :placeholder="$t('food_item.name_placeholder')" class="rounded-input" />
       </div>
       <div class="form-group">
-        <label for="price">Price:</label>
-        <input v-model="FoodItemData.price" id="price" placeholder="Price" class="rounded-input" />
+        <label for="price">{{ $t('food_item.price') }}:</label>
+        <input v-model="FoodItemData.price" id="price" :placeholder="$t('food_item.price_placeholder')" class="rounded-input" />
       </div>
       <div class="form-group">
-        <label for="description">Description:</label>
-        <textarea v-model="FoodItemData.description" id="description" placeholder="Description" class="rounded-input"></textarea>
+        <label for="description">{{ $t('food_item.description') }}:</label>
+        <textarea v-model="FoodItemData.description" id="description" :placeholder="$t('food_item.description_placeholder')" class="rounded-input"></textarea>
       </div>
       <div class="form-group">
-        <label for="image_url">Image URL:</label>
-        <input v-model="FoodItemData.image_url" id="image_url" placeholder="Image URL" class="rounded-input" />
+        <label for="image_url">{{ $t('food_item.image_url') }}:</label>
+        <input v-model="FoodItemData.image_url" id="image_url" :placeholder="$t('food_item.image_url_placeholder')" class="rounded-input" />
       </div>
 
-      <button class="update-button" @click="addFoodItem">Add</button>
-      <button class="close-button" @click="closeModal">Close</button>
-      <p class="or">or</p>
+      <button class="update-button" @click="addFoodItem">{{ $t('food_item.add_button') }}</button>
+      <button class="close-button" @click="closeModal">{{ $t('food_item.close_button') }}</button>
+      <p class="or">{{ $t('food_item.or') }}</p>
       <form @submit.prevent="uploadFile">
         <input type="file" ref="fileInput" accept=".csv" required />
-        <button class="update-button" type="submit">Upload</button>
+        <button class="update-button" type="submit">{{ $t('food_item.upload_button') }}</button>
       </form>
       
       <!-- Progress bar -->
       <div class="progress-bar">
-    <div class="progress" :style="{ width: progressWidth }"></div>
-  </div>
+        <div class="progress" :style="{ width: progressWidth }"></div>
+      </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';

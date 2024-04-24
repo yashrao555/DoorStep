@@ -9,17 +9,17 @@
             alt="altText"
           />
           <div class="res-details">
-            <h3 class="restaurant-name">{{ name }}</h3>
+           <h3 class="restaurant-name">{{ name }}</h3>
             <p class="restaurant-address">{{ city }}</p>
             <p class="restaurant-timings">
-              Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
+              {{ $t('order.timings') }} : {{ opensAtHours }}:{{ opensAtMinutes }} -
               {{ closesAtHours }}:{{ closesAtMinutes }}
             </p>
-            <p class="orderDate">Ordered on : {{ orderDate }}</p>
+            <p class="orderDate">{{ $t('order.ordered_on') }} : {{ orderDate }}</p>
           </div>
         </div>
 
-        <p class="order-status">Status: {{ order.status }}</p>
+        <p class="order-status">{{ $t('order.status') }}: {{ order.status }}</p>
       </div>
 
       <hr class="solid" />
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <p class="order-amount">Total: {{ order.total_amount.toFixed(2) }}</p>
+        <p class="order-amount">{{ $t('order.total') }}: {{ order.total_amount.toFixed(2) }}</p>
       </div>
     </div>
   </div>

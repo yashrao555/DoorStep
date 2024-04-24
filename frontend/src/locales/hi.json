@@ -1,0 +1,175 @@
+{
+    "navbar": {
+      "doorstep": "द्वार",
+      "register": "रजिस्टर",
+      "login": "लॉगिन",
+      "my_cart": "मेरा कार्ट",
+      "my_orders": "मेरे आदेश",
+      "a_restaurant":"रेस्तरां?",
+      "add_branch": "शाखा जोड़ें",
+      "restaurant_dashboard": "रेस्तरां डैशबोर्ड",
+      "logout": "लॉगआउट"
+    },
+    "search": {
+      "placeholder": "रेस्तरां खोजें...",
+      "clear": "खोज साफ़ करें",
+      "selectCity": "एक शहर चुनें"
+    },
+    "restaurants": {
+      "selectedCity": "चयनित शहर के अनुसार रेस्तरां",
+      "nearYou": "आपके नजदीकी रेस्तरां"
+    },
+    "login": {
+        "header": "लॉगिन",
+        "signup_link": "खाता चाहिए? <a href='/register'>साइन अप करें</a>",
+        "login_as": "के रूप में लॉगिन करें",
+        "choose":"चुनें",
+        "customer": "ग्राहक",
+        "restaurant": "रेस्तरां",
+        "staff": "कर्मचारी",
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "show": "दिखाएं",
+        "hide": "छिपाएं",
+        "login_button": "लॉगिन",
+        "forgot_password": "पासवर्ड भूल गए? <a href='#'>यहाँ क्लिक करें</a>"
+      },
+      "registration": {
+        "register_as": "रजिस्टर करें जैसा",
+        "customer": "ग्राहक",
+        "restaurant": "रेस्तरां",
+        "already_registered": "पहले से ही पंजीकृत?",
+        "login": "लॉगिन"
+      },
+      "registrationC": {
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "user_name": "उपयोगकर्ता नाम",
+        "date_of_birth": "जन्म तिथि",
+        "gender": "लिंग",
+        "address": "पता",
+        "city": "शहर",
+        "state": "राज्य",
+        "zip": "ज़िप",
+        "contact_number": "संपर्क नंबर",
+        "register_button": "रजिस्टर करें",
+        "placeholders": {
+          "email": "नाम@example.com",
+          "password": "अपना पासवर्ड डालें",
+          "user_name": "अपना नाम डालें",
+          "address": "अपार्टमेंट, स्टूडियो, या मंज़िल",
+          "city": "अपना शहर दर्ज करें",
+          "zip": "अपना ज़िप कोड दर्ज करें",
+          "contact_number": "अपना संपर्क नंबर दर्ज करें"
+        },
+        "validation_messages": {
+          "email_required": "ईमेल आवश्यक है।",
+          "invalid_email": "कृपया एक वैध ईमेल पता दर्ज करें।",
+          "password_required": "पासवर्ड आवश्यक है।",
+          "password_length": "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए।",
+          "user_name_required": "उपयोगकर्ता नाम आवश्यक है।",
+          "gender_required": "कृपया लिंग का चयन करें।",
+          "address_required": "पता आवश्यक है।",
+          "city_required": "शहर आवश्यक है।",
+          "state_required": "राज्य आवश्यक है।",
+          "zip_invalid": "कृपया एक वैध ज़िप कोड दर्ज करें।",
+          "contact_number_invalid": "कृपया एक वैध संपर्क नंबर दर्ज करें।"
+        }
+      },
+      "registrationR": {
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "restaurant_name": "रेस्तरां का नाम",
+        "opens_at": "खुलता है",
+        "closes_at": "बंद होता है",
+        "address": "पता",
+        "city": "शहर",
+        "state": "राज्य",
+        "zip": "पिन कोड",
+        "contact_number": "संपर्क नंबर",
+        "register_button": "रजिस्टर",
+        "placeholders": {
+          "email": "नाम@example.com",
+          "password": "अपना पासवर्ड दर्ज करें",
+          "address": "अपार्टमेंट, स्टूडियो, या फ्लोर",
+          "contact_number": "अपना संपर्क नंबर दर्ज करें",
+          "choose": "चुनें..."
+        },
+        "states": {
+          "gandhinagar": "गांधीनगर"
+        }
+      },
+      "food_item": {
+        "add_title": "खाने की वस्तु जोड़ें",
+        "name": "नाम",
+        "price": "मूल्य",
+        "description": "विवरण",
+        "image_url": "छवि URL",
+        "name_placeholder": "नाम",
+        "price_placeholder": "मूल्य",
+        "description_placeholder": "विवरण",
+        "image_url_placeholder": "छवि URL",
+        "add_button": "जोड़ें",
+        "close_button": "बंद करे",
+        "or": "या",
+        "upload_button": "अपलोड करें"
+      }
+      ,"registerS": {
+        "staff_member": "कर्मचारी का पंजीकरण करें",
+        "already_registered": "पहले से पंजीकृत?",
+        "login": "लॉगिन करें",
+        "username": "उपयोगकर्ता नाम",
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "show": "दिखाएं",
+        "hide": "छिपाएं",
+        "role": "भूमिका",
+        "choose": "चुनें...",
+        "owner": "मालिक",
+        "order_manager": "आदेश प्रबंधक",
+        "item_manager": "आइटम प्रबंधक",
+        "select_branch": "शाखा चुनें:",
+        "register_button": "रजिस्टर करें"
+      },
+      "cart": {
+        "restaurant_name": "रेस्तरां: {{ name }}",
+        "location": "स्थान: {{ address }}",
+        "timings": "समय",
+        "rating": "रेटिंग",
+        "no_items": "कोई आइटम प्रदर्शित नहीं है",
+        "total": "कुल",
+        "confirm_order": "ऑर्डर की पुष्टि करें",
+        "clear_cart": "कार्ट साफ़ करें"
+      },
+      "order": {
+        "restaurant_name": "रेस्तरां का नाम",
+        "city": "शहर",
+        "timings": "समय",
+        "ordered_on": "ऑर्डर की गई तारीख",
+        "status": "स्थिति",
+        "statuses": {
+          "pending": "अपूर्ण",
+          "confirmed": "पुष्टि की गई",
+          "shipped": "भेज दिया गया",
+          "delivered": "पहुंचाया गया"
+        },
+        "total": "कुल"
+      },
+      "orders": {
+        "restaurant_name": "रेस्तरां का नाम: {{ name }}",
+        "restaurant_address": "पता: {{ city }}",
+        "quantity_label": "मात्रा",
+        "price_label": "मूल्य",
+        "status_label": "स्थिति",
+        "choose_option": "चुनें...",
+        "pending_option": "अपूर्ण",
+        "approved_option": "स्वीकृत",
+        "completed_option": "पूरा",
+        "rejected_option": "अस्वीकृत",
+        "status_text": "स्थिति",
+        "total_amount_label": "कुल राशि",
+        "update_status_button": "स्थिति अपडेट करें",
+        "close_button": "बंद करें"
+      }
+    
+  }

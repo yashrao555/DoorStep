@@ -1,16 +1,13 @@
 <template>
   <div id="app" class="login-container">
-    <h3 class="login-header">Log in</h3>
+    <h3 class="login-header">{{ $t('login.header') }}</h3>
     <form @submit.prevent="login" class="login-form">
-      <p class="signup-link">
-        Need an account? <a href="/register">Sign up</a>
-      </p>
+      <p class="signup-link" v-html="$t('login.signup_link')"></p>
      
-
       <div class="form-group">
-        <label for="role" class="form-label">Login as</label>
+        <label for="role" class="form-label">{{ $t('login.login_as') }}</label>
         <select v-model="role" id="role" class="form-select">
-          <option selected>Choose...</option>
+          <option selected>Choose ...</option>
           <option>Customer</option>
           <option>Restaurant</option>
           <option>Staff</option>
@@ -18,7 +15,7 @@
       </div>
 
       <div class="form-group">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label">{{ $t('login.email') }}</label>
         <input
           type="email"
           id="email"
@@ -26,12 +23,11 @@
           :class="{ 'is-invalid': errors.email }"
           class="form-control form-input"
         />
-        <div v-if="errors.email" class="invalid-feedback">
-          {{ errors.email }}
-        </div>
+        <div v-if="errors.email" class="invalid-feedback">{{ errors.email }}</div>
       </div>
+
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ $t('login.password') }}</label>
         <div class="password-input">
           <input
             :type="showPassword ? 'text' : 'password'"
@@ -45,17 +41,15 @@
             class="password-toggle"
             @click="showPassword = !showPassword"
           >
-            {{ showPassword ? "Hide" : "Show" }}
+            {{ showPassword ? $t('login.hide') : $t('login.show') }}
           </button>
         </div>
-        <div v-if="errors.password" class="invalid-feedback">
-          {{ errors.password }}
-        </div>
+        <div v-if="errors.password" class="invalid-feedback">{{ errors.password }}</div>
       </div>
-      <button type="submit" class="btn btn-primary">Login</button>
-      <p class="forgot-password-link">
-        Forgot your password? <a href="#">Click here</a>
-      </p>
+
+      <button type="submit" class="btn btn-primary">{{ $t('login.login_button') }}</button>
+
+      <p class="forgot-password-link" v-html="$t('login.forgot_password')"></p>
     </form>
   </div>
 </template>
@@ -109,7 +103,7 @@ export default {
               }
             );
 
-            console.log(response.data);
+            console.log('responseeeeeeeeeeee',response);
 
             if (response.data.token) {
               this.$toast.success("Logged in successfully",{

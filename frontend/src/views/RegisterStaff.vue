@@ -1,12 +1,11 @@
 <template>
   <div id="app" class="login-container">
-    <h3 class="login-header">Register a staff member</h3>
+    <h3 class="login-header">{{ $t('registerS.staff_member') }}</h3>
     <form @submit.prevent="register" class="login-form">
-      <p class="signup-link">Already registered? <a href="/login">Login</a></p>
-      <!-- <router-link to = '/'>Jaoo</router-link> -->
+      <p class="signup-link">{{ $t('registerS.already_registered') }} <a href="/login">{{ $t('registerS.login') }}</a></p>
 
       <div class="form-group">
-        <label for="username" class="form-label">Username</label>
+        <label for="username" class="form-label">{{ $t('registerS.username') }}</label>
         <input
           type="text"
           id="username"
@@ -16,7 +15,7 @@
       </div>
 
       <div class="form-group">
-        <label for="email" class="form-label">Email</label>
+        <label for="email" class="form-label">{{ $t('registerS.email') }}</label>
         <input
           type="email"
           id="email"
@@ -30,7 +29,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ $t('registerS.password') }}</label>
         <div class="password-input">
           <input
             :type="showPassword ? 'text' : 'password'"
@@ -44,7 +43,7 @@
             class="password-toggle"
             @click="showPassword = !showPassword"
           >
-            {{ showPassword ? "Hide" : "Show" }}
+            {{ showPassword ? $t('registerS.hide') : $t('registerS.show') }}
           </button>
         </div>
         <div v-if="errors.password" class="invalid-feedback">
@@ -53,7 +52,7 @@
       </div>
 
       <div class="form-group">
-        <label for="role" class="form-label">Role</label>
+        <label for="role" class="form-label">{{ $t('registerS.role') }}</label>
         <select v-model="role" id="role" class="form-select">
           <option selected>Choose...</option>
           <option>Owner</option>
@@ -63,7 +62,7 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Select Branch:</label>
+        <label class="form-label">{{ $t('registerS.select_branch') }}</label>
         <div class="form-check" v-for="city in cities" :key="city.id">
           <input
             type="checkbox"
@@ -72,19 +71,15 @@
             :value="city.id"
             v-model="selectedCityIds"
           />
-          <label class="form-check-label" :for="'city-' + city.id">{{
-            city.name
-          }}</label>
+          <label class="form-check-label" :for="'city-' + city.id">{{ city.name }}</label>
         </div>
       </div>
 
-      
-     
-
-      <button type="submit" class="btn btn-primary">Register</button>
+      <button type="submit" class="btn btn-primary">{{ $t('registerS.register_button') }}</button>
     </form>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";

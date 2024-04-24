@@ -1,16 +1,16 @@
 <template>
   <div class="cart-page-container">
     <div class="restaurant-info" v-if="restaurant">
-      <h2 class="restaurant-name">{{ restaurant.name }}</h2>
+        <h2 class="restaurant-name">{{ restaurant.name }}</h2>
       <p class="location">{{ restaurant.address }}</p>
       <p class="restaurant-timings">
-        Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
+        {{ $t('cart.timings') }} : {{ opensAtHours }}:{{ opensAtMinutes }} -
         {{ closesAtHours }}:{{ closesAtMinutes }}
       </p>
-      <p class="restaurant-timings">Rating: {{ restaurant.rating }}</p>
+      <p class="restaurant-timings">{{ $t('cart.rating') }}: {{ restaurant.rating }}</p>
     </div>
     <div class="restaurant-info" v-else>
-      <h2>No Items to display</h2>
+      <h2>{{ $t('cart.no_items') }}</h2>
     </div>
 
     <div class="cart-items" v-if="cartItems.length > 0">
@@ -38,14 +38,15 @@
     </div>
 
     <div class="buttons-container" v-if="cartItems.length > 0">
-      <button class="total-button">Total - {{ totalAmount }}</button>
+      <button class="total-button">{{ $t('cart.total') }} - {{ totalAmount }}</button>
       <button class="confirm-order-button" @click="confirmOrder">
-        Confirm Order
+        {{ $t('cart.confirm_order') }}
       </button>
-      <button class="clear-cart-button" @click="deleteCart">Clear Cart</button>
+      <button class="clear-cart-button" @click="deleteCart">{{ $t('cart.clear_cart') }}</button>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";

@@ -1,7 +1,7 @@
 <template>
   <div v-if="orderDetails" class="order-modal">
     <div class="restaurant-details">
-      <h2 class="restaurant-name">{{ name }}</h2>
+     <h2 class="restaurant-name">{{ name }}</h2>
       <p class="restaurant-address">{{ city }}</p>
     </div>
 
@@ -9,31 +9,32 @@
       <div v-for="(item, index) in orderDetails.items" :key="index" class="item">
         <p class="item-name">{{ item.name }}</p>
         <p class="item-details">
-          <span class="quantity">Quantity: {{ item.quantity }}</span>
-          <span class="price">{{ item.price }}</span>
+          <span class="quantity">{{ $t('orders.quantity_label') }}: {{ item.quantity }}</span>
+          <span class="price">{{ $t('orders.price_label') }}: {{ item.price }}</span>
         </p>
         <hr>
       </div>
     </div>
 
     <div v-if="role === 'restaurant' || role==='staff'" class="form-group">
-      <label for="status" class="form-label">Status</label>
+      <label for="status" class="form-label">{{ $t('orders.status_label') }}</label>
       <select v-model="status" id="status" class="form-select">
-        <option selected>Choose...</option>
+         <option selected>Choose...</option>
         <option>Pending</option>
         <option>Approved</option>
         <option>Completed</option>
         <option>Rejected</option>
       </select>
     </div>
-    <p class="total-amount">Status: {{ tempStatus }}</p>
-    <p class="total-amount">Total Amount: {{ (orderDetails.total_amount).toFixed(2) }}</p>
+    <p class="total-amount">{{ $t('orders.status_text') }}: {{ tempStatus }}</p>
+    <p class="total-amount">{{ $t('orders.total_amount_label') }}: {{ (orderDetails.total_amount).toFixed(2) }}</p>
 
-    <button @click="updateStatus" class="update-button" v-if="role === 'restaurant' || role === 'staff'">Update Status</button>
+    <button @click="updateStatus" class="update-button" v-if="role === 'restaurant' || role === 'staff'">{{ $t('orders.update_status_button') }}</button>
 
-    <button @click="closeModal" class="close-button">Close</button>
+    <button @click="closeModal" class="close-button">{{ $t('orders.close_button') }}</button>
   </div>
 </template>
+
 
 <script>
 import axios from "axios";

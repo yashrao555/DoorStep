@@ -1,42 +1,47 @@
 <template>
-    <div class="scroll-container">
-  <div class="row ">
-    <div class="col-sm-12 col-lg-6 col-md-6 col-12">
-      <img
-        src="https://img.myloview.com/stickers/food-order-line-icon-meal-delivery-app-sign-online-catering-service-symbol-minimal-line-illustration-background-food-order-line-icon-pattern-banner-white-web-template-concept-vector-700-280930949.jpg"
-        alt="text"
-      />
-    </div>
+  <div class="scroll-container">
+    <div class="row">
+      <div class="col-sm-12 col-lg-6 col-md-6 col-12">
+        <img
+          src="https://img.myloview.com/stickers/food-order-line-icon-meal-delivery-app-sign-online-catering-service-symbol-minimal-line-illustration-background-food-order-line-icon-pattern-banner-white-web-template-concept-vector-700-280930949.jpg"
+          alt="text"
+        />
+      </div>
 
-    <div class="col-sm-12 col-lg-6 col-md-6 col-12">
-      <div class="registration-box">
-        <h2 class="register-text ">Register as</h2>
-        <div class="button-container">
-          <button
-            class="register-button"
-            @click="redirectTo('/register/customer')"
-          >
-            Customer
-          </button>
-          <button
-            class="register-button"
-            @click="redirectTo('/register/restaurant')"
-          >
-            Restaurant
+      <div class="col-sm-12 col-lg-6 col-md-6 col-12">
+        <div class="registration-box">
+          <h2 class="register-text ">{{ $t('registration.register_as') }}</h2>
+          <div class="button-container">
+            <button
+              class="register-button"
+              @click="redirectTo('/register/customer')"
+            >
+              {{ $t('registration.customer') }}
+            </button>
+            <button
+              class="register-button"
+              @click="redirectTo('/register/restaurant')"
+            >
+              {{ $t('registration.restaurant') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="login-container">
+          <p class="already-registered-text">{{ $t('registration.already_registered') }}</p>
+          <button class="login-button" @click="redirectTo('/login')">
+            {{ $t('registration.login') }}
           </button>
         </div>
       </div>
-
-      <div class="login-container">
-        <p class="already-registered-text">Already registered?</p>
-        <button class="login-button" @click="redirectTo('/login')">
-          Login
-        </button>
-      </div>
     </div>
   </div>
-</div>
 </template>
+
+<style>
+/* Your styles */
+</style>
+
 
 <script>
 export default {

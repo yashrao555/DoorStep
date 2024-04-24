@@ -1,0 +1,176 @@
+{
+    "navbar": {
+      "doorstep": "DoorStep",
+      "register": "Register",
+      "login": "Login",
+      "my_cart": "My Cart",
+      "my_orders": "My Orders",
+      "add_branch": "Add Branch",
+      "a_restaurant":"A Restaurant?",
+      "restaurant_dashboard": "Restaurant Dashboard",
+      "logout": "Logout"
+    },
+    "search": {
+        "placeholder": "Search for restaurants...",
+        "clear": "Clear",
+        "selectCity": "Select a city"
+      },
+      "restaurants": {
+        "selectedCity": "Restaurants according to selected city",
+        "nearYou": "Restaurants near you"
+      },
+      "login": {
+        "header": "Log in",
+        "signup_link": "Need an account? <a href='/register'>Sign up</a>",
+        "login_as": "Login as",
+        "choose":"choose",
+        "customer": "Customer",
+        "restaurant": "Restaurant",
+        "staff": "Staff",
+        "email": "Email",
+        "password": "Password",
+        "show": "Show",
+        "hide": "Hide",
+        "login_button": "Login",
+        "forgot_password": "Forgot your password? <a href='#'>Click here</a>"
+      },
+      "registration": {
+        "register_as": "Register as",
+        "customer": "Customer",
+        "restaurant": "Restaurant",
+        "already_registered": "Already registered?",
+        "login": "Login"
+      },
+      "registrationC": {
+        "email": "Email",
+        "password": "Password",
+        "user_name": "User Name",
+        "date_of_birth": "Date Of Birth",
+        "gender": "Gender",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "zip": "Zip",
+        "contact_number": "Contact Number",
+        "register_button": "Register",
+        "placeholders": {
+          "email": "name@example.com",
+          "password": "Enter your password",
+          "user_name": "Enter your name",
+          "address": "Apartment, studio, or floor",
+          "city": "Enter your city",
+          "zip": "Enter your ZIP code",
+          "contact_number": "Enter your contact number"
+        },
+        "validation_messages": {
+          "email_required": "Email is required.",
+          "invalid_email": "Please enter a valid email address.",
+          "password_required": "Password is required.",
+          "password_length": "Password must be at least 8 characters.",
+          "user_name_required": "User name is required.",
+          "gender_required": "Please select a gender.",
+          "address_required": "Address is required.",
+          "city_required": "City is required.",
+          "state_required": "State is required.",
+          "zip_invalid": "Please enter a valid ZIP code.",
+          "contact_number_invalid": "Please enter a valid contact number."
+        }
+      },
+      "registrationR": {
+        "email": "Email",
+        "password": "Password",
+        "restaurant_name": "Restaurant Name",
+        "opens_at": "Opens At",
+        "closes_at": "Closes At",
+        "address": "Address",
+        "city": "City",
+        "state": "State",
+        "zip": "Zip",
+        "contact_number": "Contact Number",
+        "register_button": "Register",
+        "placeholders": {
+          "email": "name@example.com",
+          "password": "Enter your password",
+          "address": "Apartment, studio, or floor",
+          "contact_number": "Enter your contact number",
+          "choose": "Choose..."
+        },
+        "states": {
+          "gandhinagar": "Gandhinagar"
+        }
+      },
+      "food_item": {
+        "add_title": "Add Food Item",
+        "name": "Name",
+        "price": "Price",
+        "description": "Description",
+        "image_url": "Image URL",
+        "name_placeholder": "Name",
+        "price_placeholder": "Price",
+        "description_placeholder": "Description",
+        "image_url_placeholder": "Image URL",
+        "add_button": "Add",
+        "close_button": "Close",
+        "or": "or",
+        "upload_button": "Upload"
+      },
+      "registerS": {
+        "staff_member": "Register a staff member",
+        "already_registered": "Already registered?",
+        "login": "Login",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "show": "Show",
+        "hide": "Hide",
+        "role": "Role",
+        "choose": "Choose...",
+        "owner": "Owner",
+        "order_manager": "Order Manager",
+        "item_manager": "Item Manager",
+        "select_branch": "Select Branch:",
+        "register_button": "Register"
+      },
+      "cart": {
+        "restaurant_name": "Restaurant: {{ name }}",
+        "location": "Location: {{ address }}",
+        "timings": "Timings",
+        "rating": "Rating",
+        "no_items": "No items to display",
+        "total": "Total",
+        "confirm_order": "Confirm Order",
+        "clear_cart": "Clear Cart"
+      },
+      "order": {
+        "restaurant_name": "Restaurant Name",
+        "city": "City",
+        "timings": "Timings",
+        "ordered_on": "Ordered on",
+        "status": "Status",
+        "statuses": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "shipped": "Shipped",
+          "delivered": "Delivered"
+        },
+        "total": "Total"
+      },
+      "orders": {
+        "restaurant_name": "Restaurant Name: {{ name }}",
+        "restaurant_address": "Address: {{ city }}",
+        "quantity_label": "Quantity",
+        "price_label": "Price",
+        "status_label": "Status",
+        "choose_option": "Choose...",
+        "pending_option": "Pending",
+        "approved_option": "Approved",
+        "completed_option": "Completed",
+        "rejected_option": "Rejected",
+        "status_text": "Status",
+        "total_amount_label": "Total Amount",
+        "update_status_button": "Update Status",
+        "close_button": "Close"
+      }
+    
+      
+  }

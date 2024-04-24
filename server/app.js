@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require('express-session')
+const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors')
@@ -44,6 +45,7 @@ app.use(session({
 }))
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 
 

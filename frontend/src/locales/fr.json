@@ -1,0 +1,177 @@
+
+{
+    "navbar": {
+      "doorstep": "Porte d'entrée",
+      "register": "S'inscrire",
+      "login": "S'identifier",
+      "my_cart": "Mon panier",
+      "my_orders": "Mes commandes",
+      "a_restaurant":"un Restaurant?",
+      "add_branch": "Ajouter une succursale",
+      "restaurant_dashboard": "Tableau de bord du restaurant",
+      "logout": "Se déconnecter"
+    }, "search": {
+        "placeholder": "Rechercher des restaurants...",
+        "clear": "Effacer",
+        "selectCity": "Sélectionnez une ville"
+      },
+      "restaurants": {
+        "selectedCity": "Restaurants selon la ville sélectionnée",
+        "nearYou": "Restaurants près de chez vous"
+      
+    },
+    "login": {
+        "header": "Connexion",
+        "signup_link": "Besoin d'un compte? <a href='/register'>S'inscrire</a>",
+        "login_as": "Se connecter en tant que",
+        "choose":"choisir",
+        "customer": "Client",
+        "restaurant": "Restaurant",
+        "staff": "Personnel",
+        "email": "Email",
+        "password": "Mot de passe",
+        "show": "Afficher",
+        "hide": "Cacher",
+        "login_button": "Connexion",
+        "forgot_password": "Mot de passe oublié? <a href='#'>Cliquez ici</a>"
+      },
+      "registration": {
+        "register_as": "S'inscrire en tant que",
+        "customer": "Client",
+        "restaurant": "Restaurant",
+        "already_registered": "Déjà inscrit?",
+        "login": "Connexion"
+      },
+      "registrationC": {
+        "email": "Email",
+        "password": "Mot de passe",
+        "user_name": "Nom d'utilisateur",
+        "date_of_birth": "Date de naissance",
+        "gender": "Genre",
+        "address": "Adresse",
+        "city": "Ville",
+        "state": "État",
+        "zip": "Code postal",
+        "contact_number": "Numéro de contact",
+        "register_button": "S'inscrire",
+        "placeholders": {
+          "email": "nom@example.com",
+          "password": "Entrez votre mot de passe",
+          "user_name": "Entrez votre nom",
+          "address": "Appartement, studio ou étage",
+          "city": "Entrez votre ville",
+          "zip": "Entrez votre code postal",
+          "contact_number": "Entrez votre numéro de contact"
+        },
+        "validation_messages": {
+          "email_required": "L'e-mail est requis.",
+          "invalid_email": "Veuillez saisir une adresse e-mail valide.",
+          "password_required": "Le mot de passe est requis.",
+          "password_length": "Le mot de passe doit comporter au moins 8 caractères.",
+          "user_name_required": "Le nom d'utilisateur est requis.",
+          "gender_required": "Veuillez sélectionner un genre.",
+          "address_required": "L'adresse est requise.",
+          "city_required": "La ville est requise.",
+          "state_required": "L'état est requis.",
+          "zip_invalid": "Veuillez saisir un code postal valide.",
+          "contact_number_invalid": "Veuillez saisir un numéro de contact valide."
+        }
+      },
+      "registrationR": {
+        "email": "Email",
+        "password": "Mot de passe",
+        "restaurant_name": "Nom du restaurant",
+        "opens_at": "Ouvre à",
+        "closes_at": "Ferme à",
+        "address": "Adresse",
+        "city": "Ville",
+        "state": "État",
+        "zip": "Code postal",
+        "contact_number": "Numéro de contact",
+        "register_button": "S'inscrire",
+        "placeholders": {
+          "email": "nom@example.com",
+          "password": "Entrez votre mot de passe",
+          "address": "Appartement, studio ou étage",
+          "contact_number": "Entrez votre numéro de contact",
+          "choose": "Choisir..."
+        },
+        "states": {
+          "gandhinagar": "Gandhinagar"
+        }
+      },
+      "food_item": {
+        "add_title": "Ajouter un élément alimentaire",
+        "name": "Nom",
+        "price": "Prix",
+        "description": "Description",
+        "image_url": "URL de l'image",
+        "name_placeholder": "Nom",
+        "price_placeholder": "Prix",
+        "description_placeholder": "Description",
+        "image_url_placeholder": "URL de l'image",
+        "add_button": "Ajouter",
+        "close_button": "Fermer",
+        "or": "ou",
+        "upload_button": "Télécharger"
+      },
+      "registerS": {
+        "staff_member": "Inscrire un membre du personnel",
+        "already_registered": "Déjà enregistré ?",
+        "login": "Se connecter",
+        "username": "Nom d'utilisateur",
+        "email": "Email",
+        "password": "Mot de passe",
+        "show": "Afficher",
+        "hide": "Masquer",
+        "role": "Rôle",
+        "choose": "Choisir...",
+        "owner": "Propriétaire",
+        "order_manager": "Gestionnaire de commandes",
+        "item_manager": "Gestionnaire d'articles",
+        "select_branch": "Sélectionnez la succursale :",
+        "register_button": "S'inscrire"
+      },
+      "cart": {
+        "restaurant_name": "Restaurant : {{ name }}",
+        "location": "Emplacement : {{ address }}",
+        "timings": "Horaires",
+        "rating": "Évaluation",
+        "no_items": "Aucun élément à afficher",
+        "total": "Total",
+        "confirm_order": "Confirmer la commande",
+        "clear_cart": "Vider le panier"
+      },
+      "order": {
+        "restaurant_name": "Nom du restaurant",
+        "city": "Ville",
+        "timings": "Horaires",
+        "ordered_on": "Commandé le",
+        "status": "Statut",
+        "statuses": {
+          "pending": "En attente",
+          "confirmed": "Confirmé",
+          "shipped": "Expédié",
+          "delivered": "Livré"
+        },
+        "total": "Total"
+      },
+      "orders": {
+        "restaurant_name": "Nom du restaurant : {{ name }}",
+        "restaurant_address": "Adresse : {{ city }}",
+        "quantity_label": "Quantité",
+        "price_label": "Prix",
+        "status_label": "Statut",
+        "choose_option": "Choisir...",
+        "pending_option": "En attente",
+        "approved_option": "Approuvé",
+        "completed_option": "Terminé",
+        "rejected_option": "Rejeté",
+        "status_text": "Statut",
+        "total_amount_label": "Montant total",
+        "update_status_button": "Mettre à jour le statut",
+        "close_button": "Fermer"
+      }
+
+  }
+  
