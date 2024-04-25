@@ -8,7 +8,7 @@
         href="#offcanvasWithBothOptions"
         aria-controls="offcanvasWithBothOptions"
       >
-        Filters <i class="fa-sharp fa-solid fa-filter"></i>
+        {{ $t('navbar.filter') }} <i class="fa-sharp fa-solid fa-filter"></i>
       </a>
       <button
         class="navbar-toggler"
@@ -96,13 +96,13 @@
               <i class="fa-sharp fa-solid fa-right-from-bracket"></i> {{ $t('navbar.logout') }}
             </button>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <select v-model="selectedLanguage" @change="switchLanguage">
               <option v-for="(lang, index) in supportedLanguages" :key="index" :value="lang">
                 {{ lang }}
               </option>
             </select>
-          </li>
+          </li> -->
         </ul>
       </div>
     </nav>
@@ -126,8 +126,8 @@ export default {
       showRegisterButton: true,
       showDropdown: false,
       cities: [],
-      supportedLanguages: ['en', 'fr','hi'], // Add more languages if needed
-      selectedLanguage: 'en', // Default language
+      // supportedLanguages: ['en', 'fr','hi'], 
+      // selectedLanguage: 'en', 
     };
   },
   mounted() {
@@ -140,9 +140,9 @@ export default {
       this.showLoginButton = !newVal;
       this.showRegisterButton = !newVal;
     },
-    selectedLanguage(newVal) {
-      this.$i18n.locale = newVal;
-    },
+    // selectedLanguage(newVal) {
+    //   this.$i18n.locale = newVal;
+    // },
   },
   computed: {
     showLogoutButton() {

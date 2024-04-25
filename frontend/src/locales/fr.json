@@ -9,7 +9,8 @@
       "a_restaurant":"un Restaurant?",
       "add_branch": "Ajouter une succursale",
       "restaurant_dashboard": "Tableau de bord du restaurant",
-      "logout": "Se déconnecter"
+      "logout": "Se déconnecter",
+      "filter":"Filtre"
     }, "search": {
         "placeholder": "Rechercher des restaurants...",
         "clear": "Effacer",

@@ -13,15 +13,15 @@
           v-model="searchTerm"
           @input="searchRestaurants"
           type="text"
-          :placeholder=" $t('search.placeholder') "
+          :placeholder="$t('search.placeholder')"
         />
       </div>
 
-     
-
       <!-- Clear Button -->
-      <div class="col-lg-2 col-md-6 col-sm-6 col-6 ">
-        <button class="my-2" @click="clearSearch">{{ $t('search.clear') }}</button>
+      <div class="col-lg-2 col-md-6 col-sm-6 col-6">
+        <button class="my-2" @click="clearSearch">
+          {{ $t("search.clear") }}
+        </button>
       </div>
     </div>
 
@@ -44,16 +44,34 @@
         ></button>
       </div>
       <div class="offcanvas-body">
+        <label>Select a city</label>
         <div class="filter-dropdown">
           <select
             class="my-2"
             v-model="selectedCity"
             @change="searchByCity(selectedCity)"
           >
-            <option value="">{{ $t('search.selectCity') }}</option>
+            <option value="">{{ $t("search.selectCity") }}</option>
 
             <option v-for="city in cities" :key="city.id" :value="city.id">
               {{ city.name }}
+            </option>
+          </select>
+        </div>
+
+        <label>Select a language</label>
+        <div class="filter-dropdown">
+          <select
+            class="my-2"
+            v-model="selectedLanguage"
+            @change="switchLanguage"
+          >
+            <option
+              v-for="(lang, index) in supportedLanguages"
+              :key="index"
+              :value="lang"
+            >
+              {{ lang }}
             </option>
           </select>
         </div>
@@ -67,7 +85,7 @@
     <!-- <hr class="solid" /> -->
 
     <div class="card-container" v-if="filteredRestaurant.length > 0">
-      <h2 class="heading">{{ $t('restaurants.selectedCity') }}</h2>
+      <h2 class="heading">{{ $t("restaurants.selectedCity") }}</h2>
       <!-- Iterate over rows -->
       <div class="card-section">
         <div v-for="(row, rowIndex) in rows3" :key="rowIndex" class="card-row">
@@ -91,7 +109,7 @@
 
     <!-- Restaurants near you -->
     <div class="card-container" v-if="nearbyRestaurants.length > 0">
-      <h2 class="heading">{{ $t('restaurants.nearYou') }}</h2>
+      <h2 class="heading">{{ $t("restaurants.nearYou") }}</h2>
       <!-- Iterate over rows -->
       <div class="card-section">
         <div v-for="(row, rowIndex) in rows2" :key="rowIndex" class="card-row">
@@ -112,7 +130,6 @@
 
     <!-- Separator -->
     <hr v-if="nearbyRestaurants.length > 0" class="solid" />
-
   </div>
 </template>
 
@@ -139,9 +156,14 @@ export default {
       selectedCity: null,
       filteredRestaurant: [],
       currentCityId: null,
-      supportedLanguages: ['en', 'fr'], // Add more languages if needed
-      selectedLanguage: 'en', // Default language
+      supportedLanguages: ["en", "fr", "hi"], // Add more languages if needed
+      selectedLanguage: "en", // Default language
     };
+  },
+  watch: {
+    selectedLanguage(newVal) {
+      this.$i18n.locale = newVal;
+    },
   },
   mounted() {
     this.fetchRestaurants();
@@ -273,14 +295,23 @@ export default {
         const userAddress = userAddressResponse.data.address;
         const cityName = userAddressResponse.data.city;
 
-        const cityIdResponse = await axios.post("http://localhost:3000/getCityId", { cityName });
+        const cityIdResponse = await axios.post(
+          "http://localhost:3000/getCityId",
+          { cityName }
+        );
         this.currentCityId = cityIdResponse.data.cityId;
 
-        const coordinatesResponse = await axios.get(`http://localhost:3000/coordinates-from-address?address=${encodeURIComponent(userAddress)}`);
+        const coordinatesResponse = await axios.get(
+          `http://localhost:3000/coordinates-from-address?address=${encodeURIComponent(
+            userAddress
+          )}`
+        );
         const customerLat = coordinatesResponse.data.data.latitude;
         const customerLong = coordinatesResponse.data.data.longitude;
 
-        const restaurantsResponse = await axios.get(`http://localhost:3000/restaurants/sort-by-distance/${customerLat}/${customerLong}`);
+        const restaurantsResponse = await axios.get(
+          `http://localhost:3000/restaurants/sort-by-distance/${customerLat}/${customerLong}`
+        );
 
         this.nearbyRestaurants = restaurantsResponse.data.data;
         this.rows2 = this.chunkArray(this.nearbyRestaurants, 5);
@@ -343,7 +374,7 @@ h1 {
 }
 .search-bar button {
   border: none;
-  background-color: #3498DB;
+  background-color: #3498db;
   color: #fff;
   border-radius: 20px;
   /* padding: 0.1rem 0.5rem; */
@@ -368,7 +399,7 @@ h1 {
   width: 150px;
   height: 6vh;
   background-color: #ddd;
-  color: #0D0C0C;
+  color: #0d0c0c;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-right: 33vw;
   /* margin-top: 0.5rem; */
@@ -388,8 +419,8 @@ hr.solid {
   /* font-size:xx-large; */
 }
 .loading-spinner {
-  border: 5px solid #F3F3F3; /* Light grey */
-  border-top: 5px solid #3498DB; /* Blue */
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -413,5 +444,3 @@ hr.solid {
   }
 }
 </style>
-
-

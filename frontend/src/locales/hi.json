@@ -1,6 +1,6 @@
 {
     "navbar": {
-      "doorstep": "द्वार",
+      "doorstep": "डोरस्टेप",
       "register": "रजिस्टर",
       "login": "लॉगिन",
       "my_cart": "मेरा कार्ट",
@@ -8,7 +8,8 @@
       "a_restaurant":"रेस्तरां?",
       "add_branch": "शाखा जोड़ें",
       "restaurant_dashboard": "रेस्तरां डैशबोर्ड",
-      "logout": "लॉगआउट"
+      "logout": "लॉगआउट",
+      "filter":"फ़िल्टर"
     },
     "search": {
       "placeholder": "रेस्तरां खोजें...",

@@ -8,7 +8,8 @@
       "add_branch": "Add Branch",
       "a_restaurant":"A Restaurant?",
       "restaurant_dashboard": "Restaurant Dashboard",
-      "logout": "Logout"
+      "logout": "Logout",
+      "filter":"Filters"
     },
     "search": {
         "placeholder": "Search for restaurants...",
