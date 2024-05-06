@@ -112,6 +112,7 @@ export default {
   methods: {
     async registerRestaurant() {
       try {
+       
         const response = await axios.post('http://localhost:3000/register-restaurant', {
           name: this.restaurantName,
           opens_at: this.opensAt,

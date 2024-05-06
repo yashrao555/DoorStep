@@ -5,8 +5,9 @@
         <h1 class="restaurant-name ">{{ restaurant.name }}</h1>
         <p class="restaurant-address ">{{ restaurant.address }}</p>
         <p class="restaurant-timings">
-          Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
-          {{ closesAtHours }}:{{ closesAtMinutes }}
+          <!-- Timings : {{ opensAtHours }}:{{ opensAtMinutes }} -
+          {{ closesAtHours }}:{{ closesAtMinutes }} -->
+          Timings : {{restaurant.opens_at}} - {{restaurant.closes_at}}
         </p>
         <p class="restaurant-distance ">Distance: {{ distance }} km away</p>
       </div>
@@ -58,9 +59,9 @@ export default {
       const timestamp2 = this.restaurant.closes_at;
       const date2 = new Date(timestamp2);
 
-      const istOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds (5.5 hours)
-      const istDate1 = new Date(date1.getTime() + istOffset);
-      const istDate2 = new Date(date2.getTime() + istOffset);
+       const istOffset = 5.5 * 60 * 60 * 1000; // IST offset in milliseconds (5.5 hours)
+      const istDate1 = new Date(date1.getTime() + istOffset );
+      const istDate2 = new Date(date2.getTime() + istOffset );
 
       this.opensAtHours = istDate1.getHours().toString().padStart(2, '0'); 
       this.opensAtMinutes = istDate1.getMinutes().toString().padStart(2, '0'); 

@@ -29,6 +29,8 @@ Restaurant.init(
     otp: DataTypes.STRING,
     otp_expiration: DataTypes.DATE,
     is_verified: DataTypes.BOOLEAN,
+    old_opens_at:DataTypes.TIME,
+    old_closes_at:DataTypes.TIME
   },
   {
     sequelize,

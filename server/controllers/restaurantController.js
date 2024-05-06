@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllRestaurants, getRestaurantById, getRestaurantsByName, getRestaurantsByDistance } = require('../services/restaurantService');
+const { getAllRestaurants, getRestaurantById, getRestaurantsByName, getRestaurantsByDistance, createOperatingTable, createSpecialOperatingTable } = require('../services/restaurantService');
 
 const restaurantController = express.Router()
 
@@ -55,4 +55,18 @@ restaurantController.get('/restaurants/sort-by-distance/:customer_lat/:customer_
 
     
   })
+
+  restaurantController.post('/restaurants/operating-time',async(req,res)=>{
+    const result = await createOperatingTable(7,'10:30','18:30','09:30','23:30');
+    res.json({data:result});
+  })
+
+  restaurantController.post('/restaurants/special-operating-time',async(req,res)=>{
+    const result = await createSpecialOperatingTable(7,'05-05-2024','07-05-2024','12:30','16:30');
+    res.json({data:result});
+  })
+  // restaurantController.post('/restaurants/changeTime',async(req,res)=>{
+  //   const restaurant=await changeRestaurantTimings(1,'12:30','15:00');
+  //   res.json({data:restaurant});
+  // })
   module.exports = restaurantController

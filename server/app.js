@@ -45,7 +45,6 @@ app.use(session({
 }))
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 
 
@@ -58,6 +57,15 @@ app.use(orderController)
 app.use(locationController)
 app.use(staffController)
 app.use(cityController)
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.use((req, res, next)=>{
+  // if(req.path.includes('cart')){
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+  // }else{
+  //   next()
+  // }
+});
 
 const sequelize = require("./util/database");
 

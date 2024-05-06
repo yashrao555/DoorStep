@@ -57,22 +57,22 @@ export default {
 
     timeHandler() {
       const timestamp1 = this.opensAt;
-      this.opensAtTime=this.extractTime(timestamp1);
+      this.opensAtTime=timestamp1.split(' ')[1];
       
 
       const timestamp2 = this.closesAt;
-      this.closesAtTime=this.extractTime(timestamp2);
+      this.closesAtTime=timestamp2.split(' ')[1];
       
 
 
     },
-    extractTime(utcTimeString){
-    const utcTime = new Date(utcTimeString);
-    const hours = utcTime.getUTCHours().toString().padStart(2, '0');
-    const minutes = utcTime.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = utcTime.getUTCSeconds().toString().padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-},
+    // extractTime(utcTimeString){
+    // const utcTime = new Date(utcTimeString);
+    // const hours = utcTime.getUTCHours().toString().padStart(2, '0');
+    // const minutes = utcTime.getUTCMinutes().toString().padStart(2, '0');
+    // const seconds = utcTime.getUTCSeconds().toString().padStart(2, '0');
+    // return `${hours}:${minutes}:${seconds}`;
+// },
 formatTime(date){
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
