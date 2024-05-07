@@ -1,30 +1,28 @@
 import { createStore } from 'vuex';
-import VueCookies from "vue-cookies";
+// import VueCookies from "vue-cookies";
 // import createPersistedState from 'vuex-persistedstate';
 export default createStore({
   state: {
-    isLoggedIn: false,
-    role: null,
+    displayNavigation: true,
   },
   mutations: {
-    setLoggedIn(state, isLoggedIn) {
-      state.isLoggedIn = isLoggedIn;
+    hideNavigation(state) {
+      state.displayNavigation = false;
     },
-    setRole(state, role) {
-      state.role = role;
+    showNavigation(state) {
+      state.displayNavigation = true;
     },
   },
   actions: {
-    login({ commit }, { role }) {
-      // VueCookies.set('token', token);
-      commit('setLoggedIn', true);
-      commit('setRole', role);
+    hideNavigation({ commit }) {
+      commit('hideNavigation');
     },
-    logout({ commit }) {
-      VueCookies.remove('token');
-      commit('setLoggedIn', false);
-      commit('setRole', null);
+    showNavigation({ commit }) {
+      commit('showNavigation');
     },
+  },
+  getters: {
+    navigationIsDisplayed: state => state.displayNavigation,
   },
   });
 

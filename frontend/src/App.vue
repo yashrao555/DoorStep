@@ -1,7 +1,7 @@
 <template>
   <div class="custom-container ">
 
-    <div class="nav-container">
+    <div v-if="displayNavigation" class="nav-container">
       <app-navigation></app-navigation>
     </div>
 
@@ -14,11 +14,18 @@
 
 <script>
 import AppNavigation from "./components/AppNavigation.vue";
+import { mapGetters } from 'vuex';
 
 export default {
   name: "App",
   components: {
     AppNavigation,
+  },
+  computed: {
+    ...mapGetters(['navigationIsDisplayed']),
+    displayNavigation() {
+      return this.navigationIsDisplayed;
+    },
   },
 };
 </script>

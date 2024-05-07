@@ -153,11 +153,16 @@ const getRestaurantById = async (restaurantId) => {
      
       writeCurrentDateToFile(currentDate);
     }
+<<<<<<< Updated upstream
     restaurant.opens_at = convertISOToSequelizeDateTime(restaurant.opens_at);
     restaurant.closes_at = convertISOToSequelizeDateTime(restaurant.closes_at);
 
     await restaurant.save();
 
+=======
+    
+    await restaurant.save()
+>>>>>>> Stashed changes
     return restaurant;
   } catch (error) {
     console.error("Error fetching restaurant by ID:", error);

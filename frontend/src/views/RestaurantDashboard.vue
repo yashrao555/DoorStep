@@ -67,8 +67,6 @@
 </div> -->
 
   <div>
-    
-
     <div v-if="loading" class="loading-spinner"></div>
 
     <div v-else class="">
@@ -102,47 +100,167 @@
                 <i class="fa-sharp fa-solid fa-address-card"></i>
                 Register staff members ?
               </h5>
+
+              <!-- Button trigger modal -->
+              <h5
+                class="add-item-link ms-5"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                <i class="fa-sharp fa-solid fa-clock"></i>
+                Schedule Timings?
+              </h5>
+
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-4" style="color:#ffa500;font-weight:600" id="exampleModalLabel">
+                        Set the timings
+                      </h1>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body"> 
+                      <div class="form-group">
+                        <label for="days" class="form-label fs-5">Select Days</label>
+                        <select v-model="days" id="days" class="form-select">
+                          <option selected>Choose ...</option>
+                          <option>Weekdays</option>
+                          <option>Weekends</option>
+                          <option>Special Days</option>
+                        </select>
+                      </div>
+                      <div v-if="days==='Special Days'" class="form-group">
+                        <label for="from" class="form-label fs-5">From Date</label>
+                        <input
+                          type="date"
+                          id="from"
+                          class="form-control"
+                          v-model="from"
+                        />
+                      </div>
+                      <div v-if="days==='Special Days'" class="form-group">
+                        <label for="to" class="form-label fs-5">To Date</label>
+                        <input
+                          type="date"
+                          id="to"
+                          class="form-control"
+                          v-model="to"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="opensat" class="form-label fs-5">Opening Time</label>
+                        <input
+                          type="time"
+                          id="opensat"
+                          class="form-control"
+                          v-model="opensAt"
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="closesat" class="form-label fs-5">Closing Time</label>
+                        <input
+                          type="time"
+                          id="closesat"
+                          class="form-control"
+                          v-model="closesAt"
+                        />
+                      </div>
+                      <div v-if="days!=='Special Days'" class="form-group">
+                        <label for="duration" class="form-label fs-5">No. of weekends/weekdays</label>
+                        <input
+                          type="number"
+                          id="duration"
+                          class="form-control"
+                          v-model="duration"
+                        />
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button type="button" class="save-button" @click="save">
+                        Set time
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="middle-section">
-        <div v-for="(foodItem, index) in foodItems" :key="index" class=" p-3">
-          <div class="row d-flex ">
-            <div class="list-group  col-lg-1 col-sm-1 fs-4">{{ index+1 }}</div>
-            <div class="list-group col-lg-8 col-sm-11 fs-4">{{ foodItem.name }}</div>
-            <div @click="openUpdateModal(foodItem)" class="list-group col-lg-1 col-sm-4 fs-5 text-center" style="color:blue;cursor:pointer"><i class="fa-sharp fa-solid fa-pen"></i> Update</div>
-            <div @click="openDeleteModal(foodItem)" class="list-group col-lg-1 col-sm-4 fs-5 text-center" style="color:red;cursor:pointer"><i class="fa-sharp fa-solid fa-trash"></i> Delete</div>
-            <div class="list-group col-lg-1 col-sm-4 fs-4 text-center" style="cursor:pointer"><i class="fa-sharp fa-solid fa-ellipsis-vertical"></i></div>
+        <div v-for="(foodItem, index) in foodItems" :key="index" class="p-3">
+          <div class="row d-flex">
+            <div class="list-group col-lg-1 col-sm-1 fs-4">{{ index + 1 }}</div>
+            <div class="list-group col-lg-8 col-sm-11 fs-4">
+              {{ foodItem.name }}
+            </div>
+            <div
+              @click="openUpdateModal(foodItem)"
+              class="list-group col-lg-1 col-sm-4 fs-5 text-center"
+              style="color: blue; cursor: pointer"
+            >
+              <i class="fa-sharp fa-solid fa-pen"></i> Update
+            </div>
+            <div
+              @click="openDeleteModal(foodItem)"
+              class="list-group col-lg-1 col-sm-4 fs-5 text-center"
+              style="color: red; cursor: pointer"
+            >
+              <i class="fa-sharp fa-solid fa-trash"></i> Delete
+            </div>
+            <div
+              class="list-group col-lg-1 col-sm-4 fs-4 text-center"
+              style="cursor: pointer"
+            >
+              <i class="fa-sharp fa-solid fa-ellipsis-vertical"></i>
+            </div>
           </div>
-          <hr>
+          <hr />
         </div>
       </div>
 
       <AddItemModal
-      :showModal="showAddModal"
-      :foodItem="selectedFoodItem"
-      @closeModal="closeModal"
-      @addFoodItem="addFoodItem"
-    />
+        :showModal="showAddModal"
+        :foodItem="selectedFoodItem"
+        @closeModal="closeModal"
+        @addFoodItem="addFoodItem"
+      />
 
-    <UpdateModal
-      :showModal="showUpdateModal"
-      :foodItem="selectedFoodItem"
-      @closeModal="closeModal"
-      @updateFoodItem="updateFoodItem"
-    />
+      <UpdateModal
+        :showModal="showUpdateModal"
+        :foodItem="selectedFoodItem"
+        @closeModal="closeModal"
+        @updateFoodItem="updateFoodItem"
+      />
 
-    <DeleteModal
-      :showModal="showDeleteModal"
-      :foodItem="selectedFoodItem"
-      @closeModal="closeModal"
-      @deleteFoodItem="deleteFoodItem"
-    />
+      <DeleteModal
+        :showModal="showDeleteModal"
+        :foodItem="selectedFoodItem"
+        @closeModal="closeModal"
+        @deleteFoodItem="deleteFoodItem"
+      />
     </div>
-
-    
   </div>
 </template>
 
@@ -166,6 +284,9 @@ export default {
       selectedFoodItem: null,
       restaurantId: null, // Variable to store the restaurant id
       isStaff: false,
+      days:"",
+      from:"",
+      to:""
     };
   },
   mounted() {
@@ -184,7 +305,10 @@ export default {
   },
 
   methods: {
-    // Additional methods if needed
+    save(){
+      console.log('from', typeof(this.from));
+      console.log('from', this.to);
+    },
 
     decodeToken(token) {
       try {
@@ -371,11 +495,27 @@ img {
   object-fit: cover;
 }
 
-hr{
+hr {
   margin-top: 1rem;
   color: #ffa500;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+label{
+  font-weight:500;
+}
 /* 
 .banner {
   position: relative;
@@ -442,6 +582,15 @@ h1 {
 
 .update-button:hover {
   background-color: #e57200; /* Darker shade on hover */
+}
+
+.save-button {
+  border-radius: 8px; /* Round the button border */
+  border-color: #fff;
+  background-color: #ffa500; /* Classy shade of orange */
+  color: #fff; /* White text for better visibility */
+  padding: 8px 20px;
+  cursor: pointer;
 }
 
 .card-section {
