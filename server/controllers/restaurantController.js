@@ -57,7 +57,8 @@ restaurantController.get('/restaurants/sort-by-distance/:customer_lat/:customer_
   })
 
   restaurantController.post('/restaurants/operating-time',async(req,res)=>{
-    const result = await createOperatingTable(7,'10:30','18:30','09:30','23:30');
+    const {restaurantId,opening_time,closing_time,days} = req.body;
+    const result = await createOperatingTable(restaurantId,opening_time,closing_time,days);
     res.json({data:result});
   })
 

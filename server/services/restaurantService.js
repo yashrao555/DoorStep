@@ -153,16 +153,11 @@ const getRestaurantById = async (restaurantId) => {
      
       writeCurrentDateToFile(currentDate);
     }
-<<<<<<< Updated upstream
     restaurant.opens_at = convertISOToSequelizeDateTime(restaurant.opens_at);
     restaurant.closes_at = convertISOToSequelizeDateTime(restaurant.closes_at);
 
     await restaurant.save();
 
-=======
-    
-    await restaurant.save()
->>>>>>> Stashed changes
     return restaurant;
   } catch (error) {
     console.error("Error fetching restaurant by ID:", error);
@@ -173,12 +168,51 @@ const getRestaurantById = async (restaurantId) => {
 
 const createOperatingTable = async (
   restaurantId,
-  weekday_opening_time,
-  weekday_closing_time,
-  weekend_opening_time,
-  weekend_closing_time
+  opening_time,closing_time,days
 ) => {
+
+  
   try {
+    const exists = await OperatingHours.findOne({
+      where:{
+        restaurant_id:restaurantId
+      }
+    })
+  
+    if(exists)
+      {
+        if(days==='weekdays')
+          {
+            const updatedRes = await OperatingHours.update({
+              weekday_opening_time:opening_time,
+              weekday_closing_time:closing_time,
+             
+            }, {
+              where: {
+                restaurant_id: restaurantId,
+                // Additional conditions if needed
+              },
+            });
+            
+          }
+          else{
+            const updatedRes = await OperatingHours.update({
+              weekend_opening_time: opening_time,
+              weekend_closing_time: closing_time,
+             
+            }, {
+              where: {
+                restaurant_id: restaurantId,
+                // Additional conditions if needed
+              },
+            });
+            
+          }
+  
+        return updatedRes
+      }
+
+      
     const res = await OperatingHours.create({
       restaurant_id: restaurantId,
       weekday_opening_time,

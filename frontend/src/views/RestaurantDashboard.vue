@@ -286,7 +286,10 @@ export default {
       isStaff: false,
       days:"",
       from:"",
-      to:""
+      to:"",
+      opensat:'',
+      closesat:''
+
     };
   },
   mounted() {
@@ -319,6 +322,8 @@ export default {
         return null;
       }
     },
+
+
 
     async fetchFoodItems(restaurantId) {
       try {
