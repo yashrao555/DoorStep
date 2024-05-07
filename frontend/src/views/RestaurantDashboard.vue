@@ -196,7 +196,7 @@
                       >
                         Close
                       </button>
-                      <button type="button" class="save-button" @click="save">
+                      <button type="button" class="save-button" @click="saveOperatingTime">
                         Set time
                       </button>
                     </div>
@@ -287,8 +287,8 @@ export default {
       days:"",
       from:"",
       to:"",
-      opensat:'',
-      closesat:''
+      opensAt:'',
+      closesAt:''
 
     };
   },
@@ -311,6 +311,26 @@ export default {
     save(){
       console.log('from', typeof(this.from));
       console.log('from', this.to);
+    },
+
+    async saveOperatingTime() {
+      const restaurantId = this.restaurantId
+      const openingTime = this.opensAt;
+      const closingTime = this.closesAt;
+      const days = this.days;
+
+      try {
+        const response = await axios.post('/restaurants/operating-time', {
+          restaurantId,
+          opening_time: openingTime,
+          closing_time: closingTime,
+          days,
+        });
+        
+        console.log(response.data); // Handle the response data
+      } catch (error) {
+        console.error('Error:', error);
+      }
     },
 
     decodeToken(token) {
