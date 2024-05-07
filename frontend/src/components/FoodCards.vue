@@ -57,11 +57,11 @@ export default {
 
     timeHandler() {
       const timestamp1 = this.opensAt;
-      this.opensAtTime=timestamp1.split(' ')[1];
+      this.opensAtTime=this.addTime(timestamp1)
       
 
       const timestamp2 = this.closesAt;
-      this.closesAtTime=timestamp2.split(' ')[1];
+      this.closesAtTime=this.addTime(timestamp2)
       
 
 
@@ -79,7 +79,36 @@ formatTime(date){
     const seconds = date.getSeconds().toString().padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
 },
+ addTime(inputString) {
+  // Extract the time part from the string
+  const timePart = inputString.split(' ')[1]; // Extracts "05:00:00"
 
+  // Parse the time into hours, minutes, and seconds
+  const [hoursStr, minutesStr, secondsStr] = timePart.split(":");
+  let hours = parseInt(hoursStr, 10);
+  let minutes = parseInt(minutesStr, 10);
+  let seconds = parseInt(secondsStr, 10);
+
+  // Add 5 hours and 30 minutes
+  hours += 5;
+  minutes += 30;
+
+  // Adjust hours and minutes if they exceed their respective limits
+  if (minutes >= 60) {
+    hours += Math.floor(minutes / 60);
+    minutes %= 60;
+  }
+
+  if (hours >= 24) {
+    hours %= 24;
+  }
+
+  // Format the new time
+  const newTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+  return newTime;
+}
+,
 isRestaurantOpen()
 {
   const currentUTCTime = new Date();
