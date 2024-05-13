@@ -117,24 +117,35 @@ const getRestaurantById = async (restaurantId) => {
 
     
     const currentDate = new Date().toISOString().split('T')[0]; 
-    const lastExecutionDate = getLastExecutionDateFromFile();
+    const lastExecutionDate = restaurant.last_execution_date;
 
-    if (lastExecutionDate !== currentDate) {
+    if (lastExecutionDate.toISOString().split('T')[0] !== currentDate) {
       
       console.log("First time");
       if (sHours) {
-        const firstDate = new Date(currentDate);
+        const firstDate = new Date();
         const secondDate = new Date(sHours.start_date);
         const thirdDate = new Date(sHours.end_date);
+
         if (firstDate >= secondDate && firstDate <= thirdDate) {
           restaurant.opens_at = convertISOToSequelizeDateTime(sHours.opening_time);
           restaurant.closes_at = convertISOToSequelizeDateTime(sHours.closing_time);
         }
         await restaurant.save();
 
-        if (thirdDate < firstDate) {
+        if (thirdDate.toISOString().split('T')[0] < firstDate.toISOString().split('T')[0]) {
           // Delete the record
-          await sHours.destroy();
+          await SpecialOperatingHours.destroy({ where: { restaurant_id: restaurantId } });
+          const currentDate = new Date();
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        if (currentDate.getDay() >= 0 && currentDate.getDay() <= 4) {
+          restaurant.opens_at = convertISOToSequelizeDateTime(hours.weekday_opening_time);
+          restaurant.closes_at = convertISOToSequelizeDateTime(hours.weekday_closing_time);
+        } else {
+          restaurant.opens_at = convertISOToSequelizeDateTime(hours.weekend_opening_time);
+          restaurant.closes_at = convertISOToSequelizeDateTime(hours.weekend_closing_time);
+        }
+        await restaurant.save();
         }
       } else {
 
@@ -150,13 +161,16 @@ const getRestaurantById = async (restaurantId) => {
         await restaurant.save();
       }
 
-     
-      writeCurrentDateToFile(currentDate);
+     restaurant.lastExecutionDate=new Date().toISOString().split('T')[0]; ;
+     console.log("Date changed");
+
+      // writeCurrentDateToFile(currentDate);
     }
     restaurant.opens_at = convertISOToSequelizeDateTime(restaurant.opens_at);
     restaurant.closes_at = convertISOToSequelizeDateTime(restaurant.closes_at);
 
     await restaurant.save();
+    await Restaurant.update({ last_execution_date: new Date() }, { where: { id: restaurantId } });
 
     return restaurant;
   } catch (error) {
@@ -181,7 +195,7 @@ const createOperatingTable = async (
   
     if(exists)
       {
-        if(days==='weekdays')
+        if(days==='Weekdays')
           {
             const updatedRes = await OperatingHours.update({
               weekday_opening_time:opening_time,
@@ -193,7 +207,7 @@ const createOperatingTable = async (
                 // Additional conditions if needed
               },
             });
-            
+            return updatedRes
           }
           else{
             const updatedRes = await OperatingHours.update({
@@ -206,10 +220,10 @@ const createOperatingTable = async (
                 // Additional conditions if needed
               },
             });
-            
+            return updatedRes
           }
   
-        return updatedRes
+       
       }
 
       

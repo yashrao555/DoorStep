@@ -320,7 +320,7 @@ export default {
       const days = this.days;
 
       try {
-        const response = await axios.post('/restaurants/operating-time', {
+        const response = await axios.post('http://localhost:3000/restaurants/operating-time', {
           restaurantId,
           opening_time: openingTime,
           closing_time: closingTime,
