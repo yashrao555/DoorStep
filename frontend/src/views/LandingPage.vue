@@ -326,7 +326,7 @@ export default {
 </script>
 
 <style scoped>
-/* @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap'); */
+@import url('../global.css');
 @import url("https://fonts.googleapis.com/css2?family=Anton&family=Kalnia:wght@500&display=swap");
 .scroll-container {
   height: 100vh;
@@ -410,9 +410,9 @@ hr.solid {
   margin: 3rem 210px;
 }
 .heading {
-  font-family: "Kalnia", serif;
+  font-family: var(--heading-font);
   font-optical-sizing: auto;
-  font-weight: 700;
+  font-weight: 300;
   font-style: normal;
   font-variation-settings: "wdth" 100;
   margin-left: 30px;

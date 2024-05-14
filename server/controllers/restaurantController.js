@@ -63,7 +63,8 @@ restaurantController.get('/restaurants/sort-by-distance/:customer_lat/:customer_
   })
 
   restaurantController.post('/restaurants/special-operating-time',async(req,res)=>{
-    const result = await createSpecialOperatingTable(7,'05-05-2024','07-05-2024','12:30','16:30');
+    const {restaurantId,from_date,to_date,opens_at,closes_at} = req.body;
+    const result = await createSpecialOperatingTable(restaurantId,from_date,to_date,opens_at,closes_at);
     res.json({data:result});
   })
   // restaurantController.post('/restaurants/changeTime',async(req,res)=>{

@@ -238,8 +238,7 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap");
+@import url("../global.css");
 
 .food-item-container {
   width: 39vw; /* Set the width to 70% of the viewport width */
@@ -262,8 +261,8 @@ export default {
 h2 {
   font-size: 1.5vw;
   /* font-weight: bold; */
-  font-family: "Tenor Sans", sans-serif;
-  font-weight: bold;
+  font-family: var(--foodItem-font);
+  font-weight: 500;
   font-style: normal;
   width: 25vw;
 }
@@ -276,7 +275,7 @@ h2 {
 .food-item-price {
   font-size: 0.8vw;
   color: #27ae60;
-  font-family: "Tenor Sans", sans-serif;
+  font-family: var(--small-font);
   font-weight: 400;
   font-style: normal;
 }

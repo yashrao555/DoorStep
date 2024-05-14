@@ -191,20 +191,10 @@ export default {
 
 <style scoped>
 /* Use a custom font */
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
-/* Define colors */
-:root {
-  --primary-color: #2e86c1;
-  --danger-color: #dc3545;
-  --gray-color: #f2f2f2;
-}
+@import url('../global.css');
 
-/* Set base styles */
-* {
-  box-sizing: border-box;
-  font-family: "Roboto", sans-serif;
-}
+
 
 body {
   margin: 0;
@@ -317,7 +307,7 @@ body {
   /* use a larger value for border-radius to make the button more rounded */
   border: none;
   color: white;
-  background-color: #ffa500;
+  background-color:var(--primary-color);
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;

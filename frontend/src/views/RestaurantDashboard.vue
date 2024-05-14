@@ -122,7 +122,11 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h1 class="modal-title fs-4" style="color:#ffa500;font-weight:600" id="exampleModalLabel">
+                      <h1
+                        class="modal-title fs-4"
+                        style="color: #ffa500; font-weight: 600"
+                        id="exampleModalLabel"
+                      >
                         Set the timings
                       </h1>
                       <button
@@ -132,9 +136,11 @@
                         aria-label="Close"
                       ></button>
                     </div>
-                    <div class="modal-body"> 
+                    <div class="modal-body">
                       <div class="form-group">
-                        <label for="days" class="form-label fs-5">Select Days</label>
+                        <label for="days" class="form-label fs-5"
+                          >Select Days</label
+                        >
                         <select v-model="days" id="days" class="form-select">
                           <option selected>Choose ...</option>
                           <option>Weekdays</option>
@@ -142,8 +148,10 @@
                           <option>Special Days</option>
                         </select>
                       </div>
-                      <div v-if="days==='Special Days'" class="form-group">
-                        <label for="from" class="form-label fs-5">From Date</label>
+                      <div v-if="days === 'Special Days'" class="form-group">
+                        <label for="from" class="form-label fs-5"
+                          >From Date</label
+                        >
                         <input
                           type="date"
                           id="from"
@@ -151,7 +159,7 @@
                           v-model="from"
                         />
                       </div>
-                      <div v-if="days==='Special Days'" class="form-group">
+                      <div v-if="days === 'Special Days'" class="form-group">
                         <label for="to" class="form-label fs-5">To Date</label>
                         <input
                           type="date"
@@ -161,7 +169,9 @@
                         />
                       </div>
                       <div class="form-group">
-                        <label for="opensat" class="form-label fs-5">Opening Time</label>
+                        <label for="opensat" class="form-label fs-5"
+                          >Opening Time</label
+                        >
                         <input
                           type="time"
                           id="opensat"
@@ -170,7 +180,9 @@
                         />
                       </div>
                       <div class="form-group">
-                        <label for="closesat" class="form-label fs-5">Closing Time</label>
+                        <label for="closesat" class="form-label fs-5"
+                          >Closing Time</label
+                        >
                         <input
                           type="time"
                           id="closesat"
@@ -178,8 +190,10 @@
                           v-model="closesAt"
                         />
                       </div>
-                      <div v-if="days!=='Special Days'" class="form-group">
-                        <label for="duration" class="form-label fs-5">No. of weekends/weekdays</label>
+                      <div v-if="days !== 'Special Days'" class="form-group">
+                        <label for="duration" class="form-label fs-5"
+                          >No. of weekends/weekdays</label
+                        >
                         <input
                           type="number"
                           id="duration"
@@ -196,7 +210,11 @@
                       >
                         Close
                       </button>
-                      <button type="button" class="save-button" @click="saveOperatingTime">
+                      <button
+                        type="button"
+                        class="save-button"
+                        @click="saveOperatingTime"
+                      >
                         Set time
                       </button>
                     </div>
@@ -284,12 +302,11 @@ export default {
       selectedFoodItem: null,
       restaurantId: null, // Variable to store the restaurant id
       isStaff: false,
-      days:"",
-      from:"",
-      to:"",
-      opensAt:'',
-      closesAt:''
-
+      days: "",
+      from: "",
+      to: "",
+      opensAt: "",
+      closesAt: "",
     };
   },
   mounted() {
@@ -308,28 +325,51 @@ export default {
   },
 
   methods: {
-    save(){
-      console.log('from', typeof(this.from));
-      console.log('from', this.to);
-    },
-
     async saveOperatingTime() {
-      const restaurantId = this.restaurantId
-      const openingTime = this.opensAt;
-      const closingTime = this.closesAt;
-      const days = this.days;
+      if (this.days === "Special Days") {
+        const restaurantId = this.restaurantId;
+        const from = this.from;
+        const to = this.to;
+        const openingTime = this.opensAt;
+        const closingTime = this.closesAt;
 
-      try {
-        const response = await axios.post('http://localhost:3000/restaurants/operating-time', {
-          restaurantId,
-          opening_time: openingTime,
-          closing_time: closingTime,
-          days,
-        });
-        
-        console.log(response.data); // Handle the response data
-      } catch (error) {
-        console.error('Error:', error);
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/restaurants/special-operating-time",
+            {
+              restaurantId,
+              from_date: from,
+              to_date:to,
+              opens_at: openingTime,
+              closes_at: closingTime,
+            }
+          );
+
+          console.log(response.data); // Handle the response data
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else {
+        const restaurantId = this.restaurantId;
+        const openingTime = this.opensAt;
+        const closingTime = this.closesAt;
+        const days = this.days;
+
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/restaurants/operating-time",
+            {
+              restaurantId,
+              opening_time: openingTime,
+              closing_time: closingTime,
+              days,
+            }
+          );
+
+          console.log(response.data); // Handle the response data
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
     },
 
@@ -342,8 +382,6 @@ export default {
         return null;
       }
     },
-
-
 
     async fetchFoodItems(restaurantId) {
       try {
@@ -538,8 +576,8 @@ hr {
   color: #333;
 }
 
-label{
-  font-weight:500;
+label {
+  font-weight: 500;
 }
 /* 
 .banner {

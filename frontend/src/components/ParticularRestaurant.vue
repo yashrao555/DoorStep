@@ -161,8 +161,8 @@ export default {
 
 <style scoped>
 
-@import url('https://fonts.googleapis.com/css2?family=Tilt+Warp&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Tenor+Sans&display=swap');
+@import url('../global.css');
+
 
 .restaurant-info-container {
   /* max-width: 800px; */
@@ -192,7 +192,7 @@ export default {
   font-size: 2vw;
   font-weight: bold;
   margin-bottom: 8px;
-  font-family: "Tilt Warp", sans-serif;
+  font-family: var(--heading-font);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -218,7 +218,7 @@ export default {
   font-size: 0.9vw;
   margin-bottom: 5px;
   margin-top: 10px;
-  font-family: "Tenor Sans", sans-serif;
+  font-family: var(--small-font);
   font-weight: bold;
   font-style: normal;
 }
@@ -237,7 +237,7 @@ export default {
   font-size: 0.8vw;
   margin-top: 10px;
   color: #555;
-  font-family: "Tenor Sans", sans-serif;
+  font-family: var(--small-font);
   font-weight: 400;
   font-style: normal;
 }

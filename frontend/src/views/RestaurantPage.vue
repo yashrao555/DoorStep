@@ -97,6 +97,7 @@ export default {
 </script>
 
 <style scoped>
+@import url('../global.css');
 @import url("https://fonts.googleapis.com/css2?family=Titan+One&display=swap");
 
 /* .scroll-container {
@@ -127,7 +128,7 @@ export default {
   /* font-weight: bold; */
   margin-bottom: 2vh;
   margin-top: 2vh;
-  font-family: "Titan One", sans-serif;
+  font-family: var(--heading-font);
   font-weight: 400;
   font-style: normal;
 }
