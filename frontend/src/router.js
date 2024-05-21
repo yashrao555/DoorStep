@@ -16,6 +16,7 @@ import MyOrders from './views/MyOrders.vue'
 import RestaurantDashboard from './views/RestaurantDashboard.vue';
 import RegisterStaff from "./views/RegisterStaff.vue";
 import NotFoundPage from "./views/NotFoundPage.vue"
+import WebBuilder from './components/WebBuilder.vue'
 
 const routes = [
   { path: "/", component: LandingPage },
@@ -31,6 +32,7 @@ const routes = [
   { path: "/restaurant-dashboard", component: RestaurantDashboard},
   { path: "/myOrders", component: MyOrders},
   { path: "/register/staff", component: RegisterStaff},
+  {path:"/builder",component:WebBuilder},
   // { path: "/not-found", component: NotFoundPage }, 
   {
     path: '/:pathMatch(.*)*',
@@ -48,7 +50,7 @@ const router = createRouter({
   routes,
 });
 
-const publicRoutes = ['/login', '/', '/register','/register/customer',"/register/restaurant","/restaurant/:id1/:id2","/verifyOTP","/verifyRestaurantOTP",'/:pathMatch(.*)*',];
+const publicRoutes = ['/login', '/', '/register','/register/customer',"/register/restaurant","/restaurant/:id1/:id2","/verifyOTP","/verifyRestaurantOTP","/builder",'/:pathMatch(.*)*',];
 
 router.beforeEach((to, from, next) => {
   const token = VueCookies.get('token'); 
