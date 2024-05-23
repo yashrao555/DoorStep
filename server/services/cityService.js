@@ -3,7 +3,6 @@ const RestaurantCity = require("../models/restaurantcity.js");
 const Staff = require("../models/staff.js");
 
 
-
 const getAllCities = async () => {
     try {
       // Retrieve all staff members from the database

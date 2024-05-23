@@ -16,7 +16,8 @@ import MyOrders from './views/MyOrders.vue'
 import RestaurantDashboard from './views/RestaurantDashboard.vue';
 import RegisterStaff from "./views/RegisterStaff.vue";
 import NotFoundPage from "./views/NotFoundPage.vue"
-import WebBuilder from './components/WebBuilder.vue'
+// import WebBuilder from './components/WebBuilder.vue'
+import CanvasPage from "../src/Builder/views/CanvasPage.vue";
 
 const routes = [
   { path: "/", component: LandingPage },
@@ -32,7 +33,7 @@ const routes = [
   { path: "/restaurant-dashboard", component: RestaurantDashboard},
   { path: "/myOrders", component: MyOrders},
   { path: "/register/staff", component: RegisterStaff},
-  {path:"/builder",component:WebBuilder},
+  {path:"/builder",component:CanvasPage},
   // { path: "/not-found", component: NotFoundPage }, 
   {
     path: '/:pathMatch(.*)*',

@@ -10,11 +10,10 @@
     </div>
     <select v-model="selectedComponent">
       <option value="" disabled>Select component</option>
-      <option value="div">Div</option>
-      <option value="image">Image</option>
-      <option value="paragraph">Paragraph</option>
+      <option value="TextComponent">Text</option>
+      <option value="ImageComponent">Image</option>
     </select>
-    <button @click="addItem">Add selected item dynamically</button> 
+    <button @click="addItem">Add selected item dynamically</button>
     <input type="checkbox" v-model="draggable" /> Draggable
     <input type="checkbox" v-model="resizable" /> Resizable
     <grid-layout
@@ -27,7 +26,6 @@
       :use-css-transforms="true"
       @layout-updated="updateLayout"
     >
-    
       <grid-item
         v-for="item in internalLayout"
         :static="item.static"
@@ -38,24 +36,51 @@
         :i="item.i"
         :key="item.i"
       >
-        <div class="content-wrapper" @click="openEditModal(item)">
-          <component :is="item.type" class="content">
-            <img v-if="item.type === 'image'" :src="item.src" alt="" class="image-content" />
-            <div v-else>{{ item.content }}</div>
-          </component>
+        <div>
+          <component
+          
+            :is="item.type"
+            :content="item.content"
+            :containerStyle="item.containerStyle"
+            :textStyle="item.textStyle"
+            @open-modal="openModal(item.i, $event)"
+          />
           <span class="remove" @click.stop="removeItem(item.i)">x</span>
         </div>
       </grid-item>
     </grid-layout>
 
+    <!-- Modal -->
     <div v-if="isEditModalOpen" class="modal">
       <div class="modal-content">
         <span class="close" @click="closeEditModal">&times;</span>
-        <div v-if="selectedItem.type === 'image'">
-          <input type="file" @change="uploadImage" />
+        <div>
+          <label>Text Content:</label>
+          <textarea v-model="editableContent"></textarea>
         </div>
-        <div v-else>
-          <textarea v-model="selectedItem.content"></textarea>
+        <div>
+          <h3>Container Style</h3>
+          <div>
+            <label>Background Color:</label>
+            <input type="color" v-model="editableContainerStyle.backgroundColor" />
+          </div>
+          <div>
+            <label>Padding:</label>
+            <input type="text" v-model="editableContainerStyle.padding" />
+          </div>
+          <!-- Add more container styles as needed -->
+        </div>
+        <div>
+          <h3>Text Style</h3>
+          <div>
+            <label>Font Size (px):</label>
+            <input type="number" v-model.number="editableTextStyle.fontSize" />
+          </div>
+          <div>
+            <label>Text Color:</label>
+            <input type="color" v-model="editableTextStyle.color" />
+          </div>
+          <!-- Add more text styles as needed -->
         </div>
         <button @click="saveChanges">Save</button>
       </div>
@@ -64,46 +89,36 @@
 </template>
 
 <script>
-import { GridLayout, GridItem } from "vue3-grid-layout-next";
+import { GridLayout, GridItem } from 'vue3-grid-layout-next';
+import TextComponent from '../components/TextComponent.vue';
+import ImageComponent from '../components/ImageComponent.vue';
 
 export default {
   components: {
     GridLayout,
-    GridItem
+    GridItem,
+    TextComponent,
+    ImageComponent,
   },
   data() {
     return {
-      internalLayout: [
-        // { x: 0, y: 0, w: 2, h: 2, i: "0", type: 'div', content: 'Div 0' },
-        // { x: 2, y: 0, w: 2, h: 2, i: "1", type: 'div', content: 'Div 1' },
-        // { x: 4, y: 0, w: 2, h: 2, i: "2", type: 'div', content: 'Div 2' },
-        // { x: 6, y: 0, w: 2, h: 2, i: "3", type: 'div', content: 'Div 3' },
-        // { x: 8, y: 0, w: 2, h: 2, i: "4", type: 'div', content: 'Div 4' },
-      ],
+      internalLayout: [],
       draggable: true,
       resizable: true,
       colNum: 12,
       index: 0,
       selectedComponent: '',
       isEditModalOpen: false,
-      selectedItem: null
+      editableContent: '',
+      editableContainerStyle: {},
+      editableTextStyle: {},
+      editingItemId: null, // To keep track of which item is being edited
     };
-  },
-  watch: {
-    layout: {
-      handler(newLayout) {
-        this.internalLayout = newLayout;
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    this.index = this.internalLayout.length;
   },
   methods: {
     addItem() {
       if (!this.selectedComponent) {
-        alert("Please select a component type");
+        alert('Please select a component type');
         return;
       }
       this.internalLayout.push({
@@ -113,44 +128,49 @@ export default {
         h: 2,
         i: this.index.toString(),
         type: this.selectedComponent,
-        content: this.selectedComponent === 'image' ? '' : `New ${this.selectedComponent}`
+        content: 'Sample text', // Default content for TextComponent
+        containerStyle: {}, // Default container style
+        textStyle: {}, // Default text style
       });
       this.index++;
-      console.log(this.internalLayout);
-      this.$emit("update:layout", this.internalLayout);
     },
     removeItem(val) {
-      const index = this.internalLayout.map(item => item.i).indexOf(val);
+      const index = this.internalLayout.map((item) => item.i).indexOf(val);
       this.internalLayout.splice(index, 1);
-      this.$emit("update:layout", this.internalLayout);
     },
-    openEditModal(item) {
-      this.selectedItem = item;
-      this.isEditModalOpen = true;
-    },
-    closeEditModal() {
-      this.isEditModalOpen = false;
-      this.selectedItem = null;
-    },
-    saveChanges() {
-      this.isEditModalOpen = false;
-      this.$emit("update:layout", this.internalLayout);
-    },
-    uploadImage(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.selectedItem.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+    updateItem(id, content, containerStyle, textStyle) {
+      const item = this.internalLayout.find((item) => item.i === id);
+      if (item) {
+        item.content = content;
+        item.containerStyle = containerStyle;
+        item.textStyle = textStyle;
       }
     },
     updateLayout(newLayout) {
       this.internalLayout = newLayout;
-      this.$emit("update:layout", newLayout);
-    }
-  }
+    },
+    openModal(id, data) {
+      this.editingItemId = id;
+      this.editableContent = data.content;
+      this.editableContainerStyle = { ...data.containerStyle };
+      this.editableTextStyle = { ...data.textStyle };
+      this.isEditModalOpen = true;
+    },
+    closeEditModal() {
+      this.isEditModalOpen = false;
+    },
+    saveChanges() {
+      if (this.editingItemId !== null) {
+        this.updateItem(
+          this.editingItemId,
+          this.editableContent,
+          this.editableContainerStyle,
+          this.editableTextStyle
+        );
+        this.isEditModalOpen = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -177,14 +197,13 @@ export default {
 }
 
 .vue-grid-layout {
-  background: #7a7575;
+  background: #f33636;
   position: relative;
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
   border: 1px solid black;
-  /* position: absolute; */
 }
 
 .vue-grid-item .resizing {
@@ -248,20 +267,21 @@ export default {
   display: block;
   position: fixed;
   z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
   background-color: #fff;
-  margin: 15% auto;
+  margin: 0;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .close {
@@ -276,9 +296,5 @@ export default {
   color: #000;
   text-decoration: none;
   cursor: pointer;
-}
-
-.vue-grid-item {
-  z-index: 1; /* Ensure grid items are stacked */
 }
 </style>
