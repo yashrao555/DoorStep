@@ -25,6 +25,7 @@
         return {
           ...this.textStyle,
           fontSize: this.textStyle.fontSize ? `${this.textStyle.fontSize}px` : undefined,
+          textAlign: this.textStyle.textAlign || 'left',
         };
       },
     },

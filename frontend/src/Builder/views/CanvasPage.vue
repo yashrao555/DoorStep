@@ -8,14 +8,14 @@
         </div>
       </div>
     </div>
-    <select v-model="selectedComponent">
+    <select class="select mb-3" v-model="selectedComponent">
       <option value="" disabled>Select component</option>
       <option value="TextComponent">Text</option>
       <option value="ImageComponent">Image</option>
     </select>
-    <button @click="addItem">Add selected item dynamically</button>
-    <input type="checkbox" v-model="draggable" /> Draggable
-    <input type="checkbox" v-model="resizable" /> Resizable
+    <button class="addItemButton" @click="addItem">Add item</button>
+    <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
+    <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
     <grid-layout
       v-model:layout="internalLayout"
       :col-num="colNum"
@@ -38,7 +38,6 @@
       >
         <div>
           <component
-          
             :is="item.type"
             :content="item.content"
             :containerStyle="item.containerStyle"
@@ -50,41 +49,16 @@
       </grid-item>
     </grid-layout>
 
-    <!-- Modal -->
-    <div v-if="isEditModalOpen" class="modal">
-      <div class="modal-content">
-        <span class="close" @click="closeEditModal">&times;</span>
-        <div>
-          <label>Text Content:</label>
-          <textarea v-model="editableContent"></textarea>
-        </div>
-        <div>
-          <h3>Container Style</h3>
-          <div>
-            <label>Background Color:</label>
-            <input type="color" v-model="editableContainerStyle.backgroundColor" />
-          </div>
-          <div>
-            <label>Padding:</label>
-            <input type="text" v-model="editableContainerStyle.padding" />
-          </div>
-          <!-- Add more container styles as needed -->
-        </div>
-        <div>
-          <h3>Text Style</h3>
-          <div>
-            <label>Font Size (px):</label>
-            <input type="number" v-model.number="editableTextStyle.fontSize" />
-          </div>
-          <div>
-            <label>Text Color:</label>
-            <input type="color" v-model="editableTextStyle.color" />
-          </div>
-          <!-- Add more text styles as needed -->
-        </div>
-        <button @click="saveChanges">Save</button>
-      </div>
-    </div>
+    <!-- Edit Modal -->
+    <EditModal
+      v-if="isEditModalOpen"
+      :isOpen="isEditModalOpen"
+      :content="editableContent"
+      :containerStyle="editableContainerStyle"
+      :textStyle="editableTextStyle"
+      @close="closeEditModal"
+      @save="saveChanges"
+    />
   </div>
 </template>
 
@@ -92,6 +66,7 @@
 import { GridLayout, GridItem } from 'vue3-grid-layout-next';
 import TextComponent from '../components/TextComponent.vue';
 import ImageComponent from '../components/ImageComponent.vue';
+import EditModal from '../components/EditModal.vue'; // Import the new modal component
 
 export default {
   components: {
@@ -99,6 +74,7 @@ export default {
     GridItem,
     TextComponent,
     ImageComponent,
+    EditModal, // Register the new modal component
   },
   data() {
     return {
@@ -159,13 +135,13 @@ export default {
     closeEditModal() {
       this.isEditModalOpen = false;
     },
-    saveChanges() {
+    saveChanges(data) {
       if (this.editingItemId !== null) {
         this.updateItem(
           this.editingItemId,
-          this.editableContent,
-          this.editableContainerStyle,
-          this.editableTextStyle
+          data.content,
+          data.containerStyle,
+          data.textStyle
         );
         this.isEditModalOpen = false;
       }
@@ -189,6 +165,35 @@ export default {
   columns: 120px;
 }
 
+.select{
+  margin-top:2vh;
+  border-radius: 20px;
+  padding: 0.5rem;
+  /* width: 8vw; */
+  width: 150px;
+  height: 5vh;
+  background-color: #ddd;
+  color: #0d0c0c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.addItemButton{
+  margin-left: 1.5vw;
+  border-radius: 20px;
+  padding: 0.5rem;
+  /* width: 8vw; */
+  width: 150px;
+  height: 5vh;
+  background-color: #ddd;
+  color: #0d0c0c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkBox{
+  margin-left: 1.5vw;
+  
+}
+
 .remove {
   position: absolute;
   right: 2px;
@@ -197,7 +202,7 @@ export default {
 }
 
 .vue-grid-layout {
-  background: #f33636;
+  background: #ffffff;
   position: relative;
 }
 
@@ -268,11 +273,11 @@ export default {
   position: fixed;
   z-index: 1;
   top: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: 20%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(215, 24, 24, 0.4);
 }
 
 .modal-content {
