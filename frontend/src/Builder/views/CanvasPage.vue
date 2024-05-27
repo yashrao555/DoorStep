@@ -24,6 +24,7 @@
       :is-resizable="resizable"
       :vertical-compact="true"
       :use-css-transforms="true"
+      :margin=[0,0]
       @layout-updated="updateLayout"
     >
       <grid-item
@@ -59,7 +60,10 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
+
+    <button class="btn btn-primary" @click="saveLayout">Save Layout</button>
   </div>
+  
 </template>
 
 <script>
@@ -67,6 +71,7 @@ import { GridLayout, GridItem } from 'vue3-grid-layout-next';
 import TextComponent from '../components/TextComponent.vue';
 import ImageComponent from '../components/ImageComponent.vue';
 import EditModal from '../components/EditModal.vue'; // Import the new modal component
+import axios from 'axios';
 
 export default {
   components: {
@@ -91,7 +96,35 @@ export default {
       editingItemId: null, // To keep track of which item is being edited
     };
   },
+  mounted(){
+    this.getItem();
+  },
   methods: {
+    async getItem() {
+    try {
+      const result = await axios.get('http://localhost:3000/get-all-text');
+      console.log('Fetched result:', result);
+
+      if (Array.isArray(result.data)) {
+        this.internalLayout = result.data.map(item => ({
+          x: item.x ?? 0,
+          y: item.y ?? 0,
+          w: item.w ?? 1,
+          h: item.h ?? 1,
+          i: item.i ?? String(Math.random()),
+          type: item.type ?? 'TextComponent',
+          content: item.content ?? 'Sample text',
+          containerStyle: JSON.parse(item.css).containerStyle ?? {},
+          textStyle: JSON.parse(item.css).textStyle ?? {},
+        }));
+      } else {
+        console.error('Fetched data is not an array');
+      }
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    }
+  },
+
     addItem() {
       if (!this.selectedComponent) {
         alert('Please select a component type');
@@ -144,6 +177,17 @@ export default {
           data.textStyle
         );
         this.isEditModalOpen = false;
+      }
+    },
+    async saveLayout() {
+      try {
+        console.log("backend data",this.internalLayout);
+        const response = await axios.post('http://localhost:3000/text-builder', {internalLayout:this.internalLayout});
+        console.log(response);
+        alert('Layout saved successfully');
+      } catch (error) {
+        console.error('Error saving layout:', error);
+        alert('Failed to save layout');
       }
     },
   },

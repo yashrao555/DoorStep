@@ -18,6 +18,7 @@ const orderController = require("./controllers/orderController");
 const locationController = require("./controllers/locationController");
 const staffController = require("./controllers/staffController");
 const cityController = require('./controllers/cityController')
+const webController = require('./controllers/webbuilderController')
 
 const app = express();
 const server = http.createServer(app);
@@ -57,6 +58,7 @@ app.use(orderController)
 app.use(locationController)
 app.use(staffController)
 app.use(cityController)
+app.use(webController)
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 app.use((req, res, next)=>{
@@ -68,6 +70,7 @@ app.use((req, res, next)=>{
 });
 
 const sequelize = require("./util/database");
+
 
 
 
