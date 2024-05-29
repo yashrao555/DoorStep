@@ -1,6 +1,6 @@
 const express = require('express')
 
-const {createTextComponent, getAllTextComponents} = require('../services/webbuilder.js')
+const {createTextComponent, getAllTextComponents, getCss} = require('../services/webbuilder.js')
 
 const webController = express.Router()
 
@@ -28,4 +28,13 @@ webController.get('/get-all-text',async(req,res)=>{
     }
 })
 
+webController.get('/get-css',async(req,res)=>{
+    try {
+        const result = await getCss();
+        return res.status(201).json(result)
+    } catch (error) {
+        return res.status(500).json(error)
+        
+    }
+})
 module.exports = webController

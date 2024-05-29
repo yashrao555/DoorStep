@@ -1,39 +1,25 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../util/database');
+const ComponentPosition = require('./position.js'); // Import the ComponentPosition model
 
-class TextComponent extends Model {
-  static associate(models) {
-    // Define associations here if needed
-  }
-
-  // You can add custom methods or configurations here if needed
-}
+class TextComponent extends Model {}
 
 TextComponent.init(
   {
-    type: {
+    content: {
       type: DataTypes.STRING,
-      allowNull: false
-    },
-    x: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    y: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    w: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    h: {
-      type: DataTypes.INTEGER,
       allowNull: false
     },
     css: {
       type: DataTypes.JSON,
       allowNull: true
+    },
+    componentPositionId: { // Foreign key for the relationship
+      type: DataTypes.INTEGER,
+      references: {
+        model: ComponentPosition,
+        key: 'id'
+      }
     }
   },
   {
@@ -41,5 +27,10 @@ TextComponent.init(
     modelName: 'TextComponent',
   }
 );
+
+TextComponent.belongsTo(ComponentPosition, {
+  foreignKey: 'componentPositionId',
+  as: 'position'
+});
 
 module.exports = TextComponent;

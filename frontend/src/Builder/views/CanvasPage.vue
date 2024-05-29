@@ -104,6 +104,7 @@ export default {
     try {
       const result = await axios.get('http://localhost:3000/get-all-text');
       console.log('Fetched result:', result);
+      
 
       if (Array.isArray(result.data)) {
         this.internalLayout = result.data.map(item => ({
@@ -111,12 +112,15 @@ export default {
           y: item.y ?? 0,
           w: item.w ?? 1,
           h: item.h ?? 1,
-          i: item.i ?? String(Math.random()),
-          type: item.type ?? 'TextComponent',
-          content: item.content ?? 'Sample text',
-          containerStyle: JSON.parse(item.css).containerStyle ?? {},
-          textStyle: JSON.parse(item.css).textStyle ?? {},
+          i: item.id ?? String(Math.random()),
+         // type: item.type ?? 'TextComponent',
+          //content: item.content ?? 'Sample text',
+          //containerStyle: JSON.parse(item.css).containerStyle ?? {},
+          //textStyle: JSON.parse(item.css).textStyle ?? {},
         }));
+
+        const css = await axios.get('http://localhost:3000/get-css')
+        console.log('CSS is',css);
       } else {
         console.error('Fetched data is not an array');
       }
