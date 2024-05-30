@@ -19,18 +19,20 @@ webController.post('/text-builder',async(req,res)=>{
     
 })
 
-webController.get('/get-all-text',async(req,res)=>{
+webController.get('/get-all-text/:layout_id',async(req,res)=>{
+    const {layout_id} = req.params
     try {
-        const result = await getAllTextComponents();
+        const result = await getAllTextComponents(layout_id);
         return res.status(201).json(result)
     } catch (error) {
         return res.status(500).json(error);
     }
 })
 
-webController.get('/get-css',async(req,res)=>{
+webController.get('/get-css/:layout_id',async(req,res)=>{
+    const {layout_id} = req.params
     try {
-        const result = await getCss();
+        const result = await getCss(layout_id);
         return res.status(201).json(result)
     } catch (error) {
         return res.status(500).json(error)

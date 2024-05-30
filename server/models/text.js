@@ -20,6 +20,10 @@ TextComponent.init(
         model: ComponentPosition,
         key: 'id'
       }
+    },
+    layout_id:{
+      type:DataTypes.INTEGER,
+      allowNull:true
     }
   },
   {

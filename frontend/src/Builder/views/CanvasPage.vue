@@ -181,7 +181,8 @@ export default {
               content: cssData ? cssData.content : 'Sample text',
               containerStyle: JSON.parse(parsedCSS).containerStyle ?? {},
               textStyle:JSON.parse(parsedCSS).textStyle ?? {},
-              imageStyle: parsedCSS.imageStyle ?? {}
+              imageStyle: parsedCSS.imageStyle ?? {},
+              PositionId:cssData?cssData.componentPositionId:null,
             };
           });
           console.log('Internal Layout:', this.internalLayout);
@@ -210,6 +211,8 @@ export default {
         containerStyle: {}, // Default container style
         textStyle: {}, // Default text style
         imageStyle: {},
+        PositionId:null
+        
       });
       this.index++;
     },
