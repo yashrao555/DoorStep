@@ -57,6 +57,7 @@ export default {
 
     timeHandler() {
       const timestamp1 = this.opensAt;
+      console.log('timestamp1',timestamp1);
       this.opensAtTime=this.addTime(timestamp1)
       
 
@@ -81,7 +82,9 @@ formatTime(date){
 },
  addTime(inputString) {
   // Extract the time part from the string
-  const timePart = inputString.split(' ')[1]; // Extracts "05:00:00"
+  const dateTimePart = inputString.split('T')[1]; // Extracts "05:00:00.000Z"
+  const timePart = dateTimePart.split('.')[0]; // Extracts "05:00:00"
+  console.log('timepart',timePart);
 
   // Parse the time into hours, minutes, and seconds
   const [hoursStr, minutesStr, secondsStr] = timePart.split(":");

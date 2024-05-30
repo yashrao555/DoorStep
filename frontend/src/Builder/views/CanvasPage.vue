@@ -1,21 +1,28 @@
 <template>
   <div>
-    <div class="layoutJSON">
+    <!-- <div class="layoutJSON">
       Displayed as <code>[x, y, w, h]</code>:
       <div class="columns">
         <div class="layoutItem" v-for="item in internalLayout" :key="item.i">
           <b>{{ item.i }}</b>: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
         </div>
       </div>
-    </div>
-    <select class="select mb-3" v-model="selectedComponent">
-      <option value="" disabled>Select component</option>
+    </div> -->
+    <button class="btn btn-primary ms-4" >+ New Layout</button>
+    <select class="btn btn-primary ms-4 mb-3 mt-3 " style="height:3.8vh" >
+      <option value="" disabled>Layouts</option>
+      <option>Layout 1</option> 
+      <option>Layout 2</option>
+    </select>
+    <select class="btn btn-primary ms-4 mb-3 mt-3 " style="height:3.8vh" v-model="selectedComponent">
+      <option value="" disabled>Components</option>
       <option value="TextComponent">Text</option>
       <option value="ImageComponent">Image</option>
     </select>
-    <button class="addItemButton" @click="addItem">Add item</button>
+    <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
+    <button class="btn btn-success " style="margin-left:54vw" @click="saveLayout">Save Layout</button>
     <grid-layout
       v-model:layout="internalLayout"
       :col-num="colNum"
@@ -43,6 +50,7 @@
             :content="item.content"
             :containerStyle="item.containerStyle"
             :textStyle="item.textStyle"
+            :imageStyle="item.imageStyle"
             @open-modal="openModal(item.i, $event)"
           />
           <span class="remove" @click.stop="removeItem(item.i)">x</span>
@@ -51,7 +59,7 @@
     </grid-layout>
 
     <!-- Edit Modal -->
-    <EditModal
+    <TextEditModal
       v-if="isEditModalOpen"
       :isOpen="isEditModalOpen"
       :content="editableContent"
@@ -60,8 +68,17 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
+    <ImageEditModal
+      v-if="isEditModalOpen && editingItemType === 'ImageComponent'"
+      :isOpen="isEditModalOpen"
+      :content="editableContent"
+      :containerStyle="editableContainerStyle"
+      :imageStyle="editableImageStyle"
+      @close="closeEditModal"
+      @save="saveChanges"
+    />
 
-    <button class="btn btn-primary" @click="saveLayout">Save Layout</button>
+    
   </div>
   
 </template>
@@ -70,7 +87,8 @@
 import { GridLayout, GridItem } from 'vue3-grid-layout-next';
 import TextComponent from '../components/TextComponent.vue';
 import ImageComponent from '../components/ImageComponent.vue';
-import EditModal from '../components/EditModal.vue'; // Import the new modal component
+import TextEditModal from '../editModals/textEditModal.vue'; // Import the new modal component
+import ImageEditModal from '../editModals/imageEditModal.vue';
 import axios from 'axios';
 
 export default {
@@ -79,7 +97,8 @@ export default {
     GridItem,
     TextComponent,
     ImageComponent,
-    EditModal, // Register the new modal component
+    TextEditModal, 
+    ImageEditModal
   },
   data() {
     return {
@@ -94,6 +113,8 @@ export default {
       editableContainerStyle: {},
       editableTextStyle: {},
       editingItemId: null, // To keep track of which item is being edited
+      editableImageStyle: {},
+      editingItemType: null,
     };
   },
   mounted(){
@@ -104,26 +125,70 @@ export default {
     try {
       const result = await axios.get('http://localhost:3000/get-all-text');
       console.log('Fetched result:', result);
+      const cssResult = await axios.get('http://localhost:3000/get-css')
+        console.log('CSS is',cssResult);
+
+      // if (Array.isArray(result.data)) {
+      //   this.internalLayout = result.data.map(item => ({
+      //     x: item.x ?? 0,
+      //     y: item.y ?? 0,
+      //     w: item.w ?? 1,
+      //     h: item.h ?? 1,
+      //     i: item.i ?? String(Math.random()),
+      //     type: item.type ?? 'TextComponent',
+      //     content: item.content ?? 'Sample text',
+      //     containerStyle: JSON.parse(item.css).containerStyle ?? {},
+      //     textStyle: JSON.parse(item.css).textStyle ?? {},
+      //     imageStyle: JSON.parse(item.css).imageStyle ?? {},
+      //   }));
+
+      //   const css = await axios.get('http://localhost:3000/get-css')
+      //   console.log('CSS is',css);
+      // } else {
+      //   console.error('Fetched data is not an array');
+      // }
+
       
+        
+        
+      if (Array.isArray(result.data) && Array.isArray(cssResult.data)) {
+          const cssMap = cssResult.data.reduce((acc, cssItem) => {
+            acc[cssItem.componentPositionId] = cssItem;
+            return acc;
+          }, {});
 
-      if (Array.isArray(result.data)) {
-        this.internalLayout = result.data.map(item => ({
-          x: item.x ?? 0,
-          y: item.y ?? 0,
-          w: item.w ?? 1,
-          h: item.h ?? 1,
-          i: item.id ?? String(Math.random()),
-         // type: item.type ?? 'TextComponent',
-          //content: item.content ?? 'Sample text',
-          //containerStyle: JSON.parse(item.css).containerStyle ?? {},
-          //textStyle: JSON.parse(item.css).textStyle ?? {},
-        }));
+          this.internalLayout = result.data.map(item => {
+            const cssData = cssMap[item.id];
+            console.log('cssdata :',cssData);
+            let parsedCSS = { containerStyle: {}, textStyle: {}, imageStyle: {} };
 
-        const css = await axios.get('http://localhost:3000/get-css')
-        console.log('CSS is',css);
-      } else {
-        console.error('Fetched data is not an array');
-      }
+            if (cssData) {
+              try {
+                parsedCSS = JSON.parse(cssData.css);
+                console.log('parsedcss',parsedCSS);
+              } catch (error) {
+                console.error('Error parsing CSS:', error);
+              }
+            }
+
+            return {
+              x: item.x ?? 0,
+              y: item.y ?? 0,
+              w: item.w ?? 1,
+              h: item.h ?? 1,
+              i: item.i ?? String(this.index++),
+              type: item.type ?? 'TextComponent',
+              content: cssData ? cssData.content : 'Sample text',
+              containerStyle: JSON.parse(parsedCSS).containerStyle ?? {},
+              textStyle:JSON.parse(parsedCSS).textStyle ?? {},
+              imageStyle: parsedCSS.imageStyle ?? {}
+            };
+          });
+          console.log('Internal Layout:', this.internalLayout);
+        } else {
+          console.error('Fetched data is not an array');
+        }
+      
     } catch (error) {
       console.error('Error fetching items:', error);
     }
@@ -141,9 +206,10 @@ export default {
         h: 2,
         i: this.index.toString(),
         type: this.selectedComponent,
-        content: 'Sample text', // Default content for TextComponent
+        content: this.selectedComponent === 'TextComponent' ? 'Sample text' : 'https://via.placeholder.com/150', // Default content for TextComponent
         containerStyle: {}, // Default container style
         textStyle: {}, // Default text style
+        imageStyle: {},
       });
       this.index++;
     },
@@ -151,23 +217,29 @@ export default {
       const index = this.internalLayout.map((item) => item.i).indexOf(val);
       this.internalLayout.splice(index, 1);
     },
-    updateItem(id, content, containerStyle, textStyle) {
+    updateItem(id, content, containerStyle, textStyle, imageStyle) {
       const item = this.internalLayout.find((item) => item.i === id);
       if (item) {
         item.content = content;
         item.containerStyle = containerStyle;
         item.textStyle = textStyle;
+        item.imageStyle = imageStyle;
       }
     },
     updateLayout(newLayout) {
       this.internalLayout = newLayout;
     },
     openModal(id, data) {
+      
       this.editingItemId = id;
+      
+      this.editingItemType = data.type;
       this.editableContent = data.content;
       this.editableContainerStyle = { ...data.containerStyle };
       this.editableTextStyle = { ...data.textStyle };
+      this.editableImageStyle = { ...data.imageStyle };
       this.isEditModalOpen = true;
+      console.log("id");
     },
     closeEditModal() {
       this.isEditModalOpen = false;
@@ -178,7 +250,8 @@ export default {
           this.editingItemId,
           data.content,
           data.containerStyle,
-          data.textStyle
+          data.textStyle,
+          data.imageStyle
         );
         this.isEditModalOpen = false;
       }
@@ -215,26 +288,28 @@ export default {
 
 .select{
   margin-top:2vh;
-  border-radius: 20px;
+  /* border-color: #ffa500; */
+  /* border-width: 3px; */
   padding: 0.5rem;
-  /* width: 8vw; */
-  width: 150px;
+  width: 250px;
   height: 5vh;
-  background-color: #ddd;
-  color: #0d0c0c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color:rgb(78, 135, 242);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 2.2vh;
 }
 
 .addItemButton{
   margin-left: 1.5vw;
-  border-radius: 20px;
+  /* border-color: #ffa500; */
+  /* border-width: 3px; */
   padding: 0.5rem;
-  /* width: 8vw; */
   width: 150px;
   height: 5vh;
-  background-color: #ddd;
-  color: #0d0c0c;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color:rgb(78, 135, 242);
+  color: #fffefd;
+  font-weight: bold;
+  font-size: 2.2vh;
 }
 
 .checkBox{
@@ -250,13 +325,19 @@ export default {
 }
 
 .vue-grid-layout {
-  background: #ffffff;
+  background: #c4c1c1;
   position: relative;
+  /* border: 2px solid black; */
+  
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+}
+
+.vue-grid-item:hover{
+  border: 3px solid black;
 }
 
 .vue-grid-item .resizing {

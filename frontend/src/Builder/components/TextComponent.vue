@@ -22,10 +22,15 @@
     },
     computed: {
       computedTextStyle() {
+        console.log('textStyle prop:', this.textStyle);
         return {
           ...this.textStyle,
           fontSize: this.textStyle.fontSize ? `${this.textStyle.fontSize}px` : undefined,
           textAlign: this.textStyle.textAlign || 'left',
+          fontFamily: this.textStyle.fontFamily || 'inherit',
+          fontWeight: this.textStyle.fontWeight || 'normal',
+          textDecoration: this.textStyle.textDecoration || 'none',
+          lineHeight: this.textStyle.lineHeight || 'normal',
         };
       },
     },

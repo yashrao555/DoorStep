@@ -14,19 +14,25 @@ async function createTextComponent(internalLayout) {
         y: layout.y,
         w: layout.w,
         h: layout.h,
-        layout_id:1
+        layout_id: 1
       });
-      console.log(component);
+
+      const cssData = JSON.stringify({
+        containerStyle: layout.containerStyle,
+        textStyle: layout.textStyle,
+        imageStyle: layout.imageStyle
+      });
+
       const textComp = await TextComponent.create({
-        content:"sample text",
-        css:layout.css,
-        componentPositionId:component.dataValues.id
-      }) 
-      
-      //createdComponents.push(component);
+        content: layout.content,
+        css: cssData,
+        componentPositionId: component.dataValues.id
+      });
+
+      console.log(component, textComp);
     } catch (error) {
       console.error('Error creating component:', error);
-      return error;
+      return res.status(500).json({ error: 'Error creating component' });
     }
   }
 
