@@ -1,6 +1,6 @@
 <template>
     <div :style="containerStyle" @click="openEditModal">
-      <div :style="computedTextStyle">{{ content }}</div>
+      <div class="content" :style="computedTextStyle">{{ content }}</div>
     </div>
   </template>
   
@@ -25,7 +25,7 @@
         console.log('textStyle prop:', this.textStyle);
         return {
           ...this.textStyle,
-          fontSize: this.textStyle.fontSize ? `${this.textStyle.fontSize}px` : undefined,
+          fontSize: this.textStyle.fontSize ? `${this.textStyle.fontSize}px` : '32px',
           textAlign: this.textStyle.textAlign || 'left',
           fontFamily: this.textStyle.fontFamily || 'inherit',
           fontWeight: this.textStyle.fontWeight || 'normal',
@@ -47,6 +47,8 @@
   </script>
   
   <style scoped>
-  /* No additional styles required */
+  .content{
+    content: wrap;
+  }
   </style>
   

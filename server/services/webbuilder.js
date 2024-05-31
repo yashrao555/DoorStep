@@ -1,7 +1,7 @@
 const ComponentPosition = require('../models/position.js');
 const TextComponent = require('../models/text.js')
 
-async function createTextComponent(internalLayout) {
+async function createTextComponent(internalLayout,layout_id) {
 
   console.log(internalLayout);
   //  await TextComponent.destroy({ where: {}, truncate: true });
@@ -53,7 +53,7 @@ async function createTextComponent(internalLayout) {
             y: layout.y,
             w: layout.w,
             h: layout.h,
-            layout_id: 2
+            layout_id: layout_id
           });
     
           const cssData = JSON.stringify({
@@ -66,7 +66,7 @@ async function createTextComponent(internalLayout) {
             content: layout.content,
             css: cssData,
             componentPositionId: component.dataValues.id,
-            layout_id:2
+            layout_id:layout_id
           });
         }
 

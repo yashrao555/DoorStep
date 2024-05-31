@@ -4,12 +4,14 @@ const {createTextComponent, getAllTextComponents, getCss} = require('../services
 
 const webController = express.Router()
 
-webController.post('/text-builder',async(req,res)=>{
+webController.post('/text-builder/:layout_id',async(req,res)=>{
+    const {layout_id} = req.params;
+    console.log("layout id :",layout_id);
 
     try {
         
         const internalLayout = req.body.internalLayout
-        const result =await createTextComponent(internalLayout);
+        const result =await createTextComponent(internalLayout,layout_id);
         
         return res.status(201).json({result});
     } catch (error) {

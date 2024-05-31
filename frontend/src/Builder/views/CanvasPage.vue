@@ -9,10 +9,10 @@
       </div>
     </div> -->
     <button class="btn btn-primary ms-4" >+ New Layout</button>
-    <select class="btn btn-primary ms-4 mb-3 mt-3 " style="height:3.8vh" >
+    <select class="btn btn-primary ms-4 mb-3 mt-3 " v-model="selectedLayout"  style="height:3.8vh" >
       <option value="" disabled>Layouts</option>
-      <option>Layout 1</option> 
-      <option>Layout 2</option>
+      <option value="1">Layout 1</option> 
+      <option value="2">Layout 2</option>
     </select>
     <select class="btn btn-primary ms-4 mb-3 mt-3 " style="height:3.8vh" v-model="selectedComponent">
       <option value="" disabled>Components</option>
@@ -22,7 +22,7 @@
     <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
-    <button class="btn btn-success " style="margin-left:54vw" @click="saveLayout">Save Layout</button>
+    <button class="btn btn-success " style="margin-left:54vw" @click="saveLayout(selectedLayout)">Save Layout</button>
     <grid-layout
       v-model:layout="internalLayout"
       :col-num="colNum"
@@ -31,7 +31,7 @@
       :is-resizable="resizable"
       :vertical-compact="true"
       :use-css-transforms="true"
-      :margin=[0,0]
+      :margin=[5,5]
       @layout-updated="updateLayout"
     >
       <grid-item
@@ -107,6 +107,7 @@ export default {
       resizable: true,
       colNum: 12,
       index: 0,
+      selectedLayout: '1', //
       selectedComponent: '',
       isEditModalOpen: false,
       editableContent: '',
@@ -117,15 +118,23 @@ export default {
       editingItemType: null,
     };
   },
-  mounted(){
-    this.getItem();
+  mounted() {
+    this.getItem(this.selectedLayout); // Fetch initial data based on default layout
+  },
+  watch: {
+    selectedLayout(newLayoutId) {
+      if (newLayoutId) {
+        this.getItem(newLayoutId);
+      }
+    }
   },
   methods: {
-    async getItem() {
+    async getItem(layout_id) {
     try {
-      const result = await axios.get('http://localhost:3000/get-all-text');
+      console.log(layout_id);
+      const result = await axios.get(`http://localhost:3000/get-all-text/${layout_id}`);
       console.log('Fetched result:', result);
-      const cssResult = await axios.get('http://localhost:3000/get-css')
+      const cssResult = await axios.get(`http://localhost:3000/get-css/${layout_id}`)
         console.log('CSS is',cssResult);
 
       // if (Array.isArray(result.data)) {
@@ -204,7 +213,7 @@ export default {
         x: (this.internalLayout.length * 2) % (this.colNum || 12),
         y: this.internalLayout.length + (this.colNum || 12),
         w: 2,
-        h: 2,
+        h: 1,
         i: this.index.toString(),
         type: this.selectedComponent,
         content: this.selectedComponent === 'TextComponent' ? 'Sample text' : 'https://via.placeholder.com/150', // Default content for TextComponent
@@ -259,10 +268,10 @@ export default {
         this.isEditModalOpen = false;
       }
     },
-    async saveLayout() {
+    async saveLayout(layout_id) {
       try {
         console.log("backend data",this.internalLayout);
-        const response = await axios.post('http://localhost:3000/text-builder', {internalLayout:this.internalLayout});
+        const response = await axios.post(`http://localhost:3000/text-builder/${layout_id}`, {internalLayout:this.internalLayout});
         console.log(response);
         alert('Layout saved successfully');
       } catch (error) {
@@ -330,12 +339,15 @@ export default {
 .vue-grid-layout {
   background: #c4c1c1;
   position: relative;
+  
   /* border: 2px solid black; */
   
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
   /* border: 1px solid black; */
 }
 
