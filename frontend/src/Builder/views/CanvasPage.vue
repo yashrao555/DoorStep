@@ -225,10 +225,17 @@ export default {
       });
       this.index++;
     },
+<<<<<<< Updated upstream
     removeItem(val) {
       const index = this.internalLayout.map((item) => item.i).indexOf(val);
       console.log("index ",val);
       this.internalLayout.splice(index, 1);
+=======
+    async removeItem(id) {
+      const result  = await axios.delete("http://localhost:3000/remove-element", {data: { id: id }});
+      this.internalLayout = this.internalLayout.filter(item => item.PositionId !== id);
+      console.log("result", result);
+>>>>>>> Stashed changes
     },
     updateItem(id, content, containerStyle, textStyle, imageStyle) {
       const item = this.internalLayout.find((item) => item.i === id);

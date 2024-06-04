@@ -1,8 +1,14 @@
 const express = require('express')
+const ImageComponent = require('../models/imagecomponent.js')
 
-const {createTextComponent, getAllTextComponents, getCss} = require('../services/webbuilder.js')
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const {createTextComponent, getAllTextComponents, getCss, removeElement} = require('../services/webbuilder.js')
 
 const webController = express.Router()
+
+
 
 webController.post('/text-builder/:layout_id',async(req,res)=>{
     const {layout_id} = req.params;
@@ -39,6 +45,17 @@ webController.get('/get-css/:layout_id',async(req,res)=>{
     } catch (error) {
         return res.status(500).json(error)
         
+    }
+})
+
+webController.delete('/remove-element',async(req,res)=>{
+    const {id} = req.body
+    console.log('id',id);
+    try {
+        const result = await removeElement(id);
+        return res.status(201).json(result);
+    } catch (error) {
+        return res.status(500).json(error);
     }
 })
 module.exports = webController

@@ -1,5 +1,7 @@
 const ComponentPosition = require('../models/position.js');
 const TextComponent = require('../models/text.js')
+const ImageComponent = require('../models/imagecomponent.js')
+
 
 async function createTextComponent(internalLayout,layout_id) {
 
@@ -27,12 +29,16 @@ async function createTextComponent(internalLayout,layout_id) {
             //layout_id: 2
           });
 
+         
+
           const cssData = JSON.stringify({
             containerStyle: layout.containerStyle,
             textStyle: layout.textStyle,
             imageStyle: layout.imageStyle
           });
-    
+
+          if(layout.type==='TextComponent'){
+            
           const textComp = await TextComponent.findOne({
             where:{
               componentPositionId:layout.PositionId
@@ -44,6 +50,19 @@ async function createTextComponent(internalLayout,layout_id) {
             css: cssData,
             
           });
+          }
+          else{
+            const imgComp = await ImageComponent.findOne({
+              where:{
+                componentPositionId:layout.PositionId
+              }
+            })
+            imgComp.update({
+              FileData:layout.content,
+              css:cssData
+            })
+          }
+    
         }
         
         else
@@ -61,13 +80,26 @@ async function createTextComponent(internalLayout,layout_id) {
             textStyle: layout.textStyle,
             imageStyle: layout.imageStyle
           });
+
+          if(layout.type==='TextComponent'){
+            const textComp = await TextComponent.create({
+              content: layout.content,
+              css: cssData,
+              componentPositionId: component.dataValues.id,
+              layout_id:layout_id
+            });
+          }
+          else{
+            const imgComp = await ImageComponent.create({
+              FileName:'Image1',
+              FileData:layout.content,
+              componentPositionId: component.dataValues.id,
+              layout_id:layout_id,
+              css: cssData,
+            })
+          }
     
-          const textComp = await TextComponent.create({
-            content: layout.content,
-            css: cssData,
-            componentPositionId: component.dataValues.id,
-            layout_id:layout_id
-          });
+         
         }
 
       //console.log(component, textComp);
@@ -105,4 +137,24 @@ async function createTextComponent(internalLayout,layout_id) {
     }
   }
 
-  module.exports = {createTextComponent,getAllTextComponents,getCss}
+  async function removeElement(Id){
+    try {
+     const destroyedText= await TextComponent.destroy({
+        where: {
+          componentPositionId: Id
+        }
+      })
+
+      const destroyedComponent = await ComponentPosition.destroy({
+        where: {
+          id: Id
+        }
+      })
+
+      return {destroyedText,destroyedComponent};
+    } catch (error) {
+      
+    }
+  }
+
+  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement}
