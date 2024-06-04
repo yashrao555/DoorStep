@@ -53,7 +53,7 @@
             :imageStyle="item.imageStyle"
             @open-modal="openModal(item.i, $event)"
           />
-          <span class="remove" @click.stop="removeItem(item.i)">x</span>
+          <span class="remove" @click.stop="removeItem(item.PositionId)">x</span>
         </div>
       </grid-item>
     </grid-layout>
@@ -133,7 +133,7 @@ export default {
     try {
       console.log(layout_id);
       const result = await axios.get(`http://localhost:3000/get-all-text/${layout_id}`);
-      console.log('Fetched result:', result);
+      console.log('Fetched result:', result.data[0].id);
       const cssResult = await axios.get(`http://localhost:3000/get-css/${layout_id}`)
         console.log('CSS is',cssResult);
 
@@ -213,7 +213,7 @@ export default {
         x: (this.internalLayout.length * 2) % (this.colNum || 12),
         y: this.internalLayout.length + (this.colNum || 12),
         w: 2,
-        h: 1,
+        h: this.selectedComponent === 'TextCompnent' ? 1 : 5,
         i: this.index.toString(),
         type: this.selectedComponent,
         content: this.selectedComponent === 'TextComponent' ? 'Sample text' : 'https://via.placeholder.com/150', // Default content for TextComponent
@@ -227,6 +227,7 @@ export default {
     },
     removeItem(val) {
       const index = this.internalLayout.map((item) => item.i).indexOf(val);
+      console.log("index ",val);
       this.internalLayout.splice(index, 1);
     },
     updateItem(id, content, containerStyle, textStyle, imageStyle) {
@@ -251,7 +252,7 @@ export default {
       this.editableTextStyle = { ...data.textStyle };
       this.editableImageStyle = { ...data.imageStyle };
       this.isEditModalOpen = true;
-      console.log("id");
+      console.log("id",id);
     },
     closeEditModal() {
       this.isEditModalOpen = false;

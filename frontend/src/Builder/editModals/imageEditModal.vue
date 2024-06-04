@@ -1,70 +1,82 @@
 <template>
-    <div v-if="isOpen" class="modal">
-      <div class="modal-content">
-        <span class="close" @click="close">&times;</span>
-        <h3>Edit Image Component</h3>
-        <label for="content">Image URL:</label>
-        <input type="text" id="content" v-model="localContent" />
+  <div v-if="isOpen" class="modal">
+    <div class="modal-content">
+      <span class="close" @click="close">&times;</span>
+      <h3>Edit Image Component</h3>
+      <label for="fileUpload">Upload Image:</label>
+      <input type="file" id="fileUpload" @change="handleFileUpload" />
   
-        <h4>Container Style</h4>
-        <label for="backgroundColor">Background Color:</label>
-        <input type="color" id="backgroundColor" v-model="localContainerStyle.backgroundColor" />
+      <h4>Container Style</h4>
+      <label for="backgroundColor">Background Color:</label>
+      <input type="color" id="backgroundColor" v-model="localContainerStyle.backgroundColor" />
   
-        <h4>Image Style</h4>
-        <label for="width">Width:</label>
-        <input type="text" id="width" v-model="localImageStyle.width" />
+      <h4>Image Style</h4>
+      <label for="width">Width:</label>
+      <input type="text" id="width" v-model="localImageStyle.width" />
   
-        <label for="height">Height:</label>
-        <input type="text" id="height" v-model="localImageStyle.height" />
+      <label for="height">Height:</label>
+      <input type="text" id="height" v-model="localImageStyle.height" />
   
-        <button @click="save">Save</button>
-      </div>
+      <button @click="save">Save</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    props: {
-      isOpen: {
-        type: Boolean,
-        required: true
-      },
-      content: {
-        type: String,
-        required: true
-      },
-      containerStyle: {
-        type: Object,
-        required: true
-      },
-      imageStyle: {
-        type: Object,
-        required: true
-      }
-    },
-    data() {
-      return {
-        localContent: this.content,
-        localContainerStyle: { ...this.containerStyle },
-        localImageStyle: { ...this.imageStyle }
-      };
-    },
-    methods: {
-      close() {
-        this.$emit('close');
-      },
-      save() {
-        this.$emit('save', {
-          content: this.localContent,
-          containerStyle: this.localContainerStyle,
-          imageStyle: this.localImageStyle
-        });
-      }
-    }
-  };
-  </script>
+  </div>
+</template>
 
-  <style scoped>
+<script>
+export default {
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: true
+    },
+    content: {
+      type: String,
+      required: true
+    },
+    containerStyle: {
+      type: Object,
+      required: true
+    },
+    imageStyle: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      localContent: this.content,
+      localContainerStyle: { ...this.containerStyle },
+      localImageStyle: { ...this.imageStyle },
+      uploadedFile: null
+    };
+  },
+  methods: {
+    close() {
+      this.$emit('close');
+    },
+    handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.localContent = e.target.result;
+          console.log("this is image ",this.localContent);
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    save() {
+      this.$emit('save', {
+        content: this.localContent,
+        containerStyle: this.localContainerStyle,
+        imageStyle: this.localImageStyle
+      });
+    }
+  }
+};
+</script>
+
+<style scoped>
 .modal {
   display: block;
   position: fixed;
@@ -73,7 +85,6 @@
   right: 0;
   width: 20%;
   height: 100%;
-  
   background-color: #fff;
 }
 
