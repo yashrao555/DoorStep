@@ -1,23 +1,28 @@
 const express = require('express')
-const ImageComponent = require('../models/imagecomponent.js')
+// const ImageComponent = require('../models/imagecomponent.js')
+const multer = require('multer')
 
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage, limits: { fileSize: 10 * 1024 * 1024 }  });
 const {createTextComponent, getAllTextComponents, getCss, removeElement} = require('../services/webbuilder.js')
 
 const webController = express.Router()
 
 
 
-webController.post('/text-builder/:layout_id',async(req,res)=>{
+webController.post('/text-builder/:layout_id',upload.array('images[]'),async(req,res)=>{
+    const files = req.files
+    console.log("hsfjkhsdkjfhsdkjfhksjdhf",files)
+   
     const {layout_id} = req.params;
     console.log("layout id :",layout_id);
 
     try {
-        
-        const internalLayout = req.body.internalLayout
-        const result =await createTextComponent(internalLayout,layout_id);
+        console.log(req.body)
+        const internalLayout = JSON.parse(req.body.internalLayout)
+        // console.log("internal llll ",internalLayout);
+        const result =await createTextComponent(internalLayout,layout_id,files);
         
         return res.status(201).json({result});
     } catch (error) {

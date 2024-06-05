@@ -36,7 +36,7 @@
     },
     methods: {
       openEditModal() {
-        this.$emit('open-modal', {
+        this.$emit('open-modal-text', {
           content: this.content,
           containerStyle: this.containerStyle,
           textStyle: this.textStyle,

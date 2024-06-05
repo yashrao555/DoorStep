@@ -5,6 +5,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const dotenv = require('dotenv')
 
@@ -35,6 +36,7 @@ const corsOptions = {
 };
 
 dotenv.config()
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors(corsOptions));
 app.use(session({
   secret: 'my-secret',

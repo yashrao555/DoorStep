@@ -1,12 +1,11 @@
-'use strict';
-const { Model } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class ImageComponent extends Model {
-    static associate(models) {
-      // define association here if any
-    }
-  }
-  ImageComponent.init({
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../util/database');
+const ComponentPosition = require('./position.js'); // Import the ComponentPosition model
+
+class ImageComponent extends Model {}
+
+ImageComponent.init(
+  {
     FileName: {
       type: DataTypes.STRING,
       allowNull: false
@@ -15,24 +14,28 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BLOB('long'),
       allowNull: false
     },
-    componentPositionId: { // Foreign key for the relationship
+    componentPositionId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: ComponentPosition,
-        key: 'id'
-      }
+      allowNull: true
     },
-    layout_id:{
-      type:DataTypes.INTEGER,
-      allowNull:true
+    layout_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     css: {
       type: DataTypes.TEXT,
-      allowNull: true // Allow null if you don't require this field to be mandatory
+      allowNull: true
     }
-  }, {
+  },
+  {
     sequelize,
     modelName: 'ImageComponent',
-  });
-  return ImageComponent;
-};
+  }
+);
+
+ImageComponent.belongsTo(ComponentPosition, {
+  foreignKey: 'componentPositionId',
+  as: 'position'
+});
+
+module.exports = ImageComponent;

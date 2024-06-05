@@ -8,13 +8,21 @@
         </div>
       </div>
     </div> -->
-    <button class="btn btn-primary ms-4" >+ New Layout</button>
-    <select class="btn btn-primary ms-4 mb-3 mt-3 " v-model="selectedLayout"  style="height:3.8vh" >
+    <button class="btn btn-primary ms-4">+ New Layout</button>
+    <select
+      class="btn btn-primary ms-4 mb-3 mt-3"
+      v-model="selectedLayout"
+      style="height: 3.8vh"
+    >
       <option value="" disabled>Layouts</option>
-      <option value="1">Layout 1</option> 
+      <option value="1">Layout 1</option>
       <option value="2">Layout 2</option>
     </select>
-    <select class="btn btn-primary ms-4 mb-3 mt-3 " style="height:3.8vh" v-model="selectedComponent">
+    <select
+      class="btn btn-primary ms-4 mb-3 mt-3"
+      style="height: 3.8vh"
+      v-model="selectedComponent"
+    >
       <option value="" disabled>Components</option>
       <option value="TextComponent">Text</option>
       <option value="ImageComponent">Image</option>
@@ -22,7 +30,13 @@
     <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
-    <button class="btn btn-success " style="margin-left:54vw" @click="saveLayout(selectedLayout)">Save Layout</button>
+    <button
+      class="btn btn-success"
+      style="margin-left: 54vw"
+      @click="saveLayout(selectedLayout)"
+    >
+      Save Layout
+    </button>
     <grid-layout
       v-model:layout="internalLayout"
       :col-num="colNum"
@@ -31,7 +45,7 @@
       :is-resizable="resizable"
       :vertical-compact="true"
       :use-css-transforms="true"
-      :margin=[5,5]
+      :margin="[5, 5]"
       @layout-updated="updateLayout"
     >
       <grid-item
@@ -44,6 +58,7 @@
         :i="item.i"
         :key="item.i"
       >
+      
         <div>
           <component
             :is="item.type"
@@ -51,16 +66,19 @@
             :containerStyle="item.containerStyle"
             :textStyle="item.textStyle"
             :imageStyle="item.imageStyle"
-            @open-modal="openModal(item.i, $event)"
+            @open-modal-text="openModal(item.i, $event,item.type)"
+            @open-modal-image="openModal(item.i,$event,item.type)"
           />
-          <span class="remove" @click.stop="removeItem(item.PositionId)">x</span>
+          <span class="remove" @click.stop="removeItem(item.PositionId)"
+            >x</span
+          >
         </div>
       </grid-item>
     </grid-layout>
 
     <!-- Edit Modal -->
     <TextEditModal
-      v-if="isEditModalOpen"
+      v-if="isEditModalOpen && editingItemType === 'TextComponent'"
       :isOpen="isEditModalOpen"
       :content="editableContent"
       :containerStyle="editableContainerStyle"
@@ -77,19 +95,16 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
-
-    
   </div>
-  
 </template>
 
 <script>
-import { GridLayout, GridItem } from 'vue3-grid-layout-next';
-import TextComponent from '../components/TextComponent.vue';
-import ImageComponent from '../components/ImageComponent.vue';
-import TextEditModal from '../editModals/textEditModal.vue'; // Import the new modal component
-import ImageEditModal from '../editModals/imageEditModal.vue';
-import axios from 'axios';
+import { GridLayout, GridItem } from "vue3-grid-layout-next";
+import TextComponent from "../components/TextComponent.vue";
+import ImageComponent from "../components/ImageComponent.vue";
+import TextEditModal from "../editModals/textEditModal.vue"; // Import the new modal component
+import ImageEditModal from "../editModals/imageEditModal.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -97,8 +112,8 @@ export default {
     GridItem,
     TextComponent,
     ImageComponent,
-    TextEditModal, 
-    ImageEditModal
+    TextEditModal,
+    ImageEditModal,
   },
   data() {
     return {
@@ -107,10 +122,10 @@ export default {
       resizable: true,
       colNum: 12,
       index: 0,
-      selectedLayout: '1', //
-      selectedComponent: '',
+      selectedLayout: "1", //
+      selectedComponent: "",
       isEditModalOpen: false,
-      editableContent: '',
+      editableContent: "",
       editableContainerStyle: {},
       editableTextStyle: {},
       editingItemId: null, // To keep track of which item is being edited
@@ -126,121 +141,155 @@ export default {
       if (newLayoutId) {
         this.getItem(newLayoutId);
       }
-    }
+    },
   },
   methods: {
     async getItem(layout_id) {
-    try {
-      console.log(layout_id);
-      const result = await axios.get(`http://localhost:3000/get-all-text/${layout_id}`);
-      console.log('Fetched result:', result.data[0].id);
-      const cssResult = await axios.get(`http://localhost:3000/get-css/${layout_id}`)
-        console.log('CSS is',cssResult);
+      try {
+        console.log(layout_id);
+        const result = await axios.get(
+          `http://localhost:3000/get-all-text/${layout_id}`
+        );
+        console.log("Fetched result:", result);
+        const cssResult = await axios.get(
+          `http://localhost:3000/get-css/${layout_id}`
+        );
+        console.log("CSS is", cssResult);
 
-      // if (Array.isArray(result.data)) {
-      //   this.internalLayout = result.data.map(item => ({
-      //     x: item.x ?? 0,
-      //     y: item.y ?? 0,
-      //     w: item.w ?? 1,
-      //     h: item.h ?? 1,
-      //     i: item.i ?? String(Math.random()),
-      //     type: item.type ?? 'TextComponent',
-      //     content: item.content ?? 'Sample text',
-      //     containerStyle: JSON.parse(item.css).containerStyle ?? {},
-      //     textStyle: JSON.parse(item.css).textStyle ?? {},
-      //     imageStyle: JSON.parse(item.css).imageStyle ?? {},
-      //   }));
+        // if (Array.isArray(result.data)) {
+        //   this.internalLayout = result.data.map(item => ({
+        //     x: item.x ?? 0,
+        //     y: item.y ?? 0,
+        //     w: item.w ?? 1,
+        //     h: item.h ?? 1,
+        //     i: item.i ?? String(Math.random()),
+        //     type: item.type ?? 'TextComponent',
+        //     content: item.content ?? 'Sample text',
+        //     containerStyle: JSON.parse(item.css).containerStyle ?? {},
+        //     textStyle: JSON.parse(item.css).textStyle ?? {},
+        //     imageStyle: JSON.parse(item.css).imageStyle ?? {},
+        //   }));
 
-      //   const css = await axios.get('http://localhost:3000/get-css')
-      //   console.log('CSS is',css);
-      // } else {
-      //   console.error('Fetched data is not an array');
-      // }
+        //   const css = await axios.get('http://localhost:3000/get-css')
+        //   console.log('CSS is',css);
+        // } else {
+        //   console.error('Fetched data is not an array');
+        // }
 
-      
-        
-        
-      if (Array.isArray(result.data) && Array.isArray(cssResult.data)) {
+        if (Array.isArray(result.data) && Array.isArray(cssResult.data)) {
           const cssMap = cssResult.data.reduce((acc, cssItem) => {
             acc[cssItem.componentPositionId] = cssItem;
             return acc;
           }, {});
 
-          this.internalLayout = result.data.map(item => {
+          this.internalLayout = [];
+          for (const item of result.data) {
             const cssData = cssMap[item.id];
-            console.log('cssdata :',cssData);
-            let parsedCSS = { containerStyle: {}, textStyle: {}, imageStyle: {} };
+            let parsedCSS = {
+              containerStyle: {},
+              textStyle: {},
+              imageStyle: {},
+            };
 
             if (cssData) {
               try {
                 parsedCSS = JSON.parse(cssData.css);
-                console.log('parsedcss',parsedCSS);
               } catch (error) {
-                console.error('Error parsing CSS:', error);
+                console.error("Error parsing CSS:", error);
               }
             }
 
-            return {
+            let content = null;
+
+            if (cssData && cssData.FileData) {
+              // const CHUNK_SIZE = 8192; // Adjust chunk size as needed
+
+              const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
+              let base64Data = window.btoa(
+          new Uint8Array(binaryData).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        );
+        //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
+        //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
+        //          base64Data = window.btoa(
+        //   new Uint8Array(binaryData).reduce(
+        //     (data, byte) => data + String.fromCharCode(byte),
+        //     ""
+        //   )
+        // );
+        //       }
+              const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
+              console.log("base64data",typeof(base64Data));
+              content = `data:${mimeType};base64,${base64Data}`;
+            } else {
+              content = cssData.content;
+            }
+
+            this.internalLayout.push({
               x: item.x ?? 0,
               y: item.y ?? 0,
               w: item.w ?? 1,
               h: item.h ?? 1,
               i: item.i ?? String(this.index++),
-              type: item.type ?? 'TextComponent',
-              content: cssData ? cssData.content : 'Sample text',
-              containerStyle: JSON.parse(parsedCSS).containerStyle ?? {},
-              textStyle:JSON.parse(parsedCSS).textStyle ?? {},
+              type: item.type ?? "TextComponent",
+              content: content,
+              sendFile:null,
+              containerStyle: parsedCSS.containerStyle ?? {},
+              textStyle: parsedCSS.textStyle ?? {},
               imageStyle: parsedCSS.imageStyle ?? {},
-              PositionId:cssData?cssData.componentPositionId:null,
-            };
-          });
-          console.log('Internal Layout:', this.internalLayout);
+              PositionId: cssData ? cssData.componentPositionId : null,
+            });
+          }
+
+          console.log("Internal Layout:", this.internalLayout);
         } else {
-          console.error('Fetched data is not an array');
+          console.error("Fetched data is not an array");
         }
-      
-    } catch (error) {
-      console.error('Error fetching items:', error);
-    }
-  },
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    },
 
     addItem() {
       if (!this.selectedComponent) {
-        alert('Please select a component type');
+        alert("Please select a component type");
         return;
       }
       this.internalLayout.push({
         x: (this.internalLayout.length * 2) % (this.colNum || 12),
         y: this.internalLayout.length + (this.colNum || 12),
         w: 2,
-        h: this.selectedComponent === 'TextCompnent' ? 1 : 5,
+        h: this.selectedComponent === "TextCompnent" ? 1 : 5,
         i: this.index.toString(),
         type: this.selectedComponent,
-        content: this.selectedComponent === 'TextComponent' ? 'Sample text' : 'https://via.placeholder.com/150', // Default content for TextComponent
+        content:
+          this.selectedComponent === "TextComponent"
+            ? "Sample text"
+            : "https://via.placeholder.com/150", // Default content for TextComponent
         containerStyle: {}, // Default container style
         textStyle: {}, // Default text style
         imageStyle: {},
-        PositionId:null
-        
+        PositionId: null,
       });
       this.index++;
     },
-<<<<<<< Updated upstream
-    removeItem(val) {
-      const index = this.internalLayout.map((item) => item.i).indexOf(val);
-      console.log("index ",val);
-      this.internalLayout.splice(index, 1);
-=======
     async removeItem(id) {
-      const result  = await axios.delete("http://localhost:3000/remove-element", {data: { id: id }});
-      this.internalLayout = this.internalLayout.filter(item => item.PositionId !== id);
+      const result = await axios.delete(
+        "http://localhost:3000/remove-element",
+        { data: { id: id } }
+      );
+      this.internalLayout = this.internalLayout.filter(
+        (item) => item.PositionId !== id
+      );
       console.log("result", result);
->>>>>>> Stashed changes
     },
-    updateItem(id, content, containerStyle, textStyle, imageStyle) {
+    updateItem(id, content, sendFile,containerStyle, textStyle, imageStyle) {
       const item = this.internalLayout.find((item) => item.i === id);
       if (item) {
         item.content = content;
+        item.sendFile = sendFile;
         item.containerStyle = containerStyle;
         item.textStyle = textStyle;
         item.imageStyle = imageStyle;
@@ -249,17 +298,15 @@ export default {
     updateLayout(newLayout) {
       this.internalLayout = newLayout;
     },
-    openModal(id, data) {
-      
+    openModal(id, data,type) {
       this.editingItemId = id;
-      
-      this.editingItemType = data.type;
+      this.editingItemType=type;
       this.editableContent = data.content;
       this.editableContainerStyle = { ...data.containerStyle };
       this.editableTextStyle = { ...data.textStyle };
       this.editableImageStyle = { ...data.imageStyle };
       this.isEditModalOpen = true;
-      console.log("id",id);
+      console.log("id", type);
     },
     closeEditModal() {
       this.isEditModalOpen = false;
@@ -269,6 +316,7 @@ export default {
         this.updateItem(
           this.editingItemId,
           data.content,
+          data.sendFile,
           data.containerStyle,
           data.textStyle,
           data.imageStyle
@@ -278,13 +326,28 @@ export default {
     },
     async saveLayout(layout_id) {
       try {
-        console.log("backend data",this.internalLayout);
-        const response = await axios.post(`http://localhost:3000/text-builder/${layout_id}`, {internalLayout:this.internalLayout});
+        console.log("backend data", this.internalLayout);
+      
+        const formData = new FormData();
+        // let images = []
+        for(let i =0;i<this.internalLayout.length;i++){
+          console.log(this.internalLayout[i].sendFile)
+          
+            formData.append("images[]", this.internalLayout[i].sendFile);
+          
+        }
+        // console.log(formData)
+        formData.append("internalLayout",JSON.stringify(this.internalLayout))
+        const response = await axios.post(
+          `http://localhost:3000/text-builder/${layout_id}`,
+          formData
+          // { internalLayout: this.internalLayout }
+        );
         console.log(response);
-        alert('Layout saved successfully');
+        alert("Layout saved successfully");
       } catch (error) {
-        console.error('Error saving layout:', error);
-        alert('Failed to save layout');
+        console.error("Error saving layout:", error);
+        alert("Failed to save layout");
       }
     },
   },
@@ -306,35 +369,34 @@ export default {
   columns: 120px;
 }
 
-.select{
-  margin-top:2vh;
+.select {
+  margin-top: 2vh;
   /* border-color: #ffa500; */
   /* border-width: 3px; */
   padding: 0.5rem;
   width: 250px;
   height: 5vh;
-  background-color:rgb(78, 135, 242);
+  background-color: rgb(78, 135, 242);
   color: #ffffff;
   font-weight: bold;
   font-size: 2.2vh;
 }
 
-.addItemButton{
+.addItemButton {
   margin-left: 1.5vw;
   /* border-color: #ffa500; */
   /* border-width: 3px; */
   padding: 0.5rem;
   width: 150px;
   height: 5vh;
-  background-color:rgb(78, 135, 242);
+  background-color: rgb(78, 135, 242);
   color: #fffefd;
   font-weight: bold;
   font-size: 2.2vh;
 }
 
-.checkBox{
+.checkBox {
   margin-left: 1.5vw;
-  
 }
 
 .remove {
@@ -347,9 +409,8 @@ export default {
 .vue-grid-layout {
   background: #c4c1c1;
   position: relative;
-  
+
   /* border: 2px solid black; */
-  
 }
 
 .vue-grid-item:not(.vue-grid-placeholder) {
@@ -359,7 +420,7 @@ export default {
   /* border: 1px solid black; */
 }
 
-.vue-grid-item:hover{
+.vue-grid-item:hover {
   border: 3px solid black;
 }
 
@@ -399,7 +460,8 @@ export default {
   height: 20px;
   top: 0;
   left: 0;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><circle cx='5' cy='5' r='5' fill='#999999'/></svg>") no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><circle cx='5' cy='5' r='5' fill='#999999'/></svg>")
+    no-repeat;
   background-position: bottom right;
   padding: 0 8px 8px 0;
   background-repeat: no-repeat;

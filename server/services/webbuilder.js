@@ -1,15 +1,34 @@
 const ComponentPosition = require('../models/position.js');
 const TextComponent = require('../models/text.js')
 const ImageComponent = require('../models/imagecomponent.js')
+// const fs = require("fs");
 
 
-async function createTextComponent(internalLayout,layout_id) {
+async function createTextComponent(internalLayout,layout_id,files) {
 
-  console.log(internalLayout);
+  console.log("sfdskljfklsdjfldsjklfsdjlfkjsdlkfjdslkfjldskf",internalLayout.length);
   //  await TextComponent.destroy({ where: {}, truncate: true });
   //  await ComponentPosition.destroy({ where: {}, truncate: true })
-  
+  let count = 0
   for (const layout of internalLayout) {
+    // console.log("position id", layout.PositionId)
+    let file;
+    let imageBuffer;
+    console.log("sendfile",)
+    if(layout.sendFile){
+      console.log("hellooo")
+       file = files[count]
+      if(file){
+        imageBuffer = file.buffer;
+     }
+     // console.log("shfkjsdfklsdjflkjdsf",imageBuffer)
+     count+=1
+    }
+    
+    // console.log(file)
+   
+    
+    // console.log("shfklsdjfklsdjlkf",layout)
     try {
 
       if (layout.PositionId)
@@ -52,15 +71,18 @@ async function createTextComponent(internalLayout,layout_id) {
           });
           }
           else{
-            const imgComp = await ImageComponent.findOne({
-              where:{
-                componentPositionId:layout.PositionId
-              }
-            })
-            imgComp.update({
-              FileData:layout.content,
-              css:cssData
-            })
+            if(file){
+              const imgComp = await ImageComponent.findOne({
+                where:{
+                  componentPositionId:layout.PositionId
+                }
+              })
+              imgComp.update({
+                FileData:imageBuffer,
+                css:cssData
+              })
+            }
+            
           }
     
         }
@@ -72,7 +94,8 @@ async function createTextComponent(internalLayout,layout_id) {
             y: layout.y,
             w: layout.w,
             h: layout.h,
-            layout_id: layout_id
+            layout_id: layout_id,
+            type:layout.type
           });
     
           const cssData = JSON.stringify({
@@ -90,9 +113,10 @@ async function createTextComponent(internalLayout,layout_id) {
             });
           }
           else{
+            // console.log("layout.content ",layout.content);
             const imgComp = await ImageComponent.create({
               FileName:'Image1',
-              FileData:layout.content,
+              FileData:imageBuffer,
               componentPositionId: component.dataValues.id,
               layout_id:layout_id,
               css: cssData,
@@ -128,9 +152,16 @@ async function createTextComponent(internalLayout,layout_id) {
 
   async function getCss(layout_id){
     try {
-      const result = await TextComponent.findAll({where:{
+      const resultText = await TextComponent.findAll({where:{
         layout_id:layout_id
       }});
+
+      const resultImg = await ImageComponent.findAll({where:{
+        layout_id:layout_id
+      }})
+
+      const result = resultText.concat(resultImg)
+      console.log("this is the result :",result);
       return result; 
     } catch (error) {
       throw error;

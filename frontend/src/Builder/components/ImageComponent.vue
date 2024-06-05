@@ -1,6 +1,7 @@
 <template>
   <div :style="containerStyle">
-    <img :src="content" :style="imageStyle" class="image-content" @click="openModal" />
+    <!-- {{ content }} -->
+    <img :src="content" :style="imageStyle" class="image-content" alt="Image Not Found" @click="openModal" />
   </div>
 </template>
 
@@ -22,13 +23,16 @@ export default {
   },
   methods: {
     openModal() {
-      this.$emit('open-modal', {
+      this.$emit('open-modal-image', {
         content: this.content,
         containerStyle: this.containerStyle,
         imageStyle: this.imageStyle,
         type: 'ImageComponent'
       });
     }
+  },
+  mounted() {
+    console.log('Content URL:', this.content);
   }
 };
 </script>

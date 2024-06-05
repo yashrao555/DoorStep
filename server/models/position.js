@@ -24,6 +24,10 @@ ComponentPosition.init(
     layout_id: {  // New layout_id column
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    type: {  
+      type: DataTypes.STRING,
+      allowNull: false
     }
   },
   {

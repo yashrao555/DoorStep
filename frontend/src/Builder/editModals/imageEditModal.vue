@@ -47,7 +47,8 @@ export default {
       localContent: this.content,
       localContainerStyle: { ...this.containerStyle },
       localImageStyle: { ...this.imageStyle },
-      uploadedFile: null
+      uploadedFile: null,
+      sendFile:null
     };
   },
   methods: {
@@ -56,11 +57,14 @@ export default {
     },
     handleFileUpload(event) {
       const file = event.target.files[0];
+
+      console.log(event.target.files)
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
           this.localContent = e.target.result;
-          console.log("this is image ",this.localContent);
+          this.sendFile = file
+          console.log("this is image ",this.sendFile);
         };
         reader.readAsDataURL(file);
       }
@@ -68,6 +72,7 @@ export default {
     save() {
       this.$emit('save', {
         content: this.localContent,
+        sendFile:this.sendFile,
         containerStyle: this.localContainerStyle,
         imageStyle: this.localImageStyle
       });
