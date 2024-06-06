@@ -1,7 +1,17 @@
 const ComponentPosition = require('../models/position.js');
 const TextComponent = require('../models/text.js')
-const ImageComponent = require('../models/imagecomponent.js')
+const ImageComponent = require('../models/imagecomponent.js');
+const LayoutItem = require('../models/layoutitem.js');
 // const fs = require("fs");
+
+const createLayoutItem = async (layoutData) => {
+  try {
+    const layoutItem = await LayoutItem.create(layoutData);
+    return layoutItem;
+  } catch (error) {
+    throw new Error('Error creating layout item: ' + error.message);
+  }
+};
 
 
 async function createTextComponent(internalLayout,layout_id,files) {
@@ -188,4 +198,4 @@ async function createTextComponent(internalLayout,layout_id,files) {
     }
   }
 
-  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement}
+  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement,createLayoutItem}
