@@ -64,6 +64,7 @@
       :margin="[0, 0]"
       @layout-updated="updateLayout"
       class="preview-item"
+
     >
       <grid-item
         v-for="item in internalLayout"
@@ -100,6 +101,7 @@
       :margin="[5, 5]"
       @layout-updated="updateLayout"
       class="no-preview-item"
+      :style="{ backgroundImage: `url(${imageContent})` }"
     >
       <grid-item
         v-for="item in internalLayout"
@@ -194,6 +196,7 @@ export default {
       preview: false,
       text: "See Preview",
       isCanvasModalOpen: false,
+      imageContent:null,
     };
   },
   mounted() {
@@ -218,6 +221,23 @@ export default {
           `http://localhost:3000/get-css/${layout_id}`
         );
         console.log("CSS is", cssResult);
+        const canvasResult = await axios.get(
+          `http://localhost:3000/get-layout/${layout_id}`
+        );
+        console.log("canvas result", canvasResult.data);
+
+        
+        const binaryData = canvasResult.data.image.data; // Assuming fileData is your object containing the buffer
+        let base64Data = window.btoa(
+          new Uint8Array(binaryData).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        );
+        const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
+        // console.log("base64data", typeof base64Data);
+        this.imageContent = `data:${mimeType};base64,${base64Data}`;
+        console.log("image content ",this.imageContent);
 
         // if (Array.isArray(result.data)) {
         //   this.internalLayout = result.data.map(item => ({
