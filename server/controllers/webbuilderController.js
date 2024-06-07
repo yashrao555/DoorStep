@@ -14,11 +14,15 @@ webController.post('/text-builder/change-layout/:layout_id',upload.single('image
 
         const {layout_id} = req.params
         const { css } = req.body;
-        const image = req.file ? req.file.buffer : null;
-    
+        const image = req.file 
+        console.log("id :",layout_id);
+        console.log("css : ",css);
+        console.log("image",image);
+        
+        
         const layoutData = {
           layout_id,
-          image,
+          image:image.buffer,
           css,
         };
     
@@ -40,7 +44,7 @@ webController.post('/text-builder/:layout_id',upload.array('images[]'),async(req
     console.log("layout id :",layout_id);
 
     try {
-        console.log(req.body)
+        console.log(req.body.internalLayout)
         const internalLayout = JSON.parse(req.body.internalLayout)
         // console.log("internal llll ",internalLayout);
         const result =await createTextComponent(internalLayout,layout_id,files);

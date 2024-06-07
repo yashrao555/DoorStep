@@ -31,22 +31,39 @@
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
     <button
+      class="btn btn-primary"
+      style="margin-left: 40vw"
+      @click="openEditModal"
+    >
+      Edit Background
+    </button>
+    <button
+      @click="setPreview"
+      class="btn btn-warning"
+      style="margin-left: 1vw"
+    >
+      {{ text }}
+    </button>
+    <button
       class="btn btn-success"
-      style="margin-left: 54vw"
+      style="margin-left: 1vw"
       @click="saveLayout(selectedLayout)"
     >
       Save Layout
     </button>
+    <!--preview-->
     <grid-layout
+      v-if="preview"
       v-model:layout="internalLayout"
       :col-num="colNum"
       :row-height="60"
-      :is-draggable="draggable"
-      :is-resizable="resizable"
+      :is-draggable="false"
+      :is-resizable="false"
       :vertical-compact="true"
       :use-css-transforms="true"
-      :margin="[5, 5]"
+      :margin="[0, 0]"
       @layout-updated="updateLayout"
+      class="preview-item"
     >
       <grid-item
         v-for="item in internalLayout"
@@ -58,7 +75,6 @@
         :i="item.i"
         :key="item.i"
       >
-      
         <div>
           <component
             :is="item.type"
@@ -66,8 +82,44 @@
             :containerStyle="item.containerStyle"
             :textStyle="item.textStyle"
             :imageStyle="item.imageStyle"
-            @open-modal-text="openModal(item.i, $event,item.type)"
-            @open-modal-image="openModal(item.i,$event,item.type)"
+          />
+        </div>
+      </grid-item>
+    </grid-layout>
+
+    <!--no preview-->
+    <grid-layout
+      v-else
+      v-model:layout="internalLayout"
+      :col-num="colNum"
+      :row-height="60"
+      :is-draggable="draggable"
+      :is-resizable="resizable"
+      :vertical-compact="true"
+      :use-css-transforms="true"
+      :margin="[5, 5]"
+      @layout-updated="updateLayout"
+      class="no-preview-item"
+    >
+      <grid-item
+        v-for="item in internalLayout"
+        :static="item.static"
+        :x="item.x"
+        :y="item.y"
+        :w="item.w"
+        :h="item.h"
+        :i="item.i"
+        :key="item.i"
+      >
+        <div>
+          <component
+            :is="item.type"
+            :content="item.content"
+            :containerStyle="item.containerStyle"
+            :textStyle="item.textStyle"
+            :imageStyle="item.imageStyle"
+            @open-modal-text="openModal(item.i, $event, item.type)"
+            @open-modal-image="openModal(item.i, $event, item.type)"
           />
           <span class="remove" @click.stop="removeItem(item.PositionId)"
             >x</span
@@ -95,6 +147,12 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
+    <canvasEditModal
+      v-if="isCanvasModalOpen"
+      :isOpen="isCanvasModalOpen"
+      @close="closeEditModal"
+      @save="handleBackgroundChange"
+    />
   </div>
 </template>
 
@@ -105,6 +163,7 @@ import ImageComponent from "../components/ImageComponent.vue";
 import TextEditModal from "../editModals/textEditModal.vue"; // Import the new modal component
 import ImageEditModal from "../editModals/imageEditModal.vue";
 import axios from "axios";
+import canvasEditModal from "../editModals/canvasEditModal.vue";
 
 export default {
   components: {
@@ -114,6 +173,7 @@ export default {
     ImageComponent,
     TextEditModal,
     ImageEditModal,
+    canvasEditModal,
   },
   data() {
     return {
@@ -131,6 +191,9 @@ export default {
       editingItemId: null, // To keep track of which item is being edited
       editableImageStyle: {},
       editingItemType: null,
+      preview: false,
+      text: "See Preview",
+      isCanvasModalOpen: false,
     };
   },
   mounted() {
@@ -206,22 +269,22 @@ export default {
 
               const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
               let base64Data = window.btoa(
-          new Uint8Array(binaryData).reduce(
-            (data, byte) => data + String.fromCharCode(byte),
-            ""
-          )
-        );
-        //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
-        //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
-        //          base64Data = window.btoa(
-        //   new Uint8Array(binaryData).reduce(
-        //     (data, byte) => data + String.fromCharCode(byte),
-        //     ""
-        //   )
-        // );
-        //       }
+                new Uint8Array(binaryData).reduce(
+                  (data, byte) => data + String.fromCharCode(byte),
+                  ""
+                )
+              );
+              //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
+              //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
+              //          base64Data = window.btoa(
+              //   new Uint8Array(binaryData).reduce(
+              //     (data, byte) => data + String.fromCharCode(byte),
+              //     ""
+              //   )
+              // );
+              //       }
               const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
-              console.log("base64data",typeof(base64Data));
+              console.log("base64data", typeof base64Data);
               content = `data:${mimeType};base64,${base64Data}`;
             } else {
               content = cssData.content;
@@ -235,7 +298,7 @@ export default {
               i: item.i ?? String(this.index++),
               type: item.type ?? "TextComponent",
               content: content,
-              sendFile:null,
+              sendFile: null,
               containerStyle: parsedCSS.containerStyle ?? {},
               textStyle: parsedCSS.textStyle ?? {},
               imageStyle: parsedCSS.imageStyle ?? {},
@@ -285,7 +348,7 @@ export default {
       );
       console.log("result", result);
     },
-    updateItem(id, content, sendFile,containerStyle, textStyle, imageStyle) {
+    updateItem(id, content, sendFile, containerStyle, textStyle, imageStyle) {
       const item = this.internalLayout.find((item) => item.i === id);
       if (item) {
         item.content = content;
@@ -298,9 +361,12 @@ export default {
     updateLayout(newLayout) {
       this.internalLayout = newLayout;
     },
-    openModal(id, data,type) {
+    openEditModal() {
+      this.isCanvasModalOpen = true;
+    },
+    openModal(id, data, type) {
       this.editingItemId = id;
-      this.editingItemType=type;
+      this.editingItemType = type;
       this.editableContent = data.content;
       this.editableContainerStyle = { ...data.containerStyle };
       this.editableTextStyle = { ...data.textStyle };
@@ -310,6 +376,7 @@ export default {
     },
     closeEditModal() {
       this.isEditModalOpen = false;
+      this.isCanvasModalOpen = false;
     },
     saveChanges(data) {
       if (this.editingItemId !== null) {
@@ -327,17 +394,16 @@ export default {
     async saveLayout(layout_id) {
       try {
         console.log("backend data", this.internalLayout);
-      
+
         const formData = new FormData();
         // let images = []
-        for(let i =0;i<this.internalLayout.length;i++){
-          console.log(this.internalLayout[i].sendFile)
-          
-            formData.append("images[]", this.internalLayout[i].sendFile);
-          
+        for (let i = 0; i < this.internalLayout.length; i++) {
+          console.log(this.internalLayout[i].sendFile);
+
+          formData.append("images[]", this.internalLayout[i].sendFile);
         }
         // console.log(formData)
-        formData.append("internalLayout",JSON.stringify(this.internalLayout))
+        formData.append("internalLayout", JSON.stringify(this.internalLayout));
         const response = await axios.post(
           `http://localhost:3000/text-builder/${layout_id}`,
           formData
@@ -349,6 +415,36 @@ export default {
         console.error("Error saving layout:", error);
         alert("Failed to save layout");
       }
+    },
+    async handleBackgroundChange(option, data) {
+      try {
+        const formdata = new FormData();
+        console.log("option", option);
+        console.log("data", data);
+        if (option === "color") {
+          formdata.append("color", data); // Make sure data is a string representing the color
+        } else if (option === "image" && data instanceof File) {
+          formdata.append("image", data); // Make sure data is a File object representing the image
+        } else {
+          console.error("Invalid data type or option");
+          return;
+        }
+        console.log("formdata ", formdata);
+        const response = await axios.post(
+          `http://localhost:3000/text-builder/change-layout/${this.selectedLayout}`,
+          formdata
+        );
+        console.log(response.data); // Log response or handle success message
+        // Optionally, update canvas background here
+      } catch (error) {
+        console.error("Error saving background to database:", error);
+        // Handle error or display error message
+      }
+    },
+
+    setPreview() {
+      this.preview = !this.preview;
+      this.text = this.preview ? "Unsee Preview" : "See Preview";
     },
   },
 };
@@ -406,6 +502,10 @@ export default {
   cursor: pointer;
 }
 
+.preview {
+  cursor: pointer;
+}
+
 .vue-grid-layout {
   background: #c4c1c1;
   position: relative;
@@ -413,14 +513,18 @@ export default {
   /* border: 2px solid black; */
 }
 
-.vue-grid-item:not(.vue-grid-placeholder) {
+.preview-item .vue-grid-item:not(.vue-grid-placeholder) {
+  background: #ffffff;
+}
+
+.no-preview-item .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   /* border: 1px solid black; */
 }
 
-.vue-grid-item:hover {
+.no-preview-item .vue-grid-item:hover {
   border: 3px solid black;
 }
 

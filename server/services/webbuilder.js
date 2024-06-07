@@ -92,7 +92,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
                 css:cssData
               })
             }
-            
+            console.log("css data ",cssData);
           }
     
         }
@@ -113,6 +113,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
             textStyle: layout.textStyle,
             imageStyle: layout.imageStyle
           });
+        
 
           if(layout.type==='TextComponent'){
             const textComp = await TextComponent.create({
