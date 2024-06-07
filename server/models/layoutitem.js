@@ -11,7 +11,7 @@ LayoutItem.init(
     },
     image:{
       type: DataTypes.BLOB('long'),
-      allowNull: false
+      allowNull: true
     },
     
   css: {

@@ -5,7 +5,8 @@ const multer = require('multer')
 
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage, limits: { fileSize: 10 * 1024 * 1024 }  });
-const {createTextComponent, getAllTextComponents, getCss, removeElement, createLayoutItem,getLayout} = require('../services/webbuilder.js')
+const {createTextComponent, getAllTextComponents, getCss, removeElement, createLayoutItem,getLayout} = require('../services/webbuilder.js');
+const LayoutItem = require('../models/layoutitem.js');
 
 const webController = express.Router()
 
@@ -19,6 +20,10 @@ webController.post('/text-builder/change-layout/:layout_id',upload.single('image
         console.log("id :",layout_id);
         console.log("css : ",css);
         console.log("image",image);
+
+        
+
+        
         
         
         const layoutData = {

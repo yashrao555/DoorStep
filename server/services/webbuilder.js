@@ -6,8 +6,25 @@ const LayoutItem = require('../models/layoutitem.js');
 
 const createLayoutItem = async (layoutData) => {
   try {
-    const layoutItem = await LayoutItem.create(layoutData);
+    const existingLayout = await LayoutItem.findOne({
+      where:{
+          layout_id:layoutData.layout_id
+      }
+  })
+
+  if(existingLayout)
+    {
+     const updatedLayout = await  existingLayout.update({
+        layoutData
+      })
+
+      return updatedLayout
+    }
+    else{
+      const layoutItem = await LayoutItem.create(layoutData);
     return layoutItem;
+    }
+    
   } catch (error) {
     throw new Error('Error creating layout item: ' + error.message);
   }
