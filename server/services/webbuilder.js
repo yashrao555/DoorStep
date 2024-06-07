@@ -13,10 +13,22 @@ const createLayoutItem = async (layoutData) => {
   }
 };
 
+const getLayout = async(layout_id)=>{
+  try {
+    const result = await LayoutItem.findOne({where:{
+      layout_id:layout_id
+    }});
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 async function createTextComponent(internalLayout,layout_id,files) {
 
-  console.log("sfdskljfklsdjfldsjklfsdjlfkjsdlkfjdslkfjldskf",internalLayout.length);
+  //console.log("sfdskljfklsdjfldsjklfsdjlfkjsdlkfjdslkfjldskf",internalLayout.length);
   //  await TextComponent.destroy({ where: {}, truncate: true });
   //  await ComponentPosition.destroy({ where: {}, truncate: true })
   let count = 0
@@ -199,4 +211,4 @@ async function createTextComponent(internalLayout,layout_id,files) {
     }
   }
 
-  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement,createLayoutItem}
+  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement,createLayoutItem,getLayout}
