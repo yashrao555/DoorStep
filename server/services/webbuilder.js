@@ -11,16 +11,28 @@ const createLayoutItem = async (layoutData) => {
           layout_id:layoutData.layout_id
       }
   })
+  console.log("current data ",layoutData);
 
   if(existingLayout)
     {
-     const updatedLayout = await  existingLayout.update({
-        layoutData
-      })
+      if(layoutData.image===null){
+        const updatedLayout = await  existingLayout.update({
+          image:0,
+          css:layoutData.css
+        })
+      }
+      else{
+        const updatedLayout = await  existingLayout.update({
+          image:layoutData.image,
+          css:layoutData.css
+        })
+      }
+     
 
       return updatedLayout
     }
     else{
+      console.log("hiii");
       const layoutItem = await LayoutItem.create(layoutData);
     return layoutItem;
     }

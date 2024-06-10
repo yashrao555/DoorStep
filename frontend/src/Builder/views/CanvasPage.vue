@@ -32,7 +32,7 @@
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
     <button
       class="btn btn-primary"
-      style="margin-left: 40vw"
+      style="margin-left: 38vw"
       @click="openEditModal"
     >
       Edit Background
@@ -63,7 +63,8 @@
       :use-css-transforms="true"
       :margin="[0, 0]"
       @layout-updated="updateLayout"
-      class="preview-item"
+      
+      :style="{ backgroundImage: `url(${imageContent})` , backgroundColor:bgColor}"
 
     >
       <grid-item
@@ -101,7 +102,7 @@
       :margin="[5, 5]"
       @layout-updated="updateLayout"
       class="no-preview-item"
-      :style="{ backgroundImage: `url(${imageContent})` }"
+      :style="{ backgroundImage: `url(${imageContent})` , backgroundColor:bgColor }"
     >
       <grid-item
         v-for="item in internalLayout"
@@ -197,6 +198,7 @@ export default {
       text: "See Preview",
       isCanvasModalOpen: false,
       imageContent:null,
+      bgColor:null,
     };
   },
   mounted() {
@@ -224,7 +226,7 @@ export default {
         const canvasResult = await axios.get(
           `http://localhost:3000/get-layout/${layout_id}`
         );
-        console.log("canvas result", canvasResult.data);
+        console.log("canvas result", canvasResult.data.css);
 
         
         const binaryData = canvasResult.data.image.data; // Assuming fileData is your object containing the buffer
@@ -238,6 +240,8 @@ export default {
         // console.log("base64data", typeof base64Data);
         this.imageContent = `data:${mimeType};base64,${base64Data}`;
         console.log("image content ",this.imageContent);
+
+        this.bgColor = canvasResult.data.css;
 
         // if (Array.isArray(result.data)) {
         //   this.internalLayout = result.data.map(item => ({
@@ -319,9 +323,9 @@ export default {
               type: item.type ?? "TextComponent",
               content: content,
               sendFile: null,
-              containerStyle: parsedCSS.containerStyle ?? {},
-              textStyle: parsedCSS.textStyle ?? {},
-              imageStyle: parsedCSS.imageStyle ?? {},
+              containerStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).containerStyle: parsedCSS.containerStyle,
+              textStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).textStyle :(parsedCSS).textStyle,
+              imageStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).imageStyle :(parsedCSS).imageStyle,
               PositionId: cssData ? cssData.componentPositionId : null,
             });
           }
@@ -440,7 +444,7 @@ export default {
       try {
         const formdata = new FormData();
         console.log("option", option);
-        console.log("data", data);
+        console.log("data", typeof(data));
         if (option === "color") {
           formdata.append("color", data); // Make sure data is a string representing the color
         } else if (option === "image" && data instanceof File) {
@@ -539,6 +543,7 @@ export default {
 
 .no-preview-item .vue-grid-item:not(.vue-grid-placeholder) {
   background: #ffffff;
+  /* opacity: 0.1; */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   /* border: 1px solid black; */

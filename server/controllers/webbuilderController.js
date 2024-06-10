@@ -15,7 +15,7 @@ webController.post('/text-builder/change-layout/:layout_id',upload.single('image
 
         console.log("hello");
         const {layout_id} = req.params
-        const { css } = req.body;
+        const  css  = req.body.color;
         const image = req.file 
         console.log("id :",layout_id);
         console.log("css : ",css);
@@ -28,11 +28,12 @@ webController.post('/text-builder/change-layout/:layout_id',upload.single('image
         
         const layoutData = {
           layout_id,
-          image:image.buffer,
+          image:image?image.buffer : null,
           css,
         };
     
         const newLayoutItem = await createLayoutItem(layoutData);
+        console.log("new layout item",newLayoutItem);
         res.status(201).json(newLayoutItem);
       } catch (error) {
         console.error('Error creating layout item:', error);
