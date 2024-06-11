@@ -183,6 +183,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
          
         }
 
+
       //console.log(component, textComp);
     } catch (error) {
       console.error('Error creating component:', error);
@@ -225,22 +226,25 @@ async function createTextComponent(internalLayout,layout_id,files) {
     }
   }
 
-  async function removeElement(Id){
+  async function removeElement(Id,Type){
     try {
 
-      const destroyedImage= await ImageComponent.destroy({
-        where: {
-          componentPositionId: Id
-        }
-      })
+      if(Type==="ImageComponent"){
+        const destroyedImage= await ImageComponent.destroy({
+          where: {
+            componentPositionId: Id
+          }
+        })
+      }
+      else {
+        const destroyedText= await TextComponent.destroy({
+          where: {
+            componentPositionId: Id
+          }
+        })
+  
+      }
 
-     const destroyedText= await TextComponent.destroy({
-        where: {
-          componentPositionId: Id
-        }
-      })
-
-     
 
       const destroyedComponent = await ComponentPosition.destroy({
         where: {

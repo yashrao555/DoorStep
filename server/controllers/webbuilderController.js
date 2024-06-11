@@ -96,10 +96,10 @@ webController.get('/get-css/:layout_id',async(req,res)=>{
 })
 
 webController.delete('/remove-element',async(req,res)=>{
-    const {id} = req.body
+    const {id,type} = req.body
     console.log('id',id);
     try {
-        const result = await removeElement(id);
+        const result = await removeElement(id,type);
         return res.status(201).json(result);
     } catch (error) {
         return res.status(500).json(error);

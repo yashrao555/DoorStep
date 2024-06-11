@@ -124,7 +124,7 @@
             @open-modal-text="openModal(item.i, $event, item.type)"
             @open-modal-image="openModal(item.i, $event, item.type)"
           />
-          <span class="remove" @click.stop="removeItem(item.PositionId)"
+          <span class="remove" @click.stop="removeItem(item.PositionId,item.type)"
             >x</span
           >
         </div>
@@ -362,10 +362,11 @@ export default {
       });
       this.index++;
     },
-    async removeItem(id) {
+    async removeItem(id,type) {
+      console.log("type",type);
       const result = await axios.delete(
         "http://localhost:3000/remove-element",
-        { data: { id: id } }
+        { data: { id: id,type:type } }
       );
       this.internalLayout = this.internalLayout.filter(
         (item) => item.PositionId !== id
