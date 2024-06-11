@@ -107,6 +107,8 @@ async function createTextComponent(internalLayout,layout_id,files) {
             imageStyle: layout.imageStyle
           });
 
+          
+
           if(layout.type==='TextComponent'){
             
           const textComp = await TextComponent.findOne({
@@ -115,25 +117,28 @@ async function createTextComponent(internalLayout,layout_id,files) {
             }
           })
 
-           textComp.update({
+          await textComp.update({
             content: layout.content,
             css: cssData,
             
           });
           }
           else{
-            if(file){
+            if(file || cssData){
               const imgComp = await ImageComponent.findOne({
                 where:{
                   componentPositionId:layout.PositionId
                 }
               })
-              imgComp.update({
+              console.log("img comp ",imgComp);
+              await imgComp.update({
                 FileData:imageBuffer,
                 css:cssData
               })
+              console.log("css data ",cssData);
             }
-            console.log("css data ",cssData);
+            
+            
           }
     
         }
@@ -222,11 +227,20 @@ async function createTextComponent(internalLayout,layout_id,files) {
 
   async function removeElement(Id){
     try {
+
+      const destroyedImage= await ImageComponent.destroy({
+        where: {
+          componentPositionId: Id
+        }
+      })
+
      const destroyedText= await TextComponent.destroy({
         where: {
           componentPositionId: Id
         }
       })
+
+     
 
       const destroyedComponent = await ComponentPosition.destroy({
         where: {
@@ -234,7 +248,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
         }
       })
 
-      return {destroyedText,destroyedComponent};
+      return {destroyedText,destroyedComponent,destroyedImage};
     } catch (error) {
       
     }
