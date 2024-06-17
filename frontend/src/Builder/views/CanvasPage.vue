@@ -26,6 +26,7 @@
       <option value="" disabled>Components</option>
       <option value="TextComponent">Text</option>
       <option value="ImageComponent">Image</option>
+      <option value="AddHTML">HTML</option>
     </select>
     <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
@@ -177,6 +178,7 @@
             :imageStyle="item.imageStyle"
             @open-modal-text="openModal(item.i, $event, item.type)"
             @open-modal-image="openModal(item.i, $event, item.type)"
+            @open-modal-html ="openModal(item.i,$event,item.type)"
           />
           <span class="remove" @click.stop="removeItem(item.PositionId,item.type)"
             >x</span
@@ -204,6 +206,15 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
+    <htmlModal
+      v-if="isEditModalOpen && editingItemType === 'AddHTML'"
+      :isOpen="isEditModalOpen"
+      :content="editableContent"
+      :containerStyle="editableContainerStyle"
+      :imageStyle="editableImageStyle"
+      @close="closeEditModal"
+      @save="saveChanges"
+    />
     <canvasEditModal
       v-if="isCanvasModalOpen"
       :isOpen="isCanvasModalOpen"
@@ -221,6 +232,8 @@ import TextEditModal from "../editModals/textEditModal.vue"; // Import the new m
 import ImageEditModal from "../editModals/imageEditModal.vue";
 import axios from "axios";
 import canvasEditModal from "../editModals/canvasEditModal.vue";
+import AddHTML from '../components/AddHTML.vue';
+import htmlModal from '../editModals/htmlModal.vue'
 
 export default {
   components: {
@@ -231,6 +244,9 @@ export default {
     TextEditModal,
     ImageEditModal,
     canvasEditModal,
+    AddHTML,
+    htmlModal
+  
   },
   data() {
     return {
@@ -502,6 +518,7 @@ export default {
       this.openLinkModal=false;
     },
     saveChanges(data) {
+      // console.log(data)
       if (this.editingItemId !== null) {
         this.updateItem(
           this.editingItemId,
