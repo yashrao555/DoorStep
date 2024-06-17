@@ -109,7 +109,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
 
           
 
-          if(layout.type==='TextComponent'){
+          if(layout.type==='TextComponent'||layout.type==='AddHTML'){
             
           const textComp = await TextComponent.findOne({
             where:{
@@ -161,7 +161,7 @@ async function createTextComponent(internalLayout,layout_id,files) {
           });
         
 
-          if(layout.type==='TextComponent'){
+          if(layout.type==='TextComponent'||layout.type==='AddHTML'){
             const textComp = await TextComponent.create({
               content: layout.content,
               css: cssData,
