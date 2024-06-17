@@ -30,9 +30,21 @@
     <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      
+      data-bs-target="#exampleModal"
+      style="margin-left: 34vw"
+      @click="convertToHTML"
+    >
+      Publish
+    </button>
+    
     <button
       class="btn btn-primary"
-      style="margin-left: 38vw"
+      style="margin-left: 1vw"
       @click="openEditModal"
     >
       Edit Background
@@ -51,43 +63,82 @@
     >
       Save Layout
     </button>
-    <!--preview-->
-    <grid-layout
-      v-if="preview"
-      v-model:layout="internalLayout"
-      :col-num="colNum"
-      :row-height="60"
-      :is-draggable="false"
-      :is-resizable="false"
-      :vertical-compact="true"
-      :use-css-transforms="true"
-      :margin="[0, 0]"
-      @layout-updated="updateLayout"
-      
-      :style="{ backgroundImage: `url(${imageContent})` , backgroundColor:bgColor}"
 
+    <div
+      v-if="openLinkModal"
+      class="modal "
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
     >
-      <grid-item
-        v-for="item in internalLayout"
-        :static="item.static"
-        :x="item.x"
-        :y="item.y"
-        :w="item.w"
-        :h="item.h"
-        :i="item.i"
-        :key="item.i"
-      >
-        <div>
-          <component
-            :is="item.type"
-            :content="item.content"
-            :containerStyle="item.containerStyle"
-            :textStyle="item.textStyle"
-            :imageStyle="item.imageStyle"
-          />
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Congratulations! Your WebPage is now LIVE</h1>
+            <button
+              type="button"
+              class="btn-close"
+              @click="closeEditModal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">Here is the link of your web page</div>
+          <div class="modal-body">{{ pageLink }}</div>
+          <div class="modal-body">Please copy and paste the above link on your browser to view your page</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="closeEditModal"
+            >
+              Close
+            </button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+          </div>
         </div>
-      </grid-item>
-    </grid-layout>
+      </div>
+    </div>
+    
+    <!--preview-->
+    <div v-if="preview" ref="previewSection">
+      <grid-layout
+        v-model:layout="internalLayout"
+        :col-num="colNum"
+        :row-height="60"
+        :is-draggable="false"
+        :is-resizable="false"
+        :vertical-compact="true"
+        :use-css-transforms="true"
+        :margin="[0, 0]"
+        @layout-updated="updateLayout"
+        :style="{
+          backgroundImage: `url(${imageContent})`,
+          backgroundColor: bgColor,
+        }"
+      >
+        <grid-item
+          v-for="item in internalLayout"
+          :static="item.static"
+          :x="item.x"
+          :y="item.y"
+          :w="item.w"
+          :h="item.h"
+          :i="item.i"
+          :key="item.i"
+        >
+          <div>
+            <component
+              :is="item.type"
+              :content="item.content"
+              :containerStyle="item.containerStyle"
+              :textStyle="item.textStyle"
+              :imageStyle="item.imageStyle"
+            />
+          </div>
+        </grid-item>
+      </grid-layout>
+    </div>
 
     <!--no preview-->
     <grid-layout
@@ -102,7 +153,10 @@
       :margin="[5, 5]"
       @layout-updated="updateLayout"
       class="no-preview-item"
-      :style="{ backgroundImage: `url(${imageContent})` , backgroundColor:bgColor }"
+      :style="{
+        backgroundImage: `url(${imageContent})`,
+        backgroundColor: bgColor,
+      }"
     >
       <grid-item
         v-for="item in internalLayout"
@@ -197,8 +251,10 @@ export default {
       preview: false,
       text: "See Preview",
       isCanvasModalOpen: false,
-      imageContent:null,
-      bgColor:null,
+      imageContent: null,
+      bgColor: null,
+      openLinkModal:false,
+      pageLink:"",
     };
   },
   mounted() {
@@ -212,6 +268,39 @@ export default {
     },
   },
   methods: {
+    convertToHTML() {
+      this.openLinkModal=!this.openLinkModal;
+      // Toggle to preview mode
+      // this.preview = !this.preview;
+
+      // Capture HTML content of preview section
+      const previewsection = this.$refs.previewSection; // Ensure you have a ref="previewSection" on your preview section div
+      const htmlContent = previewsection.innerHTML;
+
+      // TODO: Send htmlContent to backend or save it to a file
+      console.log(htmlContent);
+      const blob = new Blob([htmlContent], { type: "text/html" });
+
+      // Create a temporary <a> element to trigger the download
+      const link = document.createElement("a");
+      
+      link.href = URL.createObjectURL(blob);
+      this.pageLink = link.href
+      // link.download = "generated.html";
+      // console.log("link ", link);
+      // Append the <a> element to the document body
+      // document.body.appendChild(link);
+
+      // Programmatically click the link to trigger the download
+      // link.click();
+
+      // Clean up: remove the <a> element from the document body
+      // document.body.removeChild(link);
+
+      // Example: You can send this HTML content to your backend for further processing and saving
+      // Example: axios.post('/save-html', { htmlContent })
+    },
+
     async getItem(layout_id) {
       try {
         console.log(layout_id);
@@ -228,7 +317,6 @@ export default {
         );
         console.log("canvas result", canvasResult.data.css);
 
-        
         const binaryData = canvasResult.data.image.data; // Assuming fileData is your object containing the buffer
         let base64Data = window.btoa(
           new Uint8Array(binaryData).reduce(
@@ -239,7 +327,7 @@ export default {
         const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
         // console.log("base64data", typeof base64Data);
         this.imageContent = `data:${mimeType};base64,${base64Data}`;
-        console.log("image content ",this.imageContent);
+        console.log("image content ", this.imageContent);
 
         this.bgColor = canvasResult.data.css;
 
@@ -323,9 +411,18 @@ export default {
               type: item.type ?? "TextComponent",
               content: content,
               sendFile: null,
-              containerStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).containerStyle: parsedCSS.containerStyle,
-              textStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).textStyle :(parsedCSS).textStyle,
-              imageStyle: item.type==='TextComponent'? JSON.parse(parsedCSS).imageStyle :(parsedCSS).imageStyle,
+              containerStyle:
+                item.type === "TextComponent"
+                  ? JSON.parse(parsedCSS).containerStyle
+                  : parsedCSS.containerStyle,
+              textStyle:
+                item.type === "TextComponent"
+                  ? JSON.parse(parsedCSS).textStyle
+                  : parsedCSS.textStyle,
+              imageStyle:
+                item.type === "TextComponent"
+                  ? JSON.parse(parsedCSS).imageStyle
+                  : parsedCSS.imageStyle,
               PositionId: cssData ? cssData.componentPositionId : null,
             });
           }
@@ -402,6 +499,7 @@ export default {
     closeEditModal() {
       this.isEditModalOpen = false;
       this.isCanvasModalOpen = false;
+      this.openLinkModal=false;
     },
     saveChanges(data) {
       if (this.editingItemId !== null) {
@@ -445,7 +543,7 @@ export default {
       try {
         const formdata = new FormData();
         console.log("option", option);
-        console.log("data", typeof(data));
+        console.log("data", typeof data);
         if (option === "color") {
           formdata.append("color", data); // Make sure data is a string representing the color
         } else if (option === "image" && data instanceof File) {
