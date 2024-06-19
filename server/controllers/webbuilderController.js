@@ -55,13 +55,13 @@ webController.get('/get-layout/:layout_id',async(req,res)=>{
 
 webController.post('/text-builder/:layout_id',upload.array('images[]'),async(req,res)=>{
     const files = req.files
-    console.log("hsfjkhsdkjfhsdkjfhksjdhf",files)
+    // console.log("hsfjkhsdkjfhsdkjfhksjdhf",files)
    
     const {layout_id} = req.params;
     console.log("layout id :",layout_id);
 
     try {
-        console.log(req.body.internalLayout)
+        // console.log(req.body.internalLayout)
         const internalLayout = JSON.parse(req.body.internalLayout)
         // console.log("internal llll ",internalLayout);
         const result =await createTextComponent(internalLayout,layout_id,files);

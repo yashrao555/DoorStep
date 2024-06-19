@@ -3,6 +3,16 @@ const TextComponent = require('../models/text.js')
 const ImageComponent = require('../models/imagecomponent.js');
 const LayoutItem = require('../models/layoutitem.js');
 // const fs = require("fs");
+const fs = require('fs');
+const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+
+const uploadDir = path.join(__dirname, 'uploads');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const createLayoutItem = async (layoutData) => {
   try {
@@ -11,7 +21,7 @@ const createLayoutItem = async (layoutData) => {
           layout_id:layoutData.layout_id
       }
   })
-  console.log("current data ",layoutData);
+  // console.log("current data ",layoutData);
 
   if(existingLayout)
     {
@@ -32,7 +42,7 @@ const createLayoutItem = async (layoutData) => {
       return updatedLayout
     }
     else{
-      console.log("hiii");
+      // console.log("hiii");
       const layoutItem = await LayoutItem.create(layoutData);
     return layoutItem;
     }
@@ -54,144 +64,116 @@ const getLayout = async(layout_id)=>{
   }
 }
 
-
-async function createTextComponent(internalLayout,layout_id,files) {
-
-  //console.log("sfdskljfklsdjfldsjklfsdjlfkjsdlkfjdslkfjldskf",internalLayout.length);
-  //  await TextComponent.destroy({ where: {}, truncate: true });
-  //  await ComponentPosition.destroy({ where: {}, truncate: true })
-  let count = 0
+async function createTextComponent(internalLayout, layout_id, files) {
+  let count = 0;
   for (const layout of internalLayout) {
-    // console.log("position id", layout.PositionId)
     let file;
-    let imageBuffer;
-    console.log("sendfile",)
-    if(layout.sendFile){
-      console.log("hellooo")
-       file = files[count]
-      if(file){
+    let imagePath;
+    
+    if (layout.sendFile) {
+      console.log("Entered in sendfile");
+      file = files[count];
+      if (file) {
         imageBuffer = file.buffer;
-     }
-     // console.log("shfkjsdfklsdjflkjdsf",imageBuffer)
-     count+=1
+        filePath = path.join(uploadDir, file.originalname);
+        try {
+          fs.writeFileSync(filePath, imageBuffer);
+          console.log("File saved to:", filePath);
+          imagePath=filePath
+        } catch (err) {
+          console.error("Error saving file:", err);
+          return res.status(500).json({ error: 'Error saving file' });
+        }
+      }
+      count += 1;
     }
-    
-    // console.log(file)
-   
-    
-    // console.log("shfklsdjfklsdjlkf",layout)
+
     try {
+      if (layout.PositionId) {
+        const component = await ComponentPosition.findByPk(layout.PositionId);
 
-      if (layout.PositionId)
-        {
-          const component = await ComponentPosition.findByPk(layout.PositionId);
+        if (!component) {
+          console.log(`Component with id ${layout.PositionId} not found!`);
+          continue;
+        }
 
-          if (!component) {
-            console.log(`Component with id ${layout.PositionId} not found!`);
-            continue;
-          }
-    
-          await component.update({
-            x: layout.x,
-            y: layout.y,
-            w: layout.w,
-            h: layout.h,
-            //layout_id: 2
-          });
+        await component.update({
+          x: layout.x,
+          y: layout.y,
+          w: layout.w,
+          h: layout.h,
+        });
 
-         
+        const cssData = JSON.stringify({
+          containerStyle: layout.containerStyle,
+          textStyle: layout.textStyle,
+          imageStyle: layout.imageStyle
+        });
 
-          const cssData = JSON.stringify({
-            containerStyle: layout.containerStyle,
-            textStyle: layout.textStyle,
-            imageStyle: layout.imageStyle
-          });
-
-          
-
-          if(layout.type==='TextComponent'||layout.type==='AddHTML'){
-            
+        if (layout.type === 'TextComponent' || layout.type === 'AddHTML') {
           const textComp = await TextComponent.findOne({
-            where:{
-              componentPositionId:layout.PositionId
+            where: {
+              componentPositionId: layout.PositionId
             }
-          })
+          });
 
           await textComp.update({
             content: layout.content,
             css: cssData,
-            
           });
-          }
-          else{
-            if(file || cssData){
-              const imgComp = await ImageComponent.findOne({
-                where:{
-                  componentPositionId:layout.PositionId
-                }
-              })
-              console.log("img comp ",imgComp);
-              await imgComp.update({
-                FileData:imageBuffer,
-                css:cssData
-              })
-              console.log("css data ",cssData);
-            }
+        } else {
+          if (file || cssData) {
+            const imgComp = await ImageComponent.findOne({
+              where: {
+                componentPositionId: layout.PositionId
+              }
+            });
+            await imgComp.update({
+              FilePath: imagePath,
             
-            
-          }
-    
-        }
-        
-        else
-        {
-          const component = await ComponentPosition.create({
-            x: layout.x,
-            y: layout.y,
-            w: layout.w,
-            h: layout.h,
-            layout_id: layout_id,
-            type:layout.type
-          });
-    
-          const cssData = JSON.stringify({
-            containerStyle: layout.containerStyle,
-            textStyle: layout.textStyle,
-            imageStyle: layout.imageStyle
-          });
-        
-
-          if(layout.type==='TextComponent'||layout.type==='AddHTML'){
-            const textComp = await TextComponent.create({
-              content: layout.content,
-              css: cssData,
-              componentPositionId: component.dataValues.id,
-              layout_id:layout_id
+              css: cssData
             });
           }
-          else{
-            // console.log("layout.content ",layout.content);
-            const imgComp = await ImageComponent.create({
-              FileName:'Image1',
-              FileData:imageBuffer,
-              componentPositionId: component.dataValues.id,
-              layout_id:layout_id,
-              css: cssData,
-            })
-          }
-    
-         
         }
+      } else {
+        const component = await ComponentPosition.create({
+          x: layout.x,
+          y: layout.y,
+          w: layout.w,
+          h: layout.h,
+          layout_id: layout_id,
+          type: layout.type
+        });
 
+        const cssData = JSON.stringify({
+          containerStyle: layout.containerStyle,
+          textStyle: layout.textStyle,
+          imageStyle: layout.imageStyle
+        });
 
-      //console.log(component, textComp);
+        if (layout.type === 'TextComponent' || layout.type === 'AddHTML') {
+          await TextComponent.create({
+            content: layout.content,
+            css: cssData,
+            componentPositionId: component.dataValues.id,
+            layout_id: layout_id
+          });
+        } else {
+          await ImageComponent.create({
+            FileName: 'Image1',
+            FilePath: imagePath,
+            componentPositionId: component.dataValues.id,
+            layout_id: layout_id,
+            css: cssData,
+          });
+        }
+      }
     } catch (error) {
       console.error('Error creating component:', error);
       return res.status(500).json({ error: 'Error creating component' });
     }
   }
-
-  }
+}
 
   async function getAllTextComponents(layout_id) {
     try {

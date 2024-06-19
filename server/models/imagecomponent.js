@@ -12,7 +12,7 @@ ImageComponent.init(
     },
     FileData: {
       type: DataTypes.BLOB('long'),
-      allowNull: false
+      allowNull: true
     },
     componentPositionId: {
       type: DataTypes.INTEGER,
@@ -25,6 +25,9 @@ ImageComponent.init(
     css: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    FilePath:{
+      type:DataTypes.STRING
     }
   },
   {
