@@ -3,14 +3,6 @@
     <!-- {{ content }} -->
     <div class="html-style" @click="openModal">Click Here</div>
     <p v-html="content"  @click="openModal"></p>
-    <!-- {{ content }} -->
-    <!-- <img
-      :src="content"
-      :style="imageStyle"
-      class="image-content"
-      alt="Image Not Found"
-      @click="openModal"
-    /> -->
   </div>
 </template>
 

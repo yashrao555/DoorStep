@@ -8,6 +8,7 @@
         </div>
       </div>
     </div> -->
+    <img src="../../assets/logo.png" alt="">
     <button class="btn btn-primary ms-4">+ New Layout</button>
     <select
       class="btn btn-primary ms-4 mb-3 mt-3"
@@ -392,28 +393,30 @@ export default {
 
             let content = null;
 
-            if (cssData && cssData.FileData) {
-              // const CHUNK_SIZE = 8192; // Adjust chunk size as needed
+            if (cssData) {
+              console.log("css data is ",cssData);
+              // // const CHUNK_SIZE = 8192; // Adjust chunk size as needed
 
-              const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
-              let base64Data = window.btoa(
-                new Uint8Array(binaryData).reduce(
-                  (data, byte) => data + String.fromCharCode(byte),
-                  ""
-                )
-              );
-              //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
-              //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
-              //          base64Data = window.btoa(
+              // const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
+              // let base64Data = window.btoa(
               //   new Uint8Array(binaryData).reduce(
               //     (data, byte) => data + String.fromCharCode(byte),
               //     ""
               //   )
               // );
-              //       }
-              const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
-              console.log("base64data", typeof base64Data);
-              content = `data:${mimeType};base64,${base64Data}`;
+              // //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
+              // //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
+              // //          base64Data = window.btoa(
+              // //   new Uint8Array(binaryData).reduce(
+              // //     (data, byte) => data + String.fromCharCode(byte),
+              // //     ""
+              // //   )
+              // // );
+              // //       }
+              // const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
+              // console.log("base64data", typeof base64Data);
+              // content = `data:${mimeType};base64,${base64Data}`;
+              content = cssData.FilePath
             } else {
               content = cssData.content;
             }
