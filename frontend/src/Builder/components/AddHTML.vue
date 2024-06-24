@@ -12,6 +12,7 @@ export default {
     content: {
       type: String,
       required: true,
+      default:()=>("")
     },
     containerStyle: {
       type: Object,
@@ -33,7 +34,7 @@ export default {
     },
   },
   mounted() {
-    console.log("Content URL:", this.content);
+    console.log("Content URL sbfjdshfjksdhf:", this.content);
   },
 };
 </script>

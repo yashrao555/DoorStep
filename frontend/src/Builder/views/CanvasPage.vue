@@ -8,7 +8,7 @@
         </div>
       </div>
     </div> -->
-    <img src="../../assets/logo.png" alt="">
+    <img src="../../assets/logo.png" alt="" />
     <button class="btn btn-primary ms-4">+ New Layout</button>
     <select
       class="btn btn-primary ms-4 mb-3 mt-3"
@@ -36,14 +36,13 @@
     <button
       type="button"
       class="btn btn-primary"
-      
       data-bs-target="#exampleModal"
       style="margin-left: 34vw"
       @click="convertToHTML"
     >
       Publish
     </button>
-    
+
     <button
       class="btn btn-primary"
       style="margin-left: 1vw"
@@ -68,7 +67,7 @@
 
     <div
       v-if="openLinkModal"
-      class="modal "
+      class="modal"
       id="exampleModal"
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
@@ -77,7 +76,9 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Congratulations! Your WebPage is now LIVE</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Congratulations! Your WebPage is now LIVE
+            </h1>
             <button
               type="button"
               class="btn-close"
@@ -87,7 +88,10 @@
           </div>
           <div class="modal-body">Here is the link of your web page</div>
           <div class="modal-body">{{ pageLink }}</div>
-          <div class="modal-body">Please copy and paste the above link on your browser to view your page</div>
+          <div class="modal-body">
+            Please copy and paste the above link on your browser to view your
+            page
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -101,7 +105,7 @@
         </div>
       </div>
     </div>
-    
+
     <!--preview-->
     <div v-if="preview" ref="previewSection">
       <grid-layout
@@ -179,9 +183,11 @@
             :imageStyle="item.imageStyle"
             @open-modal-text="openModal(item.i, $event, item.type)"
             @open-modal-image="openModal(item.i, $event, item.type)"
-            @open-modal-html ="openModal(item.i,$event,item.type)"
+            @open-modal-html="openModal(item.i, $event, item.type)"
           />
-          <span class="remove" @click.stop="removeItem(item.PositionId,item.type)"
+          <span
+            class="remove"
+            @click.stop="removeItem(item.PositionId, item.type)"
             >x</span
           >
         </div>
@@ -233,8 +239,8 @@ import TextEditModal from "../editModals/textEditModal.vue"; // Import the new m
 import ImageEditModal from "../editModals/imageEditModal.vue";
 import axios from "axios";
 import canvasEditModal from "../editModals/canvasEditModal.vue";
-import AddHTML from '../components/AddHTML.vue';
-import htmlModal from '../editModals/htmlModal.vue'
+import AddHTML from "../components/AddHTML.vue";
+import htmlModal from "../editModals/htmlModal.vue";
 
 export default {
   components: {
@@ -246,8 +252,7 @@ export default {
     ImageEditModal,
     canvasEditModal,
     AddHTML,
-    htmlModal
-  
+    htmlModal,
   },
   data() {
     return {
@@ -270,8 +275,8 @@ export default {
       isCanvasModalOpen: false,
       imageContent: null,
       bgColor: null,
-      openLinkModal:false,
-      pageLink:"",
+      openLinkModal: false,
+      pageLink: "",
     };
   },
   mounted() {
@@ -285,8 +290,8 @@ export default {
     },
   },
   methods: {
-    convertToHTML() {
-      this.openLinkModal=!this.openLinkModal;
+    async convertToHTML(layout_id) {
+      this.openLinkModal = !this.openLinkModal;
       // Toggle to preview mode
       // this.preview = !this.preview;
 
@@ -300,9 +305,15 @@ export default {
 
       // Create a temporary <a> element to trigger the download
       const link = document.createElement("a");
-      
+
       link.href = URL.createObjectURL(blob);
-      this.pageLink = link.href
+      this.pageLink = link.href;
+    const response = await axios.post(
+  `http://localhost:3000/update-url/${layout_id}`,
+  { pageLink: this.pageLink }
+);
+
+        console.log('Response is',response);
       // link.download = "generated.html";
       // console.log("link ", link);
       // Append the <a> element to the document body
@@ -391,10 +402,10 @@ export default {
               }
             }
 
-            let content = null;
+            let content = "";
 
             if (cssData) {
-              console.log("css data is ",cssData);
+              console.log("css data is ", cssData);
               // // const CHUNK_SIZE = 8192; // Adjust chunk size as needed
 
               // const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
@@ -416,8 +427,16 @@ export default {
               // const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
               // console.log("base64data", typeof base64Data);
               // content = `data:${mimeType};base64,${base64Data}`;
-              content = cssData.FilePath
+              if (cssData.FilePath) {
+                content = cssData.FilePath;
+              }else{
+                 content = cssData.content;
+                
+              }
+
+              // console.log(content);
             } else {
+              console.log("sjhfjsjkfhfkjkf",cssData)
               content = cssData.content;
             }
 
@@ -478,11 +497,11 @@ export default {
       });
       this.index++;
     },
-    async removeItem(id,type) {
-      console.log("type",type);
+    async removeItem(id, type) {
+      console.log("type", type);
       const result = await axios.delete(
         "http://localhost:3000/remove-element",
-        { data: { id: id,type:type } }
+        { data: { id: id, type: type } }
       );
       this.internalLayout = this.internalLayout.filter(
         (item) => item.PositionId !== id
@@ -518,7 +537,7 @@ export default {
     closeEditModal() {
       this.isEditModalOpen = false;
       this.isCanvasModalOpen = false;
-      this.openLinkModal=false;
+      this.openLinkModal = false;
     },
     saveChanges(data) {
       // console.log(data)

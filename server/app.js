@@ -34,6 +34,8 @@ const corsOptions = {
     origin:true,
     credentials:true
 };
+const staticPath = path.join(__dirname, 'services/uploads');
+app.use('/uploads', express.static(staticPath));
 
 dotenv.config()
 app.use(bodyParser.json({ limit: '10mb' }));

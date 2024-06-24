@@ -6,6 +6,7 @@ const LayoutItem = require('../models/layoutitem.js');
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const { log } = require('console');
 
 const uploadDir = path.join(__dirname, 'uploads');
 
@@ -61,6 +62,24 @@ const getLayout = async(layout_id)=>{
     return result;
   } catch (error) {
     throw error;
+  }
+}
+
+async function createURL(layout_id,new_url){
+  try {
+    const layout = await LayoutItem.findOne({
+      where:{
+        layout_id:1
+      }
+    })
+    console.log(layout);
+    await layout.update({
+      url:new_url
+    })
+    return layout;
+
+  } catch (error) {
+    
   }
 }
 
@@ -153,7 +172,7 @@ async function createTextComponent(internalLayout, layout_id, files) {
 
         if (layout.type === 'TextComponent' || layout.type === 'AddHTML') {
           await TextComponent.create({
-            content: layout.content,
+            content: JSON.stringify(layout.content),
             css: cssData,
             componentPositionId: component.dataValues.id,
             layout_id: layout_id
@@ -240,4 +259,4 @@ async function createTextComponent(internalLayout, layout_id, files) {
     }
   }
 
-  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement,createLayoutItem,getLayout}
+  module.exports = {createTextComponent,getAllTextComponents,getCss,removeElement,createLayoutItem,getLayout,createURL}
