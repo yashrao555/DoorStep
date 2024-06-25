@@ -2,7 +2,19 @@
   <div v-if="isOpen" class="modal">
     <div class="modal-content">
       <span class="close" @click="close">&times;</span>
-      <textarea v-model="htmlContent" rows="20" cols="2"></textarea>
+    
+      <div class="editor">
+        <h3>HTML</h3>
+        <textarea v-model="htmlContent" rows="6" cols="30"></textarea>
+      </div>
+      <div class="editor">
+        <h3>CSS</h3>
+        <textarea v-model="cssContent" rows="6" cols="30"></textarea>
+      </div>
+      <div class="editor">
+        <h3>JavaScript</h3>
+        <textarea v-model="jsContent" rows="6" cols="30"></textarea>
+      </div>
       <button class="btn btn-primary mt-2" @click="saveChanges">Save</button>
      </div>
    
@@ -20,23 +32,13 @@ export default {
       type: String,
       required: true,
     },
-    containerStyle: {
-      type: Object,
-      required: true,
-    },
-    imageStyle: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
       htmlContent:this.content,
-  
-      localContainerStyle: { ...this.containerStyle },
-      localImageStyle: { ...this.imageStyle },
-      uploadedFile: null,
-      sendFile: null,
+      cssContent:"",
+      jsContent:""
+
     };
   },
   methods: {
@@ -46,10 +48,9 @@ export default {
     
     saveChanges() {
       this.$emit("save", {
-        content: this.htmlContent,
-        sendFile: this.sendFile,
-        containerStyle: this.localContainerStyle,
-        imageStyle: this.localImageStyle,
+        content: {htmlContent:this.htmlContent,
+                  jsContent:this.jsContent,
+                  cssContent:this.cssContent},
       });
     },
   },

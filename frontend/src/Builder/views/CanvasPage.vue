@@ -1,15 +1,9 @@
 <template>
   <div>
-    <!-- <div class="layoutJSON">
-      Displayed as <code>[x, y, w, h]</code>:
-      <div class="columns">
-        <div class="layoutItem" v-for="item in internalLayout" :key="item.i">
-          <b>{{ item.i }}</b>: [{{ item.x }}, {{ item.y }}, {{ item.w }}, {{ item.h }}]
-        </div>
-      </div>
-    </div> -->
-    <img src="../../assets/logo.png" alt="" />
+    <!-- =============================================================================== UPPER NAVBAR ======================================================================================== -->
+
     <button class="btn btn-primary ms-4">+ New Layout</button>
+
     <select
       class="btn btn-primary ms-4 mb-3 mt-3"
       v-model="selectedLayout"
@@ -19,6 +13,7 @@
       <option value="1">Layout 1</option>
       <option value="2">Layout 2</option>
     </select>
+
     <select
       class="btn btn-primary ms-4 mb-3 mt-3"
       style="height: 3.8vh"
@@ -29,7 +24,9 @@
       <option value="ImageComponent">Image</option>
       <option value="AddHTML">HTML</option>
     </select>
+
     <button class="btn btn-primary ms-4" @click="addItem">Add item</button>
+
     <input class="checkBox" type="checkbox" v-model="draggable" /> Draggable
     <input class="checkBox" type="checkbox" v-model="resizable" /> Resizable
 
@@ -50,6 +47,7 @@
     >
       Edit Background
     </button>
+
     <button
       @click="setPreview"
       class="btn btn-warning"
@@ -57,6 +55,7 @@
     >
       {{ text }}
     </button>
+
     <button
       class="btn btn-success"
       style="margin-left: 1vw"
@@ -64,6 +63,10 @@
     >
       Save Layout
     </button>
+
+    <!-- =================================================================================================================================================================================== -->
+
+    <!-- ====================================================================WEBPAGE LINK MODAL================================================================================ -->
 
     <div
       v-if="openLinkModal"
@@ -106,7 +109,10 @@
       </div>
     </div>
 
-    <!--preview-->
+    <!-- ========================================================================================================================================================================================================= -->
+
+    <!-- ===================================================================PREVIEW PAGE SECTION============================================================================================================================== -->
+
     <div v-if="preview" ref="previewSection">
       <grid-layout
         v-model:layout="internalLayout"
@@ -146,7 +152,10 @@
       </grid-layout>
     </div>
 
-    <!--no preview-->
+    <!-- ========================================================================================================================================================================================================== -->
+
+    <!-- ====================================================================MAIN CANVAS SECTION================================================================================================================================= -->
+
     <grid-layout
       v-else
       v-model:layout="internalLayout"
@@ -194,7 +203,10 @@
       </grid-item>
     </grid-layout>
 
-    <!-- Edit Modal -->
+    <!-- ================================================================================================================================================================================================= -->
+
+    <!-- ==========================================================COMPONENT EDIT MODALS================================================================================================== -->
+
     <TextEditModal
       v-if="isEditModalOpen && editingItemType === 'TextComponent'"
       :isOpen="isEditModalOpen"
@@ -204,6 +216,7 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
+
     <ImageEditModal
       v-if="isEditModalOpen && editingItemType === 'ImageComponent'"
       :isOpen="isEditModalOpen"
@@ -213,21 +226,23 @@
       @close="closeEditModal"
       @save="saveChanges"
     />
-    <htmlModal
+
+    <htmlEditModal
       v-if="isEditModalOpen && editingItemType === 'AddHTML'"
       :isOpen="isEditModalOpen"
       :content="editableContent"
-      :containerStyle="editableContainerStyle"
-      :imageStyle="editableImageStyle"
       @close="closeEditModal"
       @save="saveChanges"
     />
+
     <canvasEditModal
       v-if="isCanvasModalOpen"
       :isOpen="isCanvasModalOpen"
       @close="closeEditModal"
       @save="handleBackgroundChange"
     />
+
+    <!-- ====================================================================================================================================================================================== -->
   </div>
 </template>
 
@@ -235,12 +250,12 @@
 import { GridLayout, GridItem } from "vue3-grid-layout-next";
 import TextComponent from "../components/TextComponent.vue";
 import ImageComponent from "../components/ImageComponent.vue";
-import TextEditModal from "../editModals/textEditModal.vue"; // Import the new modal component
+import TextEditModal from "../editModals/textEditModal.vue";
 import ImageEditModal from "../editModals/imageEditModal.vue";
 import axios from "axios";
 import canvasEditModal from "../editModals/canvasEditModal.vue";
-import AddHTML from "../components/AddHTML.vue";
-import htmlModal from "../editModals/htmlModal.vue";
+import AddHTML from "../components/HTMLComponent.vue";
+import htmlEditModal from "../editModals/htmlEditModal.vue";
 
 export default {
   components: {
@@ -252,7 +267,7 @@ export default {
     ImageEditModal,
     canvasEditModal,
     AddHTML,
-    htmlModal,
+    htmlEditModal,
   },
   data() {
     return {
@@ -261,26 +276,31 @@ export default {
       resizable: true,
       colNum: 12,
       index: 0,
-      selectedLayout: "1", //
+
+      selectedLayout: "1",
       selectedComponent: "",
       isEditModalOpen: false,
+      isCanvasModalOpen: false,
+
       editableContent: "",
       editableContainerStyle: {},
       editableTextStyle: {},
-      editingItemId: null, // To keep track of which item is being edited
       editableImageStyle: {},
+
       editingItemType: null,
+      editingItemId: null,
       preview: false,
       text: "See Preview",
-      isCanvasModalOpen: false,
+
       imageContent: null,
       bgColor: null,
+
       openLinkModal: false,
       pageLink: "",
     };
   },
   mounted() {
-    this.getItem(this.selectedLayout); // Fetch initial data based on default layout
+    this.getItem(this.selectedLayout);
   },
   watch: {
     selectedLayout(newLayoutId) {
@@ -308,25 +328,12 @@ export default {
 
       link.href = URL.createObjectURL(blob);
       this.pageLink = link.href;
-    const response = await axios.post(
-  `http://localhost:3000/update-url/${layout_id}`,
-  { pageLink: this.pageLink }
-);
+      const response = await axios.post(
+        `http://localhost:3000/update-url/${layout_id}`,
+        { pageLink: this.pageLink }
+      );
 
-        console.log('Response is',response);
-      // link.download = "generated.html";
-      // console.log("link ", link);
-      // Append the <a> element to the document body
-      // document.body.appendChild(link);
-
-      // Programmatically click the link to trigger the download
-      // link.click();
-
-      // Clean up: remove the <a> element from the document body
-      // document.body.removeChild(link);
-
-      // Example: You can send this HTML content to your backend for further processing and saving
-      // Example: axios.post('/save-html', { htmlContent })
+      console.log("Response is", response);
     },
 
     async getItem(layout_id) {
@@ -359,25 +366,6 @@ export default {
 
         this.bgColor = canvasResult.data.css;
 
-        // if (Array.isArray(result.data)) {
-        //   this.internalLayout = result.data.map(item => ({
-        //     x: item.x ?? 0,
-        //     y: item.y ?? 0,
-        //     w: item.w ?? 1,
-        //     h: item.h ?? 1,
-        //     i: item.i ?? String(Math.random()),
-        //     type: item.type ?? 'TextComponent',
-        //     content: item.content ?? 'Sample text',
-        //     containerStyle: JSON.parse(item.css).containerStyle ?? {},
-        //     textStyle: JSON.parse(item.css).textStyle ?? {},
-        //     imageStyle: JSON.parse(item.css).imageStyle ?? {},
-        //   }));
-
-        //   const css = await axios.get('http://localhost:3000/get-css')
-        //   console.log('CSS is',css);
-        // } else {
-        //   console.error('Fetched data is not an array');
-        // }
 
         if (Array.isArray(result.data) && Array.isArray(cssResult.data)) {
           const cssMap = cssResult.data.reduce((acc, cssItem) => {
@@ -406,37 +394,16 @@ export default {
 
             if (cssData) {
               console.log("css data is ", cssData);
-              // // const CHUNK_SIZE = 8192; // Adjust chunk size as needed
-
-              // const binaryData = cssData.FileData.data; // Assuming fileData is your object containing the buffer
-              // let base64Data = window.btoa(
-              //   new Uint8Array(binaryData).reduce(
-              //     (data, byte) => data + String.fromCharCode(byte),
-              //     ""
-              //   )
-              // );
-              // //       for (let i = 0; i < binaryData.length; i += CHUNK_SIZE) {
-              // //         // const chunk = binaryData.slice(i, i + CHUNK_SIZE);
-              // //          base64Data = window.btoa(
-              // //   new Uint8Array(binaryData).reduce(
-              // //     (data, byte) => data + String.fromCharCode(byte),
-              // //     ""
-              // //   )
-              // // );
-              // //       }
-              // const mimeType = "image/jpeg"; // Set appropriate MIME type based on your image format
-              // console.log("base64data", typeof base64Data);
-              // content = `data:${mimeType};base64,${base64Data}`;
+              
               if (cssData.FilePath) {
                 content = cssData.FilePath;
-              }else{
-                 content = cssData.content;
-                
+              } else {
+                content = cssData.content;
               }
 
               // console.log(content);
             } else {
-              console.log("sjhfjsjkfhfkjkf",cssData)
+              console.log("sjhfjsjkfhfkjkf", cssData);
               content = cssData.content;
             }
 
