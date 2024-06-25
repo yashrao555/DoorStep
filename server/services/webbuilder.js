@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { log } = require('console');
+const HTMLComponent = require('../models/htmlComponent.js');
 
 const uploadDir = path.join(__dirname, 'uploads');
 
@@ -129,7 +130,7 @@ async function createTextComponent(internalLayout, layout_id, files) {
           imageStyle: layout.imageStyle
         });
 
-        if (layout.type === 'TextComponent' || layout.type === 'AddHTML') {
+        if (layout.type === 'TextComponent') {
           const textComp = await TextComponent.findOne({
             where: {
               componentPositionId: layout.PositionId
@@ -140,7 +141,7 @@ async function createTextComponent(internalLayout, layout_id, files) {
             content: layout.content,
             css: cssData,
           });
-        } else {
+        } else if(layout.type==='ImageComponent') {
           if (file || cssData) {
             const imgComp = await ImageComponent.findOne({
               where: {
@@ -153,6 +154,19 @@ async function createTextComponent(internalLayout, layout_id, files) {
               css: cssData
             });
           }
+        }
+        else{
+          const htmlComp = await HTMLComponent.findOne({
+            where:{
+              componentPositionId:layout.PositionId
+            }
+          })
+
+          await htmlComp.update({
+            html:layout.content.htmlContent,
+            css:layout.content.cssContent,
+            script:layout.content.jsContent
+          })
         }
       } else {
         const component = await ComponentPosition.create({
@@ -177,7 +191,7 @@ async function createTextComponent(internalLayout, layout_id, files) {
             componentPositionId: component.dataValues.id,
             layout_id: layout_id
           });
-        } else {
+        } else if(layout.type==='ImageComponent') {
           await ImageComponent.create({
             FileName: 'Image1',
             FilePath: imagePath,
@@ -186,6 +200,15 @@ async function createTextComponent(internalLayout, layout_id, files) {
             css: cssData,
           });
         }
+        else{
+        await HTMLComponent.create({
+          html:layout.content.htmlContent,
+          css:layout.content.cssContent,
+          script:layout.content.jsContent,
+          componentPositionId: component.dataValues.id,
+            layout_id: layout_id,
+        })
+      }
       }
     } catch (error) {
       console.error('Error creating component:', error);
@@ -219,9 +242,14 @@ async function createTextComponent(internalLayout, layout_id, files) {
         layout_id:layout_id
       }})
 
+      const resultHTML = await HTMLComponent.findAll({where:{
+      layout_id:layout_id
+      }})
+
+
       const result = resultText.concat(resultImg)
       console.log("this is the result :",result);
-      return result; 
+      return result.concat(resultHTML); 
     } catch (error) {
       throw error;
     }
